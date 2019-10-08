@@ -1,0 +1,1 @@
+MMNGR_CFG_logicpd-rzg2m = "MMNGR_SALVATORX"
