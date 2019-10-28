@@ -86,28 +86,6 @@ index 8e7a2a59cd32..372f208b0988
  	}
  out:
  	mutex_unlock(&sensor->lock);
-@@ -2814,6 +2837,21 @@ static int ov5640_probe(struct i2c_client *client,
- 	if (ret)
- 		goto entity_cleanup;
- 
-+	{
-+		struct device_node *ep_np = NULL;
-+		struct of_endpoint ep;
-+
-+		for_each_endpoint_of_node (dev->of_node, ep_np) {
-+			of_graph_parse_endpoint(ep_np, &ep);
-+			dev_info(dev, "Endpoint %pOF on port %d",
-+				 ep.local_node, ep.port);
-+			if (ep.port == 0)
-+			{
-+				sensor->sd.fwnode = of_fwnode_handle(ep_np);
-+			}
-+		}
-+	}
-+
- 	ret = v4l2_async_register_subdev(&sensor->sd);
- 	if (ret)
- 		goto free_ctrls;
 -- 
 2.17.1
 
