@@ -1,0 +1,201 @@
+From 29dc465481c77ff8e8ac9caa4d358ae68d287eaa Mon Sep 17 00:00:00 2001
+From: Charles Stevens <charles.stevens@logicpd.com>
+Date: Thu, 27 Feb 2020 12:55:11 -0600
+Subject: [PATCH 03/18] Add support to versaclock driver for multiple instances
+
+---
+ drivers/clk/clk-versaclock5.c | 66 ++++++++++++++++++++++++++++-------
+ 1 file changed, 53 insertions(+), 13 deletions(-)
+ mode change 100644 => 100755 drivers/clk/clk-versaclock5.c
+
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+old mode 100644
+new mode 100755
+index a738af893532..3a3642acbdd6
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -133,6 +133,7 @@ enum vc5_model {
+ 	IDT_VC5_5P49V5933,
+ 	IDT_VC5_5P49V5935,
+ 	IDT_VC6_5P49V6901,
++	IDT_VC6_5P49V6965,
+ };
+ 
+ /* Structure to describe features of a particular VC5 model */
+@@ -169,30 +170,44 @@ struct vc5_driver_data {
+ 	struct vc5_hw_data	clk_out[VC5_MAX_CLK_OUT_NUM];
+ };
+ 
+-static const char * const vc5_mux_names[] = {
++static const char * const c_vc5_mux_names[] = {
+ 	"mux"
+ };
+ 
+-static const char * const vc5_dbl_names[] = {
++static const char * const c_vc5_dbl_names[] = {
+ 	"dbl"
+ };
+ 
+-static const char * const vc5_pfd_names[] = {
++static const char * const c_vc5_pfd_names[] = {
+ 	"pfd"
+ };
+ 
+-static const char * const vc5_pll_names[] = {
++static const char * const c_vc5_pll_names[] = {
+ 	"pll"
+ };
+ 
+-static const char * const vc5_fod_names[] = {
++static const char * const c_vc5_fod_names[] = {
+ 	"fod0", "fod1", "fod2", "fod3",
+ };
+ 
+-static const char * const vc5_clk_out_names[] = {
++static const char * const c_vc5_clk_out_names[] = {
+ 	"out0_sel_i2cb", "out1", "out2", "out3", "out4",
+ };
+ 
++#define MAX_NAME_LEN 50
++static char buf[20][MAX_NAME_LEN] = {};
++static char *vc5_mux_names[ARRAY_SIZE(c_vc5_mux_names)] = { buf[0] };
++
++static char *vc5_dbl_names[ARRAY_SIZE(c_vc5_dbl_names)] = { buf[1] };
++
++static char *vc5_pfd_names[ARRAY_SIZE(c_vc5_pfd_names)] = { buf[2] };
++
++static char *vc5_pll_names[ARRAY_SIZE(c_vc5_pll_names)] = { buf[3] };
++
++static char *vc5_fod_names[ARRAY_SIZE(c_vc5_fod_names)] = { buf[4],  buf[5], buf[6], buf[7],   };
++
++static char *vc5_clk_out_names[ARRAY_SIZE(c_vc5_clk_out_names)] = { buf[8], buf[9], buf[10], buf[11], buf[12],  };
++
+ /*
+  * VersaClock5 i2c regmap
+  */
+@@ -596,6 +611,7 @@ static int vc5_clk_out_prepare(struct clk_hw *hw)
+ 	}
+ 
+ 	/* Enable the clock buffer */
++	printk (KERN_ERR " %x, %x \n", (unsigned int) VC5_CLK_OUTPUT_CFG(hwdata->num, 1), (unsigned int) VC5_CLK_OUTPUT_CFG1_EN_CLKBUF);
+ 	regmap_update_bits(vc5->regmap, VC5_CLK_OUTPUT_CFG(hwdata->num, 1),
+ 			   VC5_CLK_OUTPUT_CFG1_EN_CLKBUF,
+ 			   VC5_CLK_OUTPUT_CFG1_EN_CLKBUF);
+@@ -638,7 +654,7 @@ static unsigned char vc5_clk_out_get_parent(struct clk_hw *hw)
+ 		return 1;
+ 
+ 	dev_warn(&vc5->client->dev,
+-		 "Invalid clock output configuration (%02x)\n", src);
++		 "Invalid clock output configuration (%02x) %s\n", src, hw->init->name);
+ 	return 0;
+ }
+ 
+@@ -708,6 +724,7 @@ static int vc5_probe(struct i2c_client *client,
+ 	unsigned int n, idx = 0;
+ 	int ret;
+ 
++	dev_err(&client->dev, "Charles was here %s\n", __FUNCTION__);
+ 	vc5 = devm_kzalloc(&client->dev, sizeof(*vc5), GFP_KERNEL);
+ 	if (vc5 == NULL)
+ 		return -ENOMEM;
+@@ -733,6 +750,20 @@ static int vc5_probe(struct i2c_client *client,
+ 	/* Register clock input mux */
+ 	memset(&init, 0, sizeof(init));
+ 
++	snprintf(vc5_mux_names[0], MAX_NAME_LEN, "%s.%s", client->dev.of_node->name, c_vc5_mux_names[0]);
++	snprintf(vc5_dbl_names[0], MAX_NAME_LEN, "%s.%s", client->dev.of_node->name, c_vc5_dbl_names[0]);
++	snprintf(vc5_pfd_names[0], MAX_NAME_LEN, "%s.%s", client->dev.of_node->name, c_vc5_pfd_names[0]);
++	snprintf(vc5_pll_names[0], MAX_NAME_LEN, "%s.%s", client->dev.of_node->name, c_vc5_pll_names[0]);
++	snprintf(vc5_fod_names[0], MAX_NAME_LEN, "%s.%s", client->dev.of_node->name, c_vc5_fod_names[0]);
++	snprintf(vc5_fod_names[1], MAX_NAME_LEN, "%s.%s", client->dev.of_node->name, c_vc5_fod_names[1]);
++	snprintf(vc5_fod_names[2], MAX_NAME_LEN, "%s.%s", client->dev.of_node->name, c_vc5_fod_names[2]);
++	snprintf(vc5_fod_names[3], MAX_NAME_LEN, "%s.%s", client->dev.of_node->name, c_vc5_fod_names[3]);
++	snprintf(vc5_clk_out_names[0], MAX_NAME_LEN, "%s.%s", client->dev.of_node->name, c_vc5_clk_out_names[0]);
++	snprintf(vc5_clk_out_names[1], MAX_NAME_LEN, "%s.%s", client->dev.of_node->name, c_vc5_clk_out_names[1]);
++	snprintf(vc5_clk_out_names[2], MAX_NAME_LEN, "%s.%s", client->dev.of_node->name, c_vc5_clk_out_names[2]);
++	snprintf(vc5_clk_out_names[3], MAX_NAME_LEN, "%s.%s", client->dev.of_node->name, c_vc5_clk_out_names[3]);
++	snprintf(vc5_clk_out_names[4], MAX_NAME_LEN, "%s.%s", client->dev.of_node->name, c_vc5_clk_out_names[4]);
++
+ 	if (!IS_ERR(vc5->pin_xin)) {
+ 		vc5->clk_mux_ins |= VC5_MUX_IN_XIN;
+ 		parent_names[init.num_parents++] = __clk_get_name(vc5->pin_xin);
+@@ -774,7 +805,7 @@ static int vc5_probe(struct i2c_client *client,
+ 		init.name = vc5_dbl_names[0];
+ 		init.ops = &vc5_dbl_ops;
+ 		init.flags = CLK_SET_RATE_PARENT;
+-		init.parent_names = vc5_mux_names;
++		init.parent_names = (const char * const*)vc5_mux_names;
+ 		init.num_parents = 1;
+ 		vc5->clk_mul.init = &init;
+ 		ret = devm_clk_hw_register(&client->dev, &vc5->clk_mul);
+@@ -791,9 +822,9 @@ static int vc5_probe(struct i2c_client *client,
+ 	init.ops = &vc5_pfd_ops;
+ 	init.flags = CLK_SET_RATE_PARENT;
+ 	if (vc5->chip_info->flags & VC5_HAS_PFD_FREQ_DBL)
+-		init.parent_names = vc5_dbl_names;
++		init.parent_names = (const char * const*)vc5_dbl_names;
+ 	else
+-		init.parent_names = vc5_mux_names;
++		init.parent_names = (const char * const*)vc5_mux_names;
+ 	init.num_parents = 1;
+ 	vc5->clk_pfd.init = &init;
+ 	ret = devm_clk_hw_register(&client->dev, &vc5->clk_pfd);
+@@ -807,7 +838,7 @@ static int vc5_probe(struct i2c_client *client,
+ 	init.name = vc5_pll_names[0];
+ 	init.ops = &vc5_pll_ops;
+ 	init.flags = CLK_SET_RATE_PARENT;
+-	init.parent_names = vc5_pfd_names;
++	init.parent_names = (const char * const*)vc5_pfd_names;
+ 	init.num_parents = 1;
+ 	vc5->clk_pll.num = 0;
+ 	vc5->clk_pll.vc5 = vc5;
+@@ -825,7 +856,7 @@ static int vc5_probe(struct i2c_client *client,
+ 		init.name = vc5_fod_names[idx];
+ 		init.ops = &vc5_fod_ops;
+ 		init.flags = CLK_SET_RATE_PARENT;
+-		init.parent_names = vc5_pll_names;
++		init.parent_names = (const char * const*)vc5_pll_names;
+ 		init.num_parents = 1;
+ 		vc5->clk_fod[n].num = idx;
+ 		vc5->clk_fod[n].vc5 = vc5;
+@@ -843,7 +874,7 @@ static int vc5_probe(struct i2c_client *client,
+ 	init.name = vc5_clk_out_names[0];
+ 	init.ops = &vc5_clk_out_ops;
+ 	init.flags = CLK_SET_RATE_PARENT;
+-	init.parent_names = vc5_mux_names;
++	init.parent_names = (const char * const*)vc5_mux_names;
+ 	init.num_parents = 1;
+ 	vc5->clk_out[0].num = idx;
+ 	vc5->clk_out[0].vc5 = vc5;
+@@ -943,12 +974,20 @@ static const struct vc5_chip_info idt_5p49v6901_info = {
+ 	.flags = VC5_HAS_PFD_FREQ_DBL,
+ };
+ 
++static const struct vc5_chip_info idt_5p49v6965_info = {
++	.model = IDT_VC6_5P49V6965,
++	.clk_fod_cnt = 4,
++	.clk_out_cnt = 5,
++	.flags = 0,
++};
++
+ static const struct i2c_device_id vc5_id[] = {
+ 	{ "5p49v5923", .driver_data = IDT_VC5_5P49V5923 },
+ 	{ "5p49v5925", .driver_data = IDT_VC5_5P49V5925 },
+ 	{ "5p49v5933", .driver_data = IDT_VC5_5P49V5933 },
+ 	{ "5p49v5935", .driver_data = IDT_VC5_5P49V5935 },
+ 	{ "5p49v6901", .driver_data = IDT_VC6_5P49V6901 },
++	{ "5p49v6965", .driver_data = IDT_VC6_5P49V6965 },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, vc5_id);
+@@ -959,6 +998,7 @@ static const struct of_device_id clk_vc5_of_match[] = {
+ 	{ .compatible = "idt,5p49v5933", .data = &idt_5p49v5933_info },
+ 	{ .compatible = "idt,5p49v5935", .data = &idt_5p49v5935_info },
+ 	{ .compatible = "idt,5p49v6901", .data = &idt_5p49v6901_info },
++	{ .compatible = "idt,5p49v6965", .data = &idt_5p49v6965_info },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, clk_vc5_of_match);
+-- 
+2.17.1
+

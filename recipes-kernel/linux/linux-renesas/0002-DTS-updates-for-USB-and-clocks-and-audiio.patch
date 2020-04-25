@@ -1,0 +1,137 @@
+From 47b1685d461faf4710ed80b8207b79f4d0d1af25 Mon Sep 17 00:00:00 2001
+From: Charles Stevens <charles.stevens@logicpd.com>
+Date: Mon, 24 Feb 2020 10:29:10 -0600
+Subject: [PATCH 02/18] DTS updates for USB and clocks (and audiio)
+
+---
+ .../dts/renesas/beacon-rzg2-baseboard.dtsi    | 54 +++++++++----------
+ .../boot/dts/renesas/beacon-rzg2-som.dtsi     |  6 ++-
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi     |  9 ++++
+ 3 files changed, 41 insertions(+), 28 deletions(-)
+ mode change 100644 => 100755 arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+
+diff --git a/arch/arm64/boot/dts/renesas/beacon-rzg2-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-rzg2-baseboard.dtsi
+index 36f71f802c92..e203dd2a331c 100755
+--- a/arch/arm64/boot/dts/renesas/beacon-rzg2-baseboard.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-rzg2-baseboard.dtsi
+@@ -64,7 +64,7 @@
+ 	sound_card {
+ 		compatible = "audio-graph-card";
+ 		label = "rcar-sound";
+-		dais = <&rsnd_port0>, <&rsnd_port1>;
++		dais = <&rsnd_port0> /*, <&rsnd_port1>*/;
+ 	};
+ 
+ 	vbus0_usb2: regulator-vbus0-usb2 {
+@@ -250,32 +250,6 @@
+ 	pinctrl-0 = <&i2c0_pins>;
+ 	status = "okay";
+ 	clock-frequency = <400000>;
+-
+-	codec: wm8962@1a {
+-		compatible = "wlf,wm8962";
+-		reg = <0x1a>;
+-		DCVDD-supply = <&reg_audio>;
+-		DBVDD-supply = <&reg_audio>;
+-		AVDD-supply = <&reg_audio>;
+-		CPVDD-supply = <&reg_audio>;
+-		MICVDD-supply = <&reg_audio>;
+-		PLLVDD-supply = <&reg_audio>;
+-		SPKVDD1-supply = <&reg_audio>;
+-		SPKVDD2-supply = <&reg_audio>;
+-		gpio-cfg = <
+-			0x0000 /* 0:Default */
+-			0x0000 /* 1:Default */
+-			0x0000 /* 2:Default */
+-			0x0000 /* 3:Default */
+-			0x0000 /* 4:Default */
+-			0x0000 /* 5:Default */
+-			>;
+-			port {
+-				wm8962_endpoint: endpoint {
+-					remote-endpoint = <&rsnd_endpoint0>;
+-				};
+-			};
+-	};
+ };
+ 
+ &i2c2 {
+@@ -310,6 +284,32 @@
+ 	clock-frequency = <100000>;
+ 	status = "okay";
+ 
++	codec: wm8962@1a {
++		compatible = "wlf,wm8962";
++		reg = <0x1a>;
++		DCVDD-supply = <&reg_audio>;
++		DBVDD-supply = <&reg_audio>;
++		AVDD-supply = <&reg_audio>;
++		CPVDD-supply = <&reg_audio>;
++		MICVDD-supply = <&reg_audio>;
++		PLLVDD-supply = <&reg_audio>;
++		SPKVDD1-supply = <&reg_audio>;
++		SPKVDD2-supply = <&reg_audio>;
++		gpio-cfg = <
++			0x0000 /* 0:Default */
++			0x0000 /* 1:Default */
++			0x0000 /* 2:Default */
++			0x0000 /* 3:Default */
++			0x0000 /* 4:Default */
++			0x0000 /* 5:Default */
++			>;
++			port {
++				wm8962_endpoint: endpoint {
++					remote-endpoint = <&rsnd_endpoint0>;
++				};
++			};
++	};
++
+ 	ov5640_2: camera@3C {
+ 		compatible = "ovti,ov5640";
+ 		reg = <0x3C>;
+diff --git a/arch/arm64/boot/dts/renesas/beacon-rzg2-som.dtsi b/arch/arm64/boot/dts/renesas/beacon-rzg2-som.dtsi
+index f8b77d7d89ad..7227e42795a7 100755
+--- a/arch/arm64/boot/dts/renesas/beacon-rzg2-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-rzg2-som.dtsi
+@@ -159,11 +159,15 @@
+ 	};
+ 
+ 	versaclock5: clock-generator@6a {
+-		compatible = "idt,5p49v5923";
++		compatible = "idt,5p49v6965";
+ 		reg = <0x6a>;
+ 		#clock-cells = <1>;
+ 		clocks = <&x304_clk>;
+ 		clock-names = "xin";
++		assigned-clocks =	<&versaclock5 3>,
++							<&versaclock5 4>;
++		assigned-clock-rates =	<50000000>,
++								<25000000>;
+ 	};
+ };
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+old mode 100644
+new mode 100755
+index 9532a2847356..22348c13969c
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -344,6 +344,15 @@
+ 		#size-cells = <2>;
+ 		ranges;
+ 
++	usb2_clksel: clock-controller@e6590630 {
++			compatible = "renesas,r8a7795-rcar-usb2-clock-sel",
++					 "renesas,rcar-gen3-usb2-clock-sel";
++			reg = <0 0xe6590630 0 0x02>;
++			clocks = <&cpg CPG_MOD 703>, <&usb_extal_clk>;
++			clock-names = "ehci_ohci", "usb_extal";
++			#clock-cells = <0>;
++	};
++
+ 		cpg: clock-controller@e6150000 {
+ 			compatible = "renesas,r8a774a1-cpg-mssr";
+ 			reg = <0 0xe6150000 0 0x0bb0>;
+-- 
+2.17.1
+

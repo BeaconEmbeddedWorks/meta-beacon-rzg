@@ -1,0 +1,108 @@
+From 4a0ffe71de8582197576e50d036f8db89012dedd Mon Sep 17 00:00:00 2001
+From: Charles Stevens <charles.stevens@logicpd.com>
+Date: Tue, 24 Mar 2020 14:22:29 -0500
+Subject: [PATCH 08/18] DT changes to support camera
+
+---
+ .../renesas/logicpd-renesom-baseboard.dtsi    | 23 ++++++++++++++++++-
+ .../boot/dts/renesas/logicpd-renesom-som.dtsi | 16 ++++++++-----
+ 2 files changed, 32 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/logicpd-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/logicpd-renesom-baseboard.dtsi
+index f0ad9c3a37fd..3e43bd301811 100755
+--- a/arch/arm64/boot/dts/renesas/logicpd-renesom-baseboard.dtsi
++++ b/arch/arm64/boot/dts/renesas/logicpd-renesom-baseboard.dtsi
+@@ -279,7 +279,7 @@
+ 	status = "okay";
+ 
+ 	clocks = <&cpg CPG_MOD 1005>,
+-		 <&versaclock5 3>, <&versaclock5 4>, <&versaclock6_bb 4>,
++		 <&versaclock5 3>, <&versaclock5 4>, <&versaclock6_bb 1>, <&versaclock6_bb 2>, <&versaclock6_bb 3>, <&versaclock6_bb 4>,
+ 		 <&cpg CPG_MOD 1006>, <&cpg CPG_MOD 1007>,
+ 		 <&cpg CPG_MOD 1008>, <&cpg CPG_MOD 1009>,
+ 		 <&cpg CPG_MOD 1010>, <&cpg CPG_MOD 1011>,
+@@ -427,6 +427,27 @@
+ 		reg = <0x21>;
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
++
++		cam-hog1 {
++			gpio-hog;
++			gpios = <3 GPIO_ACTIVE_HIGH>;
++			output-high;
++			line-name = "cam-hog1";
++		};
++		cam-hog2 {
++			gpio-hog;
++			gpios = <4 GPIO_ACTIVE_HIGH>;
++			output-low;
++			line-name = "cam-hog2";
++		};
++#if 0
++		cam-hog3 {
++			gpio-hog;
++			gpios = <5 GPIO_ACTIVE_HIGH>;
++			output-high;
++			line-name = "cam-hog3";
++		};
++#endif
+ 	};
+ 
+ 	gpio_exp3: gpio@22 {
+diff --git a/arch/arm64/boot/dts/renesas/logicpd-renesom-som.dtsi b/arch/arm64/boot/dts/renesas/logicpd-renesom-som.dtsi
+index b3e155e1f082..6411f62f28b7 100755
+--- a/arch/arm64/boot/dts/renesas/logicpd-renesom-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/logicpd-renesom-som.dtsi
+@@ -462,11 +462,13 @@
+ 
+ 	reg_mipi: regulator_camera {
+ 		compatible = "regulator-fixed";
+-		regulator-name = "fixed-1.8V";
++		regulator-name = "mipi-1.8V";
+ 		regulator-min-microvolt = <1800000>;
+ 		regulator-max-microvolt = <1800000>;
+-		regulator-boot-on;
+-		regulator-always-on;
++
++		startup-delay-us = <70000>;
++		gpio = <&gpio_exp2 5 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
+ 	};
+ 
+ 	vspm_if {
+@@ -800,13 +802,13 @@
+ 	pinctrl-0 = <&avb_pins>;
+ 	pinctrl-names = "default";
+ 	phy-handle = <&phy0>;
+-	phy-mode = "rgmii-txid";
++	phy-mode = "rgmii";
+ 	status = "okay";
+ 
+ 	phy0: ethernet-phy@0 {
+ 		reg = <0>;
+-		interrupt-parent = <&gpio2>;
+-		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
++/*		interrupt-parent = <&gpio2>; */
++/*		interrupts = <11 IRQ_TYPE_LEVEL_LOW>; */
+ 		reset-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;
+ 	};
+ };
+@@ -818,6 +820,7 @@
+ 			function = "avb";
+ 		};
+ 
++#if 0
+ 		pins_mdio {
+ 			groups = "avb_mdio";
+ 			drive-strength = <24>;
+@@ -828,6 +831,7 @@
+ 			       "PIN_AVB_TD1", "PIN_AVB_TD2", "PIN_AVB_TD3";
+ 			drive-strength = <12>;
+ 		};
++#endif
+ 	};
+ 
+ 	can0_pins: can0 {
+-- 
+2.17.1
+
