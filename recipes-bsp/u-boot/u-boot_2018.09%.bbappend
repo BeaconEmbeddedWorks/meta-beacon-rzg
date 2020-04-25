@@ -1,10 +1,9 @@
-# Copyright (C) 2019 Logic PD
+# Copyright (C) 2020 Compass Electronic Solutions LLC.
 
-DESCRIPTION = "Renesas RZ/G2 U-Boot suppporting RZ/G2 Logic PD kits."
+DESCRIPTION = "Renesas RZ/G2 U-Boot suppporting Beacon Embedded Works kits."
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI += " \
-	    file://0001-Add-Logic-PD-defconfig-for-rz-g2m.patch \
-	    file://0002-Add-LogicPD-u-boot-device-tree-source-for-rz-g2m-kit.patch \
+	file://0001-Add-all-files-for-Beacon-Embedded-Works-RZ-G2M-kit.patch \
             "
