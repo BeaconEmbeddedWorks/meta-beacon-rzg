@@ -1,0 +1,46 @@
+From a46a207367922deddc2da81cb19e0cb79996caf9 Mon Sep 17 00:00:00 2001
+From: Charles Stevens <charles.stevens@logicpd.com>
+Date: Sat, 25 Apr 2020 15:48:59 -0500
+Subject: [PATCH] Modify DDR parameters for beacon dev kit.
+
+---
+ plat/renesas/rcar/ddr/ddr_b/boot_init_dram_config.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/plat/renesas/rcar/ddr/ddr_b/boot_init_dram_config.c b/plat/renesas/rcar/ddr/ddr_b/boot_init_dram_config.c
+index 5d13e0d2..3bfafd91 100644
+--- a/plat/renesas/rcar/ddr/ddr_b/boot_init_dram_config.c
++++ b/plat/renesas/rcar/ddr/ddr_b/boot_init_dram_config.c
+@@ -1645,16 +1645,16 @@ static const struct _boardcnf boardcnfs[BOARDNUM] = {
+ {
+ 	0x03,		/* phyvalid */
+ 	0x01,		/* dbi_en */
+-	0x02c0,		/* cacs_dly */
++	0x0320,		/* cacs_dly initial 0x2c0*/
+ 	0,		/* cacs_dly_adj */
+-	0x0300,		/* dqdm_dly_w */
+-	0x00a0,		/* dqdm_dly_r */
++	0x0300,		/* dqdm_dly_w initial 0x0300*/
++	0x00a0,		/* dqdm_dly_r initial 0x00a0*/
+ 	{
+ /*ch[0]*/	{
+ /*ddr_density[]*/	{ 0x04, 0xff },
+ /*ca_swap*/		0x00345201,
+ /*dqs_swap*/		0x3201,
+-/*dq_swap[]*/		{ 0x01672543, 0x45361207, 0x45632107, 0x60715234 },
++/*dq_swap[]*/		{ 0x23617540, 0x54061237, 0x43251607, 0x71605243 },
+ /*dm_swap[]*/		{ 0x08, 0x08, 0x08, 0x08 },
+ /*wdqlvl_patt[]*/	WDQLVL_PAT,
+ /*cacs_adj*/		{ 0, 0, 0, 0, 0, 0, 0, 0,
+@@ -1674,7 +1674,7 @@ static const struct _boardcnf boardcnfs[BOARDNUM] = {
+ /*ddr_density[]*/	{ 0x04, 0xff },
+ /*ca_swap*/		0x00302154,
+ /*dqs_swap*/		0x2310,
+-/*dq_swap[]*/		{ 0x01672543, 0x45361207, 0x45632107, 0x60715234 },
++/*dq_swap[]*/		{ 0x26015734, 0x04531276, 0x43251607, 0x10647532 },
+ /*dm_swap[]*/		{ 0x08, 0x08, 0x08, 0x08 },
+ /*wdqlvl_patt[]*/	WDQLVL_PAT,
+ /*cacs_adj*/		{ 0, 0, 0, 0, 0, 0, 0, 0,
+-- 
+2.17.1
+
