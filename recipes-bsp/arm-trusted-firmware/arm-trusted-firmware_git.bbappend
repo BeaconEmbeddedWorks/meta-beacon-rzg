@@ -1,1 +1,1 @@
-COMPATIBLE_MACHINE_append = "|logicpd-rzg2m"
+COMPATIBLE_MACHINE_append = "|beacon-rzg2m"

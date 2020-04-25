@@ -1,1 +1,1 @@
-MMNGR_CFG_logicpd-rzg2m = "MMNGR_SALVATORX"
+MMNGR_CFG_beacon-rzg2m = "MMNGR_SALVATORX"
