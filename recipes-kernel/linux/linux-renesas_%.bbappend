@@ -28,4 +28,7 @@ SRC_URI += " \
 	file://0016-rtc-pcf85363-remove-useless-forward-declaration.patch \
 	file://0017-rtc-pcf85363-convert-to-SPDX-identifier.patch \
 	file://0018-Touch-Backport-updated-support-for-ili210x-TS-contro.patch \
+	file://0019-Remove-custom-logic-and-beacon-dts-i-files.patch \
+	file://0020-ov5640-Add-pixel-rate-control-required-by-rcar-vin.patch \
+	file://0021-Re-add-Beacon-DT-files.patch \
 	"
