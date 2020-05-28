@@ -1,0 +1,66 @@
+From c439609dfc4581ba5a3da7b4c77ac7b8a65ebb18 Mon Sep 17 00:00:00 2001
+From: Charles Stevens <charles.stevens@logicpd.com>
+Date: Tue, 5 May 2020 14:23:18 -0500
+Subject: [PATCH] Handle GPIO poweroff signal
+
+---
+ plat/renesas/rcar/rcar_pm.c | 43 +++++++------------------------------
+ 1 file changed, 8 insertions(+), 35 deletions(-)
+
+diff --git a/plat/renesas/rcar/rcar_pm.c b/plat/renesas/rcar/rcar_pm.c
+index a94e7970..bca36835 100644
+--- a/plat/renesas/rcar/rcar_pm.c
++++ b/plat/renesas/rcar/rcar_pm.c
+@@ -310,41 +310,14 @@ void rcar_affinst_suspend_finish(unsigned int afflvl, unsigned int state)
+  ******************************************************************************/
+ static void __dead2 rcar_system_off(void)
+ {
+-#if PMIC_ROHM_BD9571
+-#if PMIC_LEVEL_MODE
+-	int32_t error;
+-
+-	error = rcar_iic_dvfs_send(SLAVE_ADDR_PMIC
+-					,REG_ADDR_DVFS_SetVID
+-					,REG_DATA_DVFS_SetVID_0V);
+-	if (error != 0) {
+-		ERROR("BL3-1:Failed the SYSTEM-OFF.\n");
+-	}
+-#else /* pulse mode */
+-	int32_t error;
+-
+-	error = rcar_iic_dvfs_send(SLAVE_ADDR_PMIC
+-					,REG_ADDR_BKUP_Mode_Cnt
+-					,REG_DATA_P_ALL_OFF);
+-	if (error != 0) {
+-		ERROR("BL3-1:Failed the SYSTEM-RESET.\n");
+-	}
+-#endif
+-#else /* PMIC_ROHM_BD9571 */
+-	uint64_t my_cpu;
+-	uint32_t boot_mpidr_ret;
+-	int32_t rtn_on;
+-
+-	my_cpu = read_mpidr_el1();
+-	boot_mpidr_ret = bl31_plat_boot_mpidr_chk();
+-	rtn_on = cpu_on_check(my_cpu);
+-	if ((RCAR_MPIDRCHK_BOOTCPU == boot_mpidr_ret) && (rtn_on == 0)) {
+-		rcar_pwrc_cpuoff(my_cpu);
+-		rcar_pwrc_clusteroff(my_cpu);
+-	} else {
+-		panic();
+-	}
+-#endif /* PMIC_ROHM_BD9571 */
++	/* I stole these lines from pfc initialization code */
++#define GPIO_BASE               (0xE6050000U)
++#define GPIO_INOUTSEL6          (GPIO_BASE + 0x5404U)
++#define GPIO_OUTDT6             (GPIO_BASE + 0x5408U)
++	/* Make sure power kill is output */
++	mmio_write_32(GPIO_INOUTSEL6, 0x00013F00U);
++	/* Set GP 6_11 Low to power off */
++	mmio_write_32(GPIO_OUTDT6, 0x00000000U);
+ 	wfi();
+ 	ERROR("RCAR System Off: operation not handled.\n");
+ 	panic();
+-- 
+2.17.1
+
