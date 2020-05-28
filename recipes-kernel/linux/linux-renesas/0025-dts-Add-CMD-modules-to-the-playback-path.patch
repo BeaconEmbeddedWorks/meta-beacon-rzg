@@ -1,0 +1,25 @@
+From afb578ae0e4a5fe4176fd275e842e748a08ebb3b Mon Sep 17 00:00:00 2001
+From: Charles Stevens <charles.stevens@logicpd.com>
+Date: Wed, 13 May 2020 13:45:28 -0500
+Subject: [PATCH 25/26] dts: Add CMD modules to the playback path.
+
+---
+ arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+index a64089c7bc17..08f02ee4831d 100644
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+@@ -706,7 +706,7 @@
+ 				bitclock-master = <&rsnd_endpoint0>;
+ 				frame-master = <&rsnd_endpoint0>;
+ 
+-				playback = <&ssi1>;
++				playback = <&ssi1 &dvc1 &src1>;
+ 				capture = <&ssi0>;
+ 			};
+ 		};
+-- 
+2.17.1
+

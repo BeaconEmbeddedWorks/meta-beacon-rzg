@@ -31,4 +31,9 @@ SRC_URI += " \
 	file://0019-Remove-custom-logic-and-beacon-dts-i-files.patch \
 	file://0020-ov5640-Add-pixel-rate-control-required-by-rcar-vin.patch \
 	file://0021-Re-add-Beacon-DT-files.patch \
+	file://0022-dts-Enable-wake-on-touch.patch \
+	file://0023-dts-configure-scif5-for-use-of-SOM-GNSS.patch \
+	file://0024-dts-Fix-audio-regulator-name.patch \
+	file://0025-dts-Add-CMD-modules-to-the-playback-path.patch \
+	file://0026-dts-Add-spidev-node-and-SPI-msiof-pin-mux.patch \
 	"
