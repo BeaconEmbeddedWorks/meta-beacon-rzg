@@ -1,0 +1,69 @@
+From c17303d92cac8c6c57e2fac53b998383875b4d5e Mon Sep 17 00:00:00 2001
+From: Charles Stevens <charles.stevens@logicpd.com>
+Date: Thu, 28 May 2020 16:44:29 -0500
+Subject: [PATCH] kms-steal-crtc: Fix crash. Add screen cmd line parameter.
+
+---
+ tests/kms/kms-steal-crtc.c     | 15 +++++----------
+ tests/kms/libkms-test-device.c |  1 +
+ 2 files changed, 6 insertions(+), 10 deletions(-)
+
+diff --git a/tests/kms/kms-steal-crtc.c b/tests/kms/kms-steal-crtc.c
+index 4b830d2..2bc47b6 100644
+--- a/tests/kms/kms-steal-crtc.c
++++ b/tests/kms/kms-steal-crtc.c
+@@ -88,8 +88,10 @@ int main(int argc, char *argv[])
+ 		return 1;
+ 	}
+ 
+-	/* TODO: allow command-line to override */
+-	screen = device->screens[0];
++	if ((argc > 2) && (*argv[2] >= '0') && (*argv[2] <= '9'))
++		screen = device->screens[*argv[2]-'0'];
++	else
++		screen = device->screens[2];
+ 
+ 	printf("Using screen %s, resolution %ux%u\n", screen->name,
+ 	       screen->width, screen->height);
+@@ -112,12 +114,6 @@ int main(int argc, char *argv[])
+ 
+ 	kms_framebuffer_unmap(fb);
+ 
+-	err = kms_screen_set(screen, device->crtcs[index++], fb);
+-	if (err < 0) {
+-		fprintf(stderr, "kms_screen_set() failed: %d\n", err);
+-		return 1;
+-	}
+-
+ 	while (true) {
+ 		int nfds = STDIN_FILENO + 1;
+ 		struct timeval timeout;
+@@ -146,12 +142,11 @@ int main(int argc, char *argv[])
+ 
+ 		/* switch CRTC */
+ 		if (index >= device->num_crtcs)
+-			index = 0;
++			break;
+ 
+ 		err = kms_screen_set(screen, device->crtcs[index], fb);
+ 		if (err < 0) {
+ 			fprintf(stderr, "kms_screen_set() failed: %d\n", err);
+-			break;
+ 		}
+ 
+ 		index++;
+diff --git a/tests/kms/libkms-test-device.c b/tests/kms/libkms-test-device.c
+index 53c7349..aeece5b 100644
+--- a/tests/kms/libkms-test-device.c
++++ b/tests/kms/libkms-test-device.c
+@@ -50,6 +50,7 @@ static const char *const connector_names[] = {
+ 	"eDP",
+ 	"Virtual",
+ 	"DSI",
++	"DPI",
+ };
+ 
+ static void kms_device_probe_screens(struct kms_device *device)
+-- 
+2.17.1
+
