@@ -3,6 +3,10 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 SRC_URI += " \
 	   file://Enable-ov5640.cfg \
 	   file://Enable-HDMI-I2S.cfg \
+	   file://Enable-PPP.cfg \
+	   file://Enable-USB-net.cfg \
+	   file://Enable-USB-serial.cfg \
+	   file://Enable-GNSS.cfg \
            "
 
 COMPATIBLE_MACHINE_append = "|beacon-rzg2m"
