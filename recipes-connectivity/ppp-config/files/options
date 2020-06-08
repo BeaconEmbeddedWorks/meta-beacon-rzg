@@ -1,0 +1,12 @@
+debug
+/dev/ttySC2
+115200
+crtscts
+asyncmap 0
+defaultroute
+replacedefaultroute
+noipdefault
+usepeerdns
+noauth
+lock
+logfile /home/root/ppp
