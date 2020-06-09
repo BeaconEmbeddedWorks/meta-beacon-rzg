@@ -7,6 +7,8 @@ SRC_URI += " \
 	   file://Enable-USB-net.cfg \
 	   file://Enable-USB-serial.cfg \
 	   file://Enable-GNSS.cfg \
+	   file://bluetooth.cfg \
+	   file://wifi.cfg \
            "
 
 COMPATIBLE_MACHINE_append = "|beacon-rzg2m"
