@@ -9,12 +9,17 @@ BBLAYERS ?= " \
   ##OEROOT##/meta \
   ##OEROOT##/meta-poky \
   ##OEROOT##/meta-yocto-bsp \
-  ##OEROOT##/..//meta-gplv2 \
+  ##OEROOT##/../meta-gplv2 \
   ##OEROOT##/../meta-rzg2 \
   ##OEROOT##/../meta-linaro/meta-linaro-toolchain \
   ##OEROOT##/../meta-linaro/meta-optee \
   ##OEROOT##/../meta-openembedded/meta-oe \
+  ##OEROOT##/../meta-openembedded/meta-networking \
+  ##OEROOT##/../meta-openembedded/meta-filesystems \
+  ##OEROOT##/../meta-openembedded/meta-python \
   ##OEROOT##/../meta-openembedded/meta-multimedia \
   ##OEROOT##/../meta-qt5 \
+  ##OEROOT##/../meta-beacon-common \
   ##OEROOT##/../meta-beacon-rzg \
+  ##OEROOT##/../meta-laird-cp \
   "

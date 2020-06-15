@@ -332,4 +332,8 @@ BB_NO_NETWORK = "0"
 
 MACHINE ?= "beacon-rzg2m"
 
-IMAGE_INSTALL_append = " htop mmc-utils" 
+ENABLE_BINARY_LOCALE_GENERATION = "1"
+
+PREFERRED_RPROVIDER_wpa-supplicant = "sterling-supplicant-lwb"
+PREFERRED_RPROVIDER_wpa-supplicant-cli = "sterling-supplicant-lwb"
+PREFERRED_RPROVIDER_wpa-supplicant-passphrase = "sterling-supplicant-lwb"
