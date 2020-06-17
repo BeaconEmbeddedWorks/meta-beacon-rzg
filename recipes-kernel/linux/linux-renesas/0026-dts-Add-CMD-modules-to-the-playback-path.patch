@@ -1,7 +1,7 @@
-From afb578ae0e4a5fe4176fd275e842e748a08ebb3b Mon Sep 17 00:00:00 2001
+From 4d2d2263641fea203c0ba77f4b6b0d870c9363fb Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@logicpd.com>
 Date: Wed, 13 May 2020 13:45:28 -0500
-Subject: [PATCH 25/26] dts: Add CMD modules to the playback path.
+Subject: [PATCH 26/30] dts: Add CMD modules to the playback path.
 
 ---
  arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi | 2 +-

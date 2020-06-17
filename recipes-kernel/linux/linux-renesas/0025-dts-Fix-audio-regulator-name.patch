@@ -1,7 +1,7 @@
-From ed1796cdbea5eb568c6ec8ee1fbd6a46e2b5cbd4 Mon Sep 17 00:00:00 2001
+From 86373e7ab216a442d5317f4940efc460d77c8904 Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@logicpd.com>
 Date: Wed, 13 May 2020 13:42:24 -0500
-Subject: [PATCH 24/26] dts: Fix audio regulator name.
+Subject: [PATCH 25/30] dts: Fix audio regulator name.
 
 ---
  arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi | 2 +-

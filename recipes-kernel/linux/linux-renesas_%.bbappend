@@ -6,9 +6,12 @@ SRC_URI += " \
 	   file://Enable-PPP.cfg \
 	   file://Enable-USB-net.cfg \
 	   file://Enable-USB-serial.cfg \
+	   file://Enable-USB-audio.cfg \
+	   file://Enable-USB-gadget.cfg \
 	   file://Enable-GNSS.cfg \
 	   file://bluetooth.cfg \
 	   file://wifi.cfg \
+	   file://Enable-fuse.cfg \
            "
 
 COMPATIBLE_MACHINE_append = "|beacon-rzg2m"
@@ -39,7 +42,11 @@ SRC_URI += " \
 	file://0021-Re-add-Beacon-DT-files.patch \
 	file://0022-dts-Enable-wake-on-touch.patch \
 	file://0023-dts-configure-scif5-for-use-of-SOM-GNSS.patch \
-	file://0024-dts-Fix-audio-regulator-name.patch \
-	file://0025-dts-Add-CMD-modules-to-the-playback-path.patch \
-	file://0026-dts-Add-spidev-node-and-SPI-msiof-pin-mux.patch \
+	file://0024-arm64-configs-Add-beacon_rzg2_defconfig.patch \
+	file://0025-dts-Fix-audio-regulator-name.patch \
+	file://0026-dts-Add-CMD-modules-to-the-playback-path.patch \
+	file://0027-dts-Add-spidev-node-and-SPI-msiof-pin-mux.patch \
+	file://0028-thermal-rcar_gen3_thermal-Fix-undefined-temperature-.patch \
+	file://0029-dts-beacon-Use-correct-GPIOs-for-backligh-enable-pow.patch \
+	file://0030-dts-Add-pin-mapping-for-SCIF4-dev-ttySC6.patch \
 	"

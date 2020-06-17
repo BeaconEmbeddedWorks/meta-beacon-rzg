@@ -1,0 +1,52 @@
+From e7529d43dd339e1a9f5e639e4cbac0d1d30a8883 Mon Sep 17 00:00:00 2001
+From: Adam Ford <aford173@gmail.com>
+Date: Tue, 9 Jun 2020 07:55:43 -0500
+Subject: [PATCH 28/30] thermal: rcar_gen3_thermal: Fix undefined temperature
+ if negative
+
+In current code, the FIXPT_DIV uses DIV_ROUND_CLOSEST but has not
+checked sign of divisor before using. It makes undefined temperature
+value in case the value is negative.
+
+This patch fixes to satisfy DIV_ROUND_CLOSEST description
+and fix bug too. Note that the name "reg" is not good because it should
+be the same type as rcar_gen3_thermal_read(). So, rename it with "ctemp".
+
+Signed-off-by: Van Do <van.do.xw@renesas.com>
+Signed-off-by: Dien Pham <dien.pham.ry@renesas.com>
+[shimoda: minor fixes, add Fixes tag]
+Fixes: 564e73d283af ("thermal: rcar_gen3_thermal: Add R-Car Gen3 thermal driver")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+ drivers/thermal/rcar_gen3_thermal.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index 593b1d68d917..b7fc200e2e5e 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -181,15 +181,15 @@ static int rcar_gen3_thermal_round(int temp)
+ static int rcar_gen3_thermal_convert_temp(struct rcar_gen3_thermal_tsc *tsc)
+ {
+ 	int mcelsius, val;
+-	u32 reg;
++	int ctemp;
+ 
+ 	/* Read register and convert to mili Celsius */
+-	reg = rcar_gen3_thermal_read(tsc, REG_GEN3_TEMP) & CTEMP_MASK;
++	ctemp = rcar_gen3_thermal_read(tsc, REG_GEN3_TEMP) & CTEMP_MASK;
+ 
+-	if (reg < thcode[tsc->id][1])
+-		val = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b1, tsc->coef.a1);
++	if (ctemp <= thcode[tsc->id][1])
++		val = FIXPT_DIV(FIXPT_INT(ctemp) - tsc->coef.b1, tsc->coef.a1);
+ 	else
+-		val = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b2, tsc->coef.a2);
++		val = FIXPT_DIV(FIXPT_INT(ctemp) - tsc->coef.b2, tsc->coef.a2);
+ 
+ 	mcelsius = rcar_gen3_thermal_round(FIXPT_TO_MCELSIUS(val));
+ 	return mcelsius;
+-- 
+2.17.1
+
