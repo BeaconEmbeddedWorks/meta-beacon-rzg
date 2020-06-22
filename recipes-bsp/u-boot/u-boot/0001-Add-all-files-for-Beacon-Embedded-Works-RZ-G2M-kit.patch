@@ -1,7 +1,7 @@
 From 275f4237e60862d3f1219c58d41c98482c4458c2 Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@logicpd.com>
 Date: Tue, 4 Feb 2020 13:03:33 -0600
-Subject: [PATCH] Add all files for Beacon Embedded Works RZ/G2M kit
+Subject: [PATCH 1/6] Add all files for Beacon Embedded Works RZ/G2M kit
 
 ---
  arch/arm/dts/beacon-rzg2-baseboard.dtsi       | 568 ++++++++++++++++++
@@ -691,7 +691,7 @@ index 0000000000..f8b77d7d89
 +
 +	reg_audio: regulator_audio {
 +		compatible = "regulator-fixed";
-+		regulator-name = "fixed-1.8Va";
++		regulator-name = "fixed-1.8V";
 +		regulator-min-microvolt = <1800000>;
 +		regulator-max-microvolt = <1800000>;
 +		regulator-boot-on;
@@ -700,7 +700,7 @@ index 0000000000..f8b77d7d89
 +
 +	reg_mipi: regulator_camera {
 +		compatible = "regulator-fixed";
-+		regulator-name = "fixed-1.8Vb";
++		regulator-name = "fixed-1.8V";
 +		regulator-min-microvolt = <1800000>;
 +		regulator-max-microvolt = <1800000>;
 +		regulator-boot-on;
@@ -782,7 +782,7 @@ index 0000000000..f8b77d7d89
 +
 +&sdhi2 {
 +	/* used for on-board WIFI */
-+	status = "disabled";
++	status = "okay";
 +	pinctrl-0 = <&sdhi2_pins_uhs>;
 +	pinctrl-names = "default";
 +
@@ -874,7 +874,7 @@ index 0000000000..f8b77d7d89
 +	sdhi3_pins: sd3 {
 +		groups = "sdhi3_data8", "sdhi3_ctrl", "sdhi3_ds";
 +		function = "sdhi3";
-+		power-source = <1800>;
++		power-source = <3300>;
 +	};
 +
 +	sdhi3_pins_uhs: sd3_uhs {
