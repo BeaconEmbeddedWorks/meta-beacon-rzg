@@ -49,4 +49,5 @@ SRC_URI += " \
 	file://0028-thermal-rcar_gen3_thermal-Fix-undefined-temperature-.patch \
 	file://0029-dts-beacon-Use-correct-GPIOs-for-backligh-enable-pow.patch \
 	file://0030-dts-Add-pin-mapping-for-SCIF4-dev-ttySC6.patch \
+	file://0031-drm-rcar-du-dw-hdmi-Reject-modes-with-a-too-high-clo.patch \
 	"
