@@ -8,6 +8,7 @@ SRC_URI += " \
 	file://options	\
 	file://att  	\
 	file://att-chat	\
+	file://init.sh	\
  "
 
 do_install_append() {
@@ -15,5 +16,6 @@ do_install_append() {
     install -m 0755 ${WORKDIR}/options ${D}${sysconfdir}/ppp/
     install -m 0755 ${WORKDIR}/att ${D}${sysconfdir}/ppp/peers/
     install -m 0755 ${WORKDIR}/att-chat ${D}${sysconfdir}/ppp/peers/
+    install -m 0755 ${WORKDIR}/init.sh ${D}${sysconfdir}/ppp/peers/
 }
 

@@ -1,2 +1,3 @@
 modem
+init "bash /etc/ppp/peers/init.sh"
 connect "/usr/sbin/chat -v -f /etc/ppp/peers/att-chat"
