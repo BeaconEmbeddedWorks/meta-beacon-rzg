@@ -1,7 +1,7 @@
-From a46a207367922deddc2da81cb19e0cb79996caf9 Mon Sep 17 00:00:00 2001
+From efbdc0928f125c1cce53ed0c1d60cced43c6a307 Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@logicpd.com>
 Date: Sat, 25 Apr 2020 15:48:59 -0500
-Subject: [PATCH] Modify DDR parameters for beacon dev kit.
+Subject: [PATCH 1/4] Modify DDR parameters for beacon dev kit.
 
 ---
  plat/renesas/rcar/ddr/ddr_b/boot_init_dram_config.c | 10 +++++-----
