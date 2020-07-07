@@ -1,24 +1,25 @@
-From 2f2e1b90be7f888437efed4ee000aa7b2031106f Mon Sep 17 00:00:00 2001
+From 60fc47670331aba0475b486dce50a1dc9cecc52e Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@logicpd.com>
-Date: Wed, 29 Apr 2020 14:34:51 -0500
-Subject: [PATCH 21/21] Re-add Beacon DT files
+Date: Thu, 2 Jul 2020 09:04:03 -0500
+Subject: [PATCH 11/12] Introduce Beacon DTS files from 0db70f7e6927
 
 ---
- .../dts/renesas/beacon-renesom-baseboard.dtsi | 832 ++++++++++++++++++
- .../boot/dts/renesas/beacon-renesom-som.dtsi  | 368 ++++++++
+ .../dts/renesas/beacon-renesom-baseboard.dtsi | 874 ++++++++++++++++++
+ .../boot/dts/renesas/beacon-renesom-som.dtsi  | 374 ++++++++
+ .../renesas/r8a774a1-beacon-rzg2m-kit-rgb.dts |  19 +
  .../dts/renesas/r8a774a1-beacon-rzg2m-kit.dts |  10 +
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi     |  30 +
- 4 files changed, 1240 insertions(+)
+ 4 files changed, 1277 insertions(+)
  create mode 100644 arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
  create mode 100644 arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit-rgb.dts
  create mode 100644 arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit.dts
 
 diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
 new file mode 100644
-index 000000000000..bd8beab1befc
+index 000000000000..b851866cbf82
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-@@ -0,0 +1,832 @@
+@@ -0,0 +1,874 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Device Tree Source for Base Board of LogicPD RZ/G2 platform.
@@ -37,6 +38,8 @@ index 000000000000..bd8beab1befc
 +		serial2 = &hscif1;
 +		serial3 = &scif0;
 +		serial4 = &hscif2;
++		serial5 = &scif5;
++		serial6 = &scif4;
 +		spi0 = &msiof0;
 +		spi1 = &msiof1;
 +		spi2 = &msiof2;
@@ -52,7 +55,7 @@ index 000000000000..bd8beab1befc
 +	backlight: backlight {
 +		compatible = "pwm-backlight";
 +		power-supply = <&reg_lcd>;
-+		enable-gpios = <&gpio_exp1 3 GPIO_ACTIVE_HIGH>;
++		enable-gpios = <&gpio_exp3 7 GPIO_ACTIVE_LOW>;
 +		pwms = <&pwm0 0 50000>;
 +		brightness-levels = <0 4 8 16 32 64 128 255>;
 +		default-brightness-level = <6>;
@@ -72,38 +75,38 @@ index 000000000000..bd8beab1befc
 +	keys {
 +		compatible = "gpio-keys";
 +
-+		key-1 {
++		key-1 { /* S19 */
 +			gpios = <&gpio4 6 GPIO_ACTIVE_LOW>;
 +			linux,code = <KEY_1>;
-+			label = "Switch-1";
++			label = "Up";
 +			wakeup-source;
 +			debounce-interval = <20>;
 +		};
-+		key-2 {
++		key-2 { /*S20 */
 +			gpios = <&gpio3 13 GPIO_ACTIVE_LOW>;
 +			linux,code = <KEY_2>;
-+			label = "Switch-2";
++			label = "Left";
 +			wakeup-source;
 +			debounce-interval = <20>;
 +		};
-+		key-3 {
++		key-3 { /* S21 */
 +			gpios = <&gpio5 17 GPIO_ACTIVE_LOW>;
 +			linux,code = <KEY_3>;
-+			label = "Switch-3";
++			label = "Down";
 +			wakeup-source;
 +			debounce-interval = <20>;
 +		};
-+		key-4 {
++		key-4 { /* S22 */
 +			gpios = <&gpio5 20 GPIO_ACTIVE_LOW>;
 +			linux,code = <KEY_4>;
-+			label = "Switch-4";
++			label = "Right";
 +			wakeup-source;
 +			debounce-interval = <20>;
 +		};
-+		key-5 {
++		key-5 { /* S23 */
 +			gpios = <&gpio5 22 GPIO_ACTIVE_LOW>;
 +			linux,code = <KEY_5>;
-+			label = "Switch-4";
++			label = "Center";
 +			wakeup-source;
 +			debounce-interval = <20>;
 +		};
@@ -175,7 +178,7 @@ index 000000000000..bd8beab1befc
 +		compatible = "rocktech,rk070er9427";
 +		/*backlight is shared between lvds and parallel displays */
 +		backlight = <&backlight>;
-+		enable-gpios = <&gpio_exp3 7 GPIO_ACTIVE_LOW>;
++		enable-gpios = <&gpio1 21 GPIO_ACTIVE_HIGH>;
 +		port {
 +			rgb_panel: endpoint {
 +				remote-endpoint = <&du_out_rgb>;
@@ -185,7 +188,7 @@ index 000000000000..bd8beab1befc
 +
 +	reg_audio: regulator_audio {
 +		compatible = "regulator-fixed";
-+		regulator-name = "fixed-1.8V";
++		regulator-name = "audio-1.8V";
 +		regulator-min-microvolt = <1800000>;
 +		regulator-max-microvolt = <1800000>;
 +		gpio = <&gpio_exp2 7 GPIO_ACTIVE_HIGH>;
@@ -331,8 +334,6 @@ index 000000000000..bd8beab1befc
 +};
 +
 +&du {
-+	pinctrl-0 = <&du_pins>;
-+	pinctrl-names = "default";
 +	status = "okay";
 +
 +	clocks = <&cpg CPG_MOD 724>,
@@ -404,7 +405,7 @@ index 000000000000..bd8beab1befc
 +
 +&i2c2 {
 +	status = "okay";
-+	clock-frequency = <100000>;
++	clock-frequency = <400000>;
 +
 +	pinctrl-0 = <&i2c2_pins>;
 +	pinctrl-names = "default";
@@ -511,7 +512,7 @@ index 000000000000..bd8beab1befc
 +
 +&i2c5 {
 +	status = "okay";
-+	clock-frequency = <100000>;
++	clock-frequency = <400000>;
 +	pinctrl-0 = <&i2c5_pins>;
 +	pinctrl-names = "default";
 +
@@ -560,6 +561,7 @@ index 000000000000..bd8beab1befc
 +		reg = <0x26>;
 +		interrupt-parent = <&gpio5>;
 +		interrupts = <9 IRQ_TYPE_EDGE_RISING>;
++		wakeup-source;
 +	};
 +};
 +
@@ -597,6 +599,11 @@ index 000000000000..bd8beab1befc
 +};
 +
 +&pfc {
++	scif4_pins: scif4 {
++		groups = "scif4_data_c";
++		function = "scif4";
++	};
++
 +	can0_pins: can0 {
 +		groups = "can0_data_a";
 +		function = "can0";
@@ -626,6 +633,11 @@ index 000000000000..bd8beab1befc
 +		/* GP_0_4 , AVS1, AVS2, GP_7_3 */
 +		pins = "GP_0_4", "GP_7_0", "GP_7_1", "GP_7_3";
 +		bias-pull-down;
++	};
++
++	msiof1_pins: msiof1 {
++		groups = "msiof1_clk_g", "msiof1_rxd_g", "msiof1_txd_g";
++		function = "msiof1";
 +	};
 +
 +	pwm0_pins: pwm0 {
@@ -725,7 +737,7 @@ index 000000000000..bd8beab1befc
 +				bitclock-master = <&rsnd_endpoint0>;
 +				frame-master = <&rsnd_endpoint0>;
 +
-+				playback = <&ssi1>;
++				playback = <&ssi1 &dvc1 &src1>;
 +				capture = <&ssi0>;
 +			};
 +		};
@@ -744,6 +756,19 @@ index 000000000000..bd8beab1befc
 +	};
 +};
 +
++&msiof1 {
++	pinctrl-0 = <&msiof1_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++	cs-gpios = <&gpio3 10 GPIO_ACTIVE_LOW>;
++
++	spidev1@0 {
++	       compatible = "spidev";
++	       spi-max-frequency = <5000000>;
++	       reg = <0>;
++	};
++};
++
 +&rwdt {
 +	status = "okay";
 +	timeout-sec = <60>;
@@ -751,6 +776,20 @@ index 000000000000..bd8beab1befc
 +
 +&scif0 {
 +	pinctrl-0 = <&scif0_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
++&scif4 {
++	pinctrl-0 = <&scif4_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
++&scif5 {
++	pinctrl-0 = <&scif5_pins>;
 +	pinctrl-names = "default";
 +
 +	status = "okay";
@@ -851,12 +890,16 @@ index 000000000000..bd8beab1befc
 +	pinctrl-names = "default";
 +	status = "okay";
 +};
++
++&msiof_ref_clk {
++	clock-frequency = <50000000>;
++};
 diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
 new file mode 100644
-index 000000000000..029b7149bb20
+index 000000000000..2ecbef0c7641
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
-@@ -0,0 +1,368 @@
+@@ -0,0 +1,374 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Device Tree Source for SOM of LogicPD RZ/G2 platform.
@@ -983,6 +1026,7 @@ index 000000000000..029b7149bb20
 +		device-wakeup-gpios = <&pca9654 5 GPIO_ACTIVE_HIGH>;
 +		clocks = <&osc_32k>;
 +		clock-names = "extclk";
++		max-speed = <4000000>;
 +	};
 +};
 +
@@ -1039,6 +1083,11 @@ index 000000000000..029b7149bb20
 +	scif0_pins: scif0 {
 +		groups = "scif0_data";
 +		function = "scif0";
++	};
++
++	scif5_pins: scif5 {
++		groups = "scif5_data_a";
++		function = "scif5";
 +	};
 +
 +	scif_clk_pins: scif_clk {
@@ -1132,7 +1181,7 @@ index 000000000000..029b7149bb20
 +
 +&i2c4 {
 +	status = "okay";
-+	clock-frequency = <400000>;
++	clock-frequency = <100000>;
 +
 +	pca9654: gpio@20 {
 +		compatible = "onnn,pca9654";
@@ -1225,6 +1274,31 @@ index 000000000000..029b7149bb20
 +&vspi0 {
 +	status = "okay";
 +};
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit-rgb.dts b/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit-rgb.dts
+new file mode 100644
+index 000000000000..52d756258951
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit-rgb.dts
+@@ -0,0 +1,19 @@
++/dts-v1/;
++
++#include "r8a774a1.dtsi"
++#include "beacon-renesom-som.dtsi"
++#include "beacon-renesom-baseboard.dtsi"
++
++/ {
++	model = "Beacon Embedded Works RZ/G2M Development Kit";
++	compatible =	"beacon,beacon-rzg2m", "renesas,r8a774a1";
++};
++
++&scif4 {
++	status = "disabled";
++};
++
++&du {
++	pinctrl-0 = <&du_pins>;
++	pinctrl-names = "default";
++};
 diff --git a/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit.dts b/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit.dts
 new file mode 100644
 index 000000000000..020123b6d27d
@@ -1241,54 +1315,6 @@ index 000000000000..020123b6d27d
 +	model = "Beacon Embedded Works RZ/G2M Development Kit";
 +	compatible =	"beacon,beacon-rzg2m", "renesas,r8a774a1";
 +};
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index 22348c13969c..ceaa799e6471 100755
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -1710,6 +1710,35 @@
- 			resets = <&cpg 601>;
- 		};
- 
-+		hdmi0: hdmi@fead0000 {
-+			compatible = "renesas,r8a7796-hdmi", "renesas,rcar-gen3-hdmi";
-+			reg = <0 0xfead0000 0 0x10000>;
-+			interrupts = <GIC_SPI 389 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 729>, <&cpg CPG_CORE R8A774A1_CLK_HDMI>;
-+			clock-names = "iahb", "isfr";
-+			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
-+			resets = <&cpg 729>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				port@0 {
-+					reg = <0>;
-+					dw_hdmi0_in: endpoint {
-+						remote-endpoint = <&du_out_hdmi0>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+				};
-+				port@2 {
-+					/* HDMI sound */
-+					reg = <2>;
-+				};
-+			};
-+		};
-+
- 		du: display@feb00000 {
- 			compatible = "renesas,du-r8a774a1";
- 			reg = <0 0xfeb00000 0 0x70000>;
-@@ -1738,6 +1767,7 @@
- 				port@1 {
- 					reg = <1>;
- 					du_out_hdmi0: endpoint {
-+						remote-endpoint = <&dw_hdmi0_in>;
- 					};
- 				};
- 				port@2 {
 -- 
 2.17.1
 

@@ -1,7 +1,7 @@
-From 825d04de20e001edcba39131ec74edb6ca313a21 Mon Sep 17 00:00:00 2001
+From cc8249ac6807031fc2e41fbabece481832aea19a Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@logicpd.com>
-Date: Wed, 29 Apr 2020 14:34:19 -0500
-Subject: [PATCH 20/21] ov5640: Add pixel rate control required by rcar-vin
+Date: Wed, 1 Jul 2020 19:01:39 -0500
+Subject: [PATCH 03/12] ov5640: Add pixel rate control required by rcar-vin
 
 ---
  drivers/media/i2c/ov5640.c | 23 +++++++++++++++++++++++
@@ -11,7 +11,7 @@ Subject: [PATCH 20/21] ov5640: Add pixel rate control required by rcar-vin
 diff --git a/drivers/media/i2c/ov5640.c b/drivers/media/i2c/ov5640.c
 old mode 100644
 new mode 100755
-index d5c0ffc55d46..7584400d1e49
+index 2023df14f828..2351bf6ff22d
 --- a/drivers/media/i2c/ov5640.c
 +++ b/drivers/media/i2c/ov5640.c
 @@ -27,6 +27,7 @@
@@ -76,8 +76,8 @@ index d5c0ffc55d46..7584400d1e49
  	ctrls->gain->flags |= V4L2_CTRL_FLAG_VOLATILE;
  	ctrls->exposure->flags |= V4L2_CTRL_FLAG_VOLATILE;
  
-@@ -2584,6 +2604,9 @@ static int ov5640_s_frame_interval(struct v4l2_subdev *sd,
- 	if (mode != sensor->current_mode) {
+@@ -2585,6 +2605,9 @@ static int ov5640_s_frame_interval(struct v4l2_subdev *sd,
+ 		sensor->frame_interval = fi->interval;
  		sensor->current_mode = mode;
  		sensor->pending_mode_change = true;
 +

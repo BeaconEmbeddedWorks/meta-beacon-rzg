@@ -1,7 +1,7 @@
-From 548bf27244703cc9d36da8983ecade01e8002fbe Mon Sep 17 00:00:00 2001
+From 221befc0ace0ae0dfd85a4ab59b4c9e4527b8deb Mon Sep 17 00:00:00 2001
 From: Biju Das <biju.das@bp.renesas.com>
 Date: Fri, 7 Dec 2018 11:27:44 +0000
-Subject: [PATCH 12/18] rtc: pcf85363: Add support for NXP pcf85263 rtc
+Subject: [PATCH 05/12] rtc: pcf85363: Add support for NXP pcf85263 rtc
 
 Add support for NXP pcf85263 real-time clock. pcf85263 rtc is compatible
 with pcf85363,except that pcf85363 has additional 64 bytes of RAM.
@@ -16,7 +16,7 @@ Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
  1 file changed, 76 insertions(+), 18 deletions(-)
 
 diff --git a/drivers/rtc/rtc-pcf85363.c b/drivers/rtc/rtc-pcf85363.c
-index c04a1edcd571..a3988079f60a 100644
+index c3702684b342..f14d13d36414 100644
 --- a/drivers/rtc/rtc-pcf85363.c
 +++ b/drivers/rtc/rtc-pcf85363.c
 @@ -120,6 +120,11 @@ struct pcf85363 {
@@ -31,7 +31,7 @@ index c04a1edcd571..a3988079f60a 100644
  static int pcf85363_rtc_read_time(struct device *dev, struct rtc_time *tm)
  {
  	struct pcf85363 *pcf85363 = dev_get_drvdata(dev);
-@@ -311,25 +316,75 @@ static int pcf85363_nvram_write(void *priv, unsigned int offset, void *val,
+@@ -316,25 +321,75 @@ static int pcf85363_nvram_write(void *priv, unsigned int offset, void *val,
  				 val, bytes);
  }
  
@@ -119,7 +119,7 @@ index c04a1edcd571..a3988079f60a 100644
  
  	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C))
  		return -ENODEV;
-@@ -339,7 +394,7 @@ static int pcf85363_probe(struct i2c_client *client,
+@@ -344,7 +399,7 @@ static int pcf85363_probe(struct i2c_client *client,
  	if (!pcf85363)
  		return -ENOMEM;
  
@@ -128,7 +128,7 @@ index c04a1edcd571..a3988079f60a 100644
  	if (IS_ERR(pcf85363->regmap)) {
  		dev_err(&client->dev, "regmap allocation failed\n");
  		return PTR_ERR(pcf85363->regmap);
-@@ -370,15 +425,18 @@ static int pcf85363_probe(struct i2c_client *client,
+@@ -375,15 +430,18 @@ static int pcf85363_probe(struct i2c_client *client,
  
  	ret = rtc_register_device(pcf85363->rtc);
  
@@ -151,7 +151,7 @@ index c04a1edcd571..a3988079f60a 100644
  };
  MODULE_DEVICE_TABLE(of, dev_ids);
  
-@@ -393,5 +451,5 @@ static struct i2c_driver pcf85363_driver = {
+@@ -398,5 +456,5 @@ static struct i2c_driver pcf85363_driver = {
  module_i2c_driver(pcf85363_driver);
  
  MODULE_AUTHOR("Eric Nelson");

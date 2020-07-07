@@ -1,7 +1,7 @@
-From e7529d43dd339e1a9f5e639e4cbac0d1d30a8883 Mon Sep 17 00:00:00 2001
+From 77ed1eff637564e092edab58e420e12ed1ff2e8d Mon Sep 17 00:00:00 2001
 From: Adam Ford <aford173@gmail.com>
 Date: Tue, 9 Jun 2020 07:55:43 -0500
-Subject: [PATCH 28/30] thermal: rcar_gen3_thermal: Fix undefined temperature
+Subject: [PATCH 12/12] thermal: rcar_gen3_thermal: Fix undefined temperature
  if negative
 
 In current code, the FIXPT_DIV uses DIV_ROUND_CLOSEST but has not
@@ -19,14 +19,14 @@ Fixes: 564e73d283af ("thermal: rcar_gen3_thermal: Add R-Car Gen3 thermal driver"
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Signed-off-by: Adam Ford <aford173@gmail.com>
 ---
- drivers/thermal/rcar_gen3_thermal.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/thermal/rcar_gen3_thermal.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index 593b1d68d917..b7fc200e2e5e 100644
+index 012d324ee3f7..534651938f8f 100644
 --- a/drivers/thermal/rcar_gen3_thermal.c
 +++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -181,15 +181,15 @@ static int rcar_gen3_thermal_round(int temp)
+@@ -175,17 +175,15 @@ static int rcar_gen3_thermal_round(int temp)
  static int rcar_gen3_thermal_convert_temp(struct rcar_gen3_thermal_tsc *tsc)
  {
  	int mcelsius, val;
@@ -37,16 +37,18 @@ index 593b1d68d917..b7fc200e2e5e 100644
 -	reg = rcar_gen3_thermal_read(tsc, REG_GEN3_TEMP) & CTEMP_MASK;
 +	ctemp = rcar_gen3_thermal_read(tsc, REG_GEN3_TEMP) & CTEMP_MASK;
  
--	if (reg < thcode[tsc->id][1])
--		val = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b1, tsc->coef.a1);
+-	if (reg <= thcode[tsc->id][1])
+-		val = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b1,
+-				tsc->coef.a1);
 +	if (ctemp <= thcode[tsc->id][1])
 +		val = FIXPT_DIV(FIXPT_INT(ctemp) - tsc->coef.b1, tsc->coef.a1);
  	else
--		val = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b2, tsc->coef.a2);
+-		val = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b2,
+-				tsc->coef.a2);
 +		val = FIXPT_DIV(FIXPT_INT(ctemp) - tsc->coef.b2, tsc->coef.a2);
- 
  	mcelsius = rcar_gen3_thermal_round(FIXPT_TO_MCELSIUS(val));
  	return mcelsius;
+ }
 -- 
 2.17.1
 

@@ -1,7 +1,7 @@
-From 2315dc05de5cb1b965a4de8cc26fae8af91b137c Mon Sep 17 00:00:00 2001
+From 36d00aeef3f4099127ef549e59ea65cf73856521 Mon Sep 17 00:00:00 2001
 From: Adam Ford <aford173@gmail.com>
 Date: Wed, 13 May 2020 14:04:34 -0500
-Subject: [PATCH 24/30] arm64: configs: Add beacon_rzg2_defconfig
+Subject: [PATCH 02/12] arm64: configs: Add beacon_rzg2_defconfig
 
 Sync the defconfig with that of Yocto and customize for Beacon boards.
 
