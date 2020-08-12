@@ -1,0 +1,52 @@
+From 458f52d932d7a5d108b075d3c84d43b9bfd55835 Mon Sep 17 00:00:00 2001
+From: Charles Stevens <charles.stevens@compasses.com>
+Date: Tue, 4 Aug 2020 13:33:05 -0500
+Subject: [PATCH 19/20] dts: Add Beacon EmbeddedWorks RZ/G2N DTS files
+
+---
+ .../dts/renesas/r8a774b1-beacon-rzg2n-kit-rgb.dts | 15 +++++++++++++++
+ .../dts/renesas/r8a774b1-beacon-rzg2n-kit.dts     | 10 ++++++++++
+ 2 files changed, 25 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit-rgb.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit.dts
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit-rgb.dts b/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit-rgb.dts
+new file mode 100644
+index 000000000000..148d5808bc00
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit-rgb.dts
+@@ -0,0 +1,15 @@
++#include "r8a774b1-beacon-rzg2n-kit.dts"
++
++/ {
++	model = "Beacon Embedded Works RZ/G2N Development Kit";
++	compatible =	"beacon,beacon-rzg2n", "renesas,r8a774b1";
++};
++
++&scif4 {
++	status = "disabled";
++};
++
++&du {
++	pinctrl-0 = <&du_pins>;
++	pinctrl-names = "default";
++};
+diff --git a/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit.dts b/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit.dts
+new file mode 100644
+index 000000000000..88024df80ec1
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit.dts
+@@ -0,0 +1,10 @@
++/dts-v1/;
++
++#include "r8a774b1.dtsi"
++#include "beacon-renesom-som.dtsi"
++#include "beacon-renesom-baseboard.dtsi"
++
++/ {
++	model = "Beacon Embedded Works RZ/G2N Development Kit";
++	compatible =	"beacon,beacon-rzg2n", "renesas,r8a774b1";
++};
+-- 
+2.17.1
+

@@ -1,0 +1,127 @@
+From 0961025acf3e74c741612799a3d0f0bba8ecc7f3 Mon Sep 17 00:00:00 2001
+From: Charles Stevens <charles.stevens@compasses.com>
+Date: Mon, 10 Aug 2020 17:26:52 -0500
+Subject: [PATCH 23/23] dts: Update wrappers for all SoC variants moving
+ aliases to wrappers.
+
+---
+ .../dts/renesas/r8a774a1-beacon-rzg2m-kit-rgb.dts | 13 +------------
+ .../dts/renesas/r8a774b1-beacon-rzg2n-kit-rgb.dts |  7 +++++--
+ .../dts/renesas/r8a774b1-beacon-rzg2n-kit.dts     | 15 +++++++++++++++
+ .../dts/renesas/r8a774e1-beacon-rzg2h-kit-rgb.dts |  7 +++++--
+ .../dts/renesas/r8a774e1-beacon-rzg2h-kit.dts     | 15 +++++++++++++++
+ 5 files changed, 41 insertions(+), 16 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit-rgb.dts b/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit-rgb.dts
+index 01cd9ce677f7..182411b67035 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit-rgb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit-rgb.dts
+@@ -2,20 +2,9 @@
+ 
+ / {
+ 	model = "Beacon EmbeddedWorks RZ/G2M Development Kit + RGB";
+-	compatible =	"beacon,beacon-rzg2m", "renesas,r8a774a1";
+ 
+ 	aliases {
+-		serial0 = &scif2;
+-		serial1 = &hscif0;
+-		serial2 = &hscif1;
+-		serial3 = &scif0;
+-		serial4 = &hscif2;
+-		serial5 = &scif5;
+-		ethernet0 = &avb;
+-	};
+-
+-	chosen {
+-		stdout-path = "serial0:115200n8";
++		/delete-property/ serial6;
+ 	};
+ };
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit-rgb.dts b/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit-rgb.dts
+index 148d5808bc00..56a7e7e26df6 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit-rgb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit-rgb.dts
+@@ -1,8 +1,11 @@
+ #include "r8a774b1-beacon-rzg2n-kit.dts"
+ 
+ / {
+-	model = "Beacon Embedded Works RZ/G2N Development Kit";
+-	compatible =	"beacon,beacon-rzg2n", "renesas,r8a774b1";
++	model = "Beacon EmbeddedWorks RZ/G2N Development Kit + RGB";
++
++	aliases {
++		/delete-property/ serial6;
++	};
+ };
+ 
+ &scif4 {
+diff --git a/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit.dts b/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit.dts
+index 88024df80ec1..ae02f3093c58 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit.dts
+@@ -7,4 +7,19 @@
+ / {
+ 	model = "Beacon Embedded Works RZ/G2N Development Kit";
+ 	compatible =	"beacon,beacon-rzg2n", "renesas,r8a774b1";
++
++	aliases {
++		serial0 = &scif2;
++		serial1 = &hscif0;
++		serial2 = &hscif1;
++		serial3 = &scif0;
++		serial4 = &hscif2;
++		serial5 = &scif5;
++		serial6 = &scif4;
++		ethernet0 = &avb;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
+ };
+diff --git a/arch/arm64/boot/dts/renesas/r8a774e1-beacon-rzg2h-kit-rgb.dts b/arch/arm64/boot/dts/renesas/r8a774e1-beacon-rzg2h-kit-rgb.dts
+index c48784e23f76..e71d8c545d16 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774e1-beacon-rzg2h-kit-rgb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774e1-beacon-rzg2h-kit-rgb.dts
+@@ -1,8 +1,11 @@
+ #include "r8a774e1-beacon-rzg2h-kit.dts"
+ 
+ / {
+-	model = "Beacon Embedded Works RZ/G2H Development Kit";
+-	compatible =	"beacon,beacon-rzg2h", "renesas,r8a774e1";
++	model = "Beacon EmbeddedWorks RZ/G2H Development Kit + RGB";
++
++	aliases {
++		/delete-property/ serial6;
++	};
+ };
+ 
+ &scif4 {
+diff --git a/arch/arm64/boot/dts/renesas/r8a774e1-beacon-rzg2h-kit.dts b/arch/arm64/boot/dts/renesas/r8a774e1-beacon-rzg2h-kit.dts
+index 99c5f49db9c3..9131bb933025 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774e1-beacon-rzg2h-kit.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774e1-beacon-rzg2h-kit.dts
+@@ -7,4 +7,19 @@
+ / {
+ 	model = "Beacon Embedded Works RZ/G2H Development Kit";
+ 	compatible =	"beacon,beacon-rzg2h", "renesas,r8a774e1";
++
++	aliases {
++		serial0 = &scif2;
++		serial1 = &hscif0;
++		serial2 = &hscif1;
++		serial3 = &scif0;
++		serial4 = &hscif2;
++		serial5 = &scif5;
++		serial6 = &scif4;
++		ethernet0 = &avb;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
+ };
+-- 
+2.17.1
+

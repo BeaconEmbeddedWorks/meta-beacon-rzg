@@ -1,0 +1,506 @@
+From 5bc2e75b9a58f0354085e5a1a271418b9390a690 Mon Sep 17 00:00:00 2001
+From: Adam Ford <aford173@gmail.com>
+Date: Thu, 9 Jul 2020 12:24:07 -0500
+Subject: [PATCH 21/23] arm64: dts: r8a774a1-beacon-rzg2m: Update device tree
+ to support Beta Hardware
+
+The hardware between the Alpha and Beta revisions have undergone significant change.
+This patch migrates the device tree files to support Beta.
+
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+ .../dts/renesas/beacon-renesom-baseboard.dtsi | 212 +++++++++---------
+ .../boot/dts/renesas/beacon-renesom-som.dtsi  |   6 +-
+ .../renesas/r8a774a1-beacon-rzg2m-kit-rgb.dts |  16 +-
+ .../dts/renesas/r8a774a1-beacon-rzg2m-kit.dts |  17 +-
+ 4 files changed, 144 insertions(+), 107 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+index f69df9603101..166ce28f8c6c 100644
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+@@ -10,30 +10,19 @@
+ #include <dt-bindings/clk/versaclock.h>
+ 
+ / {
+-	aliases {
+-		serial0 = &scif2;
+-		serial1 = &hscif0;
+-		serial2 = &hscif1;
+-		serial3 = &scif0;
+-		serial4 = &hscif2;
+-		serial5 = &scif5;
+-		serial6 = &scif4;
+-		spi0 = &msiof0;
+-		spi1 = &msiof1;
+-		spi2 = &msiof2;
+-		spi3 = &msiof3;
+-		ethernet0 = &avb;
+-	};
+-
+-	chosen {
+-		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
+-		stdout-path = "serial0:115200n8";
+-	};
+-
+-	backlight: backlight {
++	backlight_lvds: backlight-lvds {
+ 		compatible = "pwm-backlight";
+ 		power-supply = <&reg_lcd>;
+-		enable-gpios = <&gpio_exp3 7 GPIO_ACTIVE_LOW>;
++		enable-gpios = <&gpio_exp1 3 GPIO_ACTIVE_LOW>;
++		pwms = <&pwm2 0 50000>;
++		brightness-levels = <0 4 8 16 32 64 128 255>;
++		default-brightness-level = <6>;
++	};
++
++	backlight_rgb: backlight-rgb {
++		compatible = "pwm-backlight";
++		power-supply = <&reg_lcd>;
++		enable-gpios = <&gpio_exp1 7 GPIO_ACTIVE_LOW>;
+ 		pwms = <&pwm0 0 50000>;
+ 		brightness-levels = <0 4 8 16 32 64 128 255>;
+ 		default-brightness-level = <6>;
+@@ -103,17 +92,14 @@
+ 		led1 {
+ 			gpios = <&gpio7 0 GPIO_ACTIVE_HIGH>;
+ 			label = "LED1";
+-			linux,default-trigger = "heartbeat";
+ 		};
+ 		led2 {
+ 			gpios = <&gpio7 1 GPIO_ACTIVE_HIGH>;
+ 			label = "LED2";
+-			linux,default-trigger = "heartbeat";
+ 		};
+ 		led3 {
+ 			gpios = <&gpio7 3 GPIO_ACTIVE_HIGH>;
+ 			label = "LED3";
+-			linux,default-trigger = "heartbeat";
+ 		};
+ 	};
+ 
+@@ -122,8 +108,7 @@
+ 		power-supply = <&reg_lcd_reset>;
+ 		width-mm = <223>;
+ 		height-mm = <125>;
+-		/*backlight is shared between lvds and parallel displays */
+-		/*backlight = <&backlight>;*/
++		backlight = <&backlight_lvds>;
+ 		data-mapping = "vesa-24";
+ 
+ 		panel-timing {
+@@ -152,24 +137,22 @@
+ 
+ 	rgb {
+ 		/* Some random LCD with similar timings */
+-		/*compatible = "armadeus,st0700-adapt";*/
+ 		compatible = "rocktech,rk070er9427";
+-		/*backlight is shared between lvds and parallel displays */
+-		backlight = <&backlight>;
++		backlight = <&backlight_rgb>;
+ 		enable-gpios = <&gpio1 21 GPIO_ACTIVE_HIGH>;
+ 		port {
+ 			rgb_panel: endpoint {
+ 				remote-endpoint = <&du_out_rgb>;
+ 			};
+ 		};
+-    };
++	};
+ 
+ 	reg_audio: regulator_audio {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "audio-1.8V";
+ 		regulator-min-microvolt = <1800000>;
+ 		regulator-max-microvolt = <1800000>;
+-		gpio = <&gpio_exp2 7 GPIO_ACTIVE_HIGH>;
++		gpio = <&gpio_exp4 1 GPIO_ACTIVE_HIGH>;
+ 		enable-active-high;
+ 	};
+ 	
+@@ -244,11 +227,13 @@
+ };
+ 
+ &audio_clk_a {
+-	clock-frequency = <22579200>;
++	clock-frequency = <24576000>; /* Support 48KHz */
++	assigned-clocks = <&versaclock6_bb 4>;
++	assigned-clock-rates = <24576000>;
+ };
+ 
+ &audio_clk_b {
+-	clock-frequency = <22579200>;
++	clock-frequency = <22579200>; /* Support 44.1KHz */
+ };
+ 
+ &can0 {
+@@ -265,24 +250,8 @@
+ 	status = "okay";
+ };
+ 
+-/* &cmt0 {
+-	status = "okay";
+-};
+-
+-&cmt1 {
+-	status = "okay";
+-};
+-
+-&cmt2 {
+-	status = "okay";
+-};
+-
+-&cmt3 {
+-	status = "okay";
+-}; */
+-
+ &csi20 {
+-	status = "okay";
++	status = "disabled"; /* Enable when we have cameras */
+ 
+ 	ports {
+ 		port@0 {
+@@ -290,14 +259,14 @@
+ 			csi20_in: endpoint {
+ 				clock-lanes = <0>;
+ 				data-lanes = <1 2>;
+-				remote-endpoint = <&ov5640_to_mipi_csi2>;
++				/* remote-endpoint = <&ov5640_to_mipi_csi2>; */
+ 			};
+ 		};
+ 	};
+ };
+ 
+ &csi40 {
+-	status = "disabled";
++	status = "disabled";  /* Enable when we have cameras */
+ 
+ 	ports {
+ 		port@0 {
+@@ -305,7 +274,7 @@
+ 			csi40_in: endpoint {
+ 				clock-lanes = <0>;
+ 				data-lanes = <1 2 3 4>;
+-				remote-endpoint = <&ov5640_2_to_mipi_csi2>;
++				/* remote-endpoint = <&ov5640_2_to_mipi_csi2>; */
+ 			};
+ 		};
+ 	};
+@@ -331,14 +300,12 @@
+ &ehci0 {
+ 	dr_mode = "otg";
+ 	status = "okay";
+-	clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>, <&versaclock5 3>, <&versaclock6_bb 4>;
++	clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>;
+ };
+ 
+ &ehci1 {
+ 	status = "okay";
+-	/* Hack, we are asking the EHCI to take a clk ref to the Ethernet Phy
+-       refclock so Ethernet will work */
+-	clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>, <&versaclock5 4>;
++	clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>;
+ };
+ 
+ &hdmi0 {
+@@ -388,48 +355,16 @@
+ 	pinctrl-0 = <&i2c2_pins>;
+ 	pinctrl-names = "default";
+ 
+-	/* Two-Channel Camera */
+-	ov5640: camera@3c {
+-		compatible = "ovti,ov5640";
+-		reg = <0x3c>;
+-		clocks = <&versaclock6_bb 2>;
+-		clock-names = "xclk";
+-		DOVDD-supply = <&reg_cam1>;
+-		AVDD-supply = <&reg_cam1>;
+-		DVDD-supply = <&reg_cam1>;
+-		powerdown-gpios = <&gpio_exp2 4 GPIO_ACTIVE_HIGH>;
+-		reset-gpios = <&gpio_exp2 3 GPIO_ACTIVE_LOW>;
+-		status = "okay";
+-
+-		port {
+-			ov5640_to_mipi_csi2: endpoint {
+-				remote-endpoint = <&csi20_in>;
+-				clock-lanes = <0>;
+-				data-lanes = <1 2>;
+-			};
+-		};
+-	};
+-	
+-	ov5640_2: camera@10 {
+-		compatible = "ovti,ov5640";
+-		reg = <0x10>;
+-		clocks = <&versaclock6_bb 1>;
+-		clock-names = "xclk";
+-		DOVDD-supply = <&reg_cam0>;
+-		AVDD-supply = <&reg_cam0>;
+-		DVDD-supply = <&reg_cam0>;
+-		status = "disabled";
+-		powerdown-gpios = <&gpio_exp2 1 GPIO_ACTIVE_HIGH>;
+-		reset-gpios = <&gpio_exp2 0 GPIO_ACTIVE_LOW>;
+-		port {
+-			ov5640_2_to_mipi_csi2: endpoint {
+-				remote-endpoint = <&csi40_in>;
+-				clock-lanes = <0>;
+-				data-lanes = <1 2>;
+-			};
+-		};
+-	};
++	/* Eventual Home of CSI0 Camera */
+ 
++	/* 0 - CSI0_RSTn */
++	/* 1 - CAM0_PW_EN_0 */
++	/* 2 - CAM0_PW_EN_1 */
++	/* 3 - CSI1_RSTn */
++	/* 4 - CAM1_PW_EN_0 */
++	/* 5 - CAM1_PW_EN_1 */
++	/* 6 - nc */
++	/* 7 - nc */
+ 	gpio_exp2: gpio@21 {
+ 		compatible = "onnn,pca9654";
+ 		reg = <0x21>;
+@@ -437,6 +372,14 @@
+ 		#gpio-cells = <2>;
+ 	};
+ 
++	/* 0 - PCIECLKREQn */
++	/* 1 - PCIEWAKEn */
++	/* 2 - W_DISABLE1n */
++	/* 3 - CAT6_POWER_OFFn */
++	/* 4 - PEWAKEn */
++	/* 5 - PM_ADBUS4 */
++	/* 6 - CLKREQn */
++	/* 7 - SSD_RESETn */
+ 	gpio_exp3: gpio@22 {
+ 		compatible = "onnn,pca9654";
+ 		reg = <0x22>;
+@@ -444,15 +387,30 @@
+ 		#gpio-cells = <2>;
+ 	};
+ 	
++	/* 0 - SSD_DEV_SLP */
++	/* 1 - CODEC_SPK_PWR_EN */
++	/* 2 - nc */
++	/* 3 - USBC-ENn_MUX */
++	/* 4 - CELLMOD_RESETn */
++	/* 5 - nc */
++	/* 6 - nc */
++	/* 7 - nc */
++	gpio_exp4: gpio@23 {
++		compatible = "onnn,pca9654";
++		reg = <0x23>;
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
++
+ 	versaclock6_bb: versaclock6_bb@6a {
+ 		compatible = "idt,5p49v6965";
+ 		reg = <0x6a>;
+ 		#clock-cells = <1>;
+ 		clocks = <&x304_clk>;
+ 		clock-names = "xin";
+-		/* CSI0_MCLK, CSI1_MCLK, AUDIO_CLKIN, USB_HUB_MCLK_BB */
++		/* CSI0_MCLK, CSI1_MCLK, AUDIO_CLK_CODEC, AUDIO_CLKA */
+ 		assigned-clocks = <&versaclock6_bb 1>, <&versaclock6_bb 2>, <&versaclock6_bb 3>, <&versaclock6_bb 4>;
+-		assigned-clock-rates =	<24000000>, <24000000>, <24000000>, <24000000>;
++		assigned-clock-rates =	<24000000>, <24000000>, <24000000>, <24576000>;
+ 
+ 		OUT1 {
+ 			idt,mode = <VC5_CMOS>;
+@@ -494,6 +452,8 @@
+ 	pinctrl-0 = <&i2c5_pins>;
+ 	pinctrl-names = "default";
+ 
++	/* Eventual Home of CSI1 Camera */
++
+ 	codec: wm8962@1a {
+ 		compatible = "wlf,wm8962";
+ 		reg = <0x1a>;
+@@ -505,6 +465,8 @@
+ 		PLLVDD-supply = <&reg_audio>;
+ 		SPKVDD1-supply = <&reg_audio>;
+ 		SPKVDD2-supply = <&reg_audio>;
++		assigned-clocks = <&versaclock6_bb 3>;
++		assigned-clock-rates = <24000000>;
+ 		gpio-cfg = <
+ 			0x0000 /* 0:Default */
+ 			0x0000 /* 1:Default */
+@@ -527,6 +489,7 @@
+ 	/* 4 - Touch_shdwn */
+ 	/* 5 - LCD_H_pol */
+ 	/* 6 - lcd_V_pol */
++	/* 7 - BL_Disable */
+ 	gpio_exp1: gpio@20 {
+ 		compatible = "onnn,pca9654";
+ 		reg = <0x20>;
+@@ -541,6 +504,32 @@
+ 		interrupts = <9 IRQ_TYPE_EDGE_RISING>;
+ 		wakeup-source;
+ 	};
++
++	hd3ss3220@47 {
++		compatible = "ti,hd3ss3220";
++		reg = <0x47>;
++		interrupt-parent = <&gpio6>;
++		interrupts = <4 IRQ_TYPE_LEVEL_LOW>;
++
++		connector {
++			compatible = "usb-c-connector";
++			label = "USB-C";
++			data-role = "dual";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					reg = <1>;
++					hd3ss3220_ep: endpoint {
++						remote-endpoint = <&usb3_role_switch>;
++					};
++				};
++			};
++		};
++	};
++
+ };
+ 
+ &lvds0 {
+@@ -623,6 +612,11 @@
+ 		function = "pwm0";
+ 	};
+ 
++	pwm2_pins: pwm2 {
++		groups = "pwm2_a";
++		function = "pwm2_a";
++	};
++
+ 	sdhi0_pins: sd0 {
+ 		groups = "sdhi0_data4", "sdhi0_ctrl";
+ 		function = "sdhi0";
+@@ -673,6 +667,12 @@
+ 	status = "okay";
+ };
+ 
++&pwm2 {
++	pinctrl-0 = <&pwm2_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
+ &rcar_sound {
+ 	pinctrl-0 = <&sound_pins &sound_clk_pins>;
+ 	pinctrl-names = "default";
+@@ -811,9 +811,15 @@
+ };
+ 
+ &usb3_peri0 {
+-	phys = <&usb3_phy0>;
+-	phy-names = "usb";
++	companion = <&xhci0>;
+ 	status = "okay";
++	usb-role-switch;
++
++	port {
++		usb3_role_switch: endpoint {
++			remote-endpoint = <&hd3ss3220_ep>;
++		};
++	};
+ };
+ 
+ &usb3_phy0 {
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
+index e5f1c1e2f584..737a0d204e5b 100644
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
+@@ -93,6 +93,8 @@
+ 	pinctrl-names = "default";
+ 	phy-handle = <&phy0>;
+ 	phy-mode = "rgmii-txid";
++	assigned-clocks = <&versaclock5 4>;
++	assigned-clock-rates = <125000000>;
+ 	status = "okay";
+ 
+ 	phy0: ethernet-phy@0 {
+@@ -130,6 +132,8 @@
+ 
+ &usb_extal_clk {
+ 	clock-frequency = <50000000>;
++	assigned-clocks = <&versaclock5 3>;
++	assigned-clock-rates = <50000000>;
+ };
+ 
+ &usb3s0_clk {
+@@ -221,13 +225,11 @@
+ 	status = "okay";
+ };
+ 
+-#if 01
+ &hscif2 {
+ 	status = "okay";
+ 	pinctrl-0 = <&hscif2_pins>;
+ 	pinctrl-names = "default";
+ };
+-#endif
+ 
+ &gpio6 {
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit-rgb.dts b/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit-rgb.dts
+index e17f61370086..01cd9ce677f7 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit-rgb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit-rgb.dts
+@@ -1,8 +1,22 @@
+ #include "r8a774a1-beacon-rzg2m-kit.dts"
+ 
+ / {
+-	model = "Beacon Embedded Works RZ/G2M Development Kit";
++	model = "Beacon EmbeddedWorks RZ/G2M Development Kit + RGB";
+ 	compatible =	"beacon,beacon-rzg2m", "renesas,r8a774a1";
++
++	aliases {
++		serial0 = &scif2;
++		serial1 = &hscif0;
++		serial2 = &hscif1;
++		serial3 = &scif0;
++		serial4 = &hscif2;
++		serial5 = &scif5;
++		ethernet0 = &avb;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
+ };
+ 
+ &scif4 {
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit.dts b/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit.dts
+index 020123b6d27d..966f0e2c3aa8 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit.dts
+@@ -5,6 +5,21 @@
+ #include "beacon-renesom-baseboard.dtsi"
+ 
+ / {
+-	model = "Beacon Embedded Works RZ/G2M Development Kit";
++	model = "Beacon EmbeddedWorks RZ/G2M Development Kit";
+ 	compatible =	"beacon,beacon-rzg2m", "renesas,r8a774a1";
++
++	aliases {
++		serial0 = &scif2;
++		serial1 = &hscif0;
++		serial2 = &hscif1;
++		serial3 = &scif0;
++		serial4 = &hscif2;
++		serial5 = &scif5;
++		serial6 = &scif4;
++		ethernet0 = &avb;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
+ };
+-- 
+2.17.1
+

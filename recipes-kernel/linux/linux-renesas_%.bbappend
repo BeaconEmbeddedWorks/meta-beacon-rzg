@@ -14,7 +14,7 @@ SRC_URI += " \
 	   file://Enable-fuse.cfg \
            "
 
-COMPATIBLE_MACHINE_append = "|beacon-rzg2m"
+COMPATIBLE_MACHINE_append = "|beacon-rzg2m|beacon-rzg2n|beacon-rzg2h"
 
 #END_HEADER
 
@@ -32,4 +32,14 @@ SRC_URI += " \
 	file://0011-Introduce-Beacon-DTS-files-from-0db70f7e6927.patch \
 	file://0012-thermal-rcar_gen3_thermal-Fix-undefined-temperature-.patch \
 	file://0013-drm-rcar-Backport-DU-encoder-driver-to-support-DPI-d.patch \
+	file://0014-arm64-dts-beacon-renesom-baseboard-Fix-vsync.patch \
+	file://0015-arm64-dts-renesas-r8a774e1-Add-HDMI-encoder-instance.patch \
+	file://0016-drm-rcar-du-Fix-PHY-configure-registers.patch \
+	file://0017-dts-Remove-SoC-specific-references-in-preparation-fo.patch \
+	file://0018-dts-Leverage-kit-DTS-file-when-building-rgb-variant.patch \
+	file://0019-dts-Add-Beacon-EmbeddedWorks-RZ-G2N-DTS-files.patch \
+	file://0020-dts-Add-Beacon-EmbeddedWorks-RZ-G2H-DTS-files.patch \
+	file://0021-arm64-dts-r8a774a1-beacon-rzg2m-Update-device-tree-t.patch \
+	file://0022-dts-Don-t-assign-clock-rates-in-consumer-nodes.patch \
+	file://0023-dts-Update-wrappers-for-all-SoC-variants-moving-alia.patch \
 	"

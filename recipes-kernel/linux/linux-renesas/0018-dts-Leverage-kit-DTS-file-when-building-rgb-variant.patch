@@ -1,0 +1,26 @@
+From 8bfbb93bf38dfd6ebebf46de74f1c3c7dbd876d2 Mon Sep 17 00:00:00 2001
+From: Charles Stevens <charles.stevens@compasses.com>
+Date: Tue, 4 Aug 2020 13:32:20 -0500
+Subject: [PATCH 18/20] dts: Leverage kit DTS file when building -rgb variant.
+
+---
+ .../boot/dts/renesas/r8a774a1-beacon-rzg2m-kit-rgb.dts      | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit-rgb.dts b/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit-rgb.dts
+index 52d756258951..e17f61370086 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit-rgb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit-rgb.dts
+@@ -1,8 +1,4 @@
+-/dts-v1/;
+-
+-#include "r8a774a1.dtsi"
+-#include "beacon-renesom-som.dtsi"
+-#include "beacon-renesom-baseboard.dtsi"
++#include "r8a774a1-beacon-rzg2m-kit.dts"
+ 
+ / {
+ 	model = "Beacon Embedded Works RZ/G2M Development Kit";
+-- 
+2.17.1
+

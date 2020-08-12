@@ -1,0 +1,30 @@
+From c657a0d13dcd340413fbb31ff5de947871348b13 Mon Sep 17 00:00:00 2001
+From: Adam Ford <aford173@gmail.com>
+Date: Wed, 15 Jul 2020 09:18:56 -0500
+Subject: [PATCH 14/20] arm64: dts: beacon-renesom-baseboard: Fix vsync
+
+According to the upstream checks, the only valid entries are 0 or 1.
+This patch makes this value '1' instad of '3' and have been verified
+to continue to operate normally.
+
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+ arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+index b851866cbf82..576cddb60c6e 100644
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+@@ -136,7 +136,7 @@
+ 			hback-porch = <40>;
+ 			vfront-porch = <13>;
+ 			vback-porch = <29>;
+-			vsync-len = <3>;
++			vsync-len = <1>;
+ 			hsync-active = <1>;
+ 			vsync-active = <3>;
+ 			de-active = <1>;
+-- 
+2.17.1
+

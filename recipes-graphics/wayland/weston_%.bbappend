@@ -6,5 +6,11 @@ do_install_append() {
         if [ "${MACHINE}" = "beacon-rzg2m" ] ; then
             install -m 644 ${WORKDIR}/weston_v4l2.ini ${D}/${sysconfdir}/xdg/weston/weston.ini
         fi
+        if [ "${MACHINE}" = "beacon-rzg2n" ] ; then
+            install -m 644 ${WORKDIR}/weston_v4l2.ini ${D}/${sysconfdir}/xdg/weston/weston.ini
+        fi
+        if [ "${MACHINE}" = "beacon-rzg2h" ] ; then
+            install -m 644 ${WORKDIR}/weston_v4l2.ini ${D}/${sysconfdir}/xdg/weston/weston.ini
+        fi
     fi
 }

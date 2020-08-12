@@ -1,1 +1,3 @@
 MMNGR_CFG_beacon-rzg2m = "MMNGR_SALVATORX"
+MMNGR_CFG_beacon-rzg2n = "MMNGR_SALVATORX"
+MMNGR_CFG_beacon-rzg2h = "MMNGR_SALVATORX"
