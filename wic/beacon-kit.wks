@@ -1,0 +1,7 @@
+# short-description: Create SD card image for a Beacon Embedded kit.
+# long-description: Creates a partitioned SD card image for Beacon 
+# EmbeddedWorks Renesas RZ/G2 based development kit.
+# Boot files are located in the first vfat partition.
+
+part --source bootimg-partition --ondisk mmcblk2 --fstype=vfat --label boot --active --align 1024 --size 100
+part / --source rootfs --ondisk mmcblk --fstype=ext4 --label rootfs --align 1024
