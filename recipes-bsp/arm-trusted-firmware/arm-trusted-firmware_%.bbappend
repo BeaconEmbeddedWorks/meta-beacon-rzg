@@ -9,3 +9,9 @@ SRC_URI += "file://0001-Modify-DDR-parameters-for-beacon-dev-kit.patch \
             file://0005-Modify-RZ-G2N-to-work-on-Beacon-EmbeddedWorks-RZ-G2N.patch \
             "
 
+do_deploy_append() {
+
+    # Copy IPL binaries to deploy folder
+    install -m 0644 ${S}/tools/dummy_create/bootparam_sa0.bin ${DEPLOYDIR}/bootparam_sa0.bin
+    install -m 0644 ${S}/tools/dummy_create/cert_header_sa6.bin ${DEPLOYDIR}/cert_header_sa6.bin
+}
