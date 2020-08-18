@@ -13,4 +13,5 @@ SRC_URI += " \
 	file://0004-configs-beacon-rzg2m.h-Simplify-Boot-scripts.patch \
 	file://0005-configs-r8a774a1_beacon-rzg2m-Enable-CMD_PART.patch \
 	file://0006-configs-beacon-rzg2m.h-Fix-loading-addresses.patch \
+	file://0007-beacon-rzg2m-Configure-RAMdisk-scripts-for-booting.patch \
 	"
