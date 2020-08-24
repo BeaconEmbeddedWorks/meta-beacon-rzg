@@ -334,6 +334,8 @@ MACHINE ?= "beacon-rzg2m"
 
 ENABLE_BINARY_LOCALE_GENERATION = "1"
 
-PREFERRED_RPROVIDER_wpa-supplicant = "sterling-supplicant-lwb"
-PREFERRED_RPROVIDER_wpa-supplicant-cli = "sterling-supplicant-lwb"
-PREFERRED_RPROVIDER_wpa-supplicant-passphrase = "sterling-supplicant-lwb"
+PREFERRED_VERSION_openssl = "debian"
+BBMASK  += "/meta-laird-cp/recipes-packages/sterling-supplicant"
+BBMASK  += "/meta-laird-cp/recipes-packages/summit-supplicant"
+BBMASK  += "/meta-laird-cp/recipes-packages/openssl"
+
