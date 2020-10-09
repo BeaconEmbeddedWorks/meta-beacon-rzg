@@ -1,0 +1,39 @@
+From f9bd6ad064df08cf8f219133504be5b35bea92f6 Mon Sep 17 00:00:00 2001
+From: Adam Ford <aford173@gmail.com>
+Date: Tue, 22 Sep 2020 11:37:53 -0500
+Subject: [PATCH 28/29] arm64: dts: beacon-renesom-baseboard: Fix PWM for LVDS
+ backlight
+
+This patch fixes some PWM pin mux and polarity issues with the
+backlight for the beta hardware.
+
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+ arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+index 35238b44988c..f8e74eca7a4e 100644
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+@@ -13,7 +13,7 @@
+ 	backlight_lvds: backlight-lvds {
+ 		compatible = "pwm-backlight";
+ 		power-supply = <&reg_lcd>;
+-		enable-gpios = <&gpio_exp1 3 GPIO_ACTIVE_LOW>;
++		enable-gpios = <&gpio_exp1 3 GPIO_ACTIVE_HIGH>;
+ 		pwms = <&pwm2 0 50000>;
+ 		brightness-levels = <0 4 8 16 32 64 128 255>;
+ 		default-brightness-level = <6>;
+@@ -599,7 +599,7 @@
+ 
+ 	pwm2_pins: pwm2 {
+ 		groups = "pwm2_a";
+-		function = "pwm2_a";
++		function = "pwm2";
+ 	};
+ 
+ 	sdhi0_pins: sd0 {
+-- 
+2.17.1
+

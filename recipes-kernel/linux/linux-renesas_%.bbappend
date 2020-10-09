@@ -42,4 +42,10 @@ SRC_URI += " \
 	file://0021-arm64-dts-r8a774a1-beacon-rzg2m-Update-device-tree-t.patch \
 	file://0022-dts-Don-t-assign-clock-rates-in-consumer-nodes.patch \
 	file://0023-dts-Update-wrappers-for-all-SoC-variants-moving-alia.patch \
+	file://0024-eeprom-Enable-MFG-EEPROM-decoder-for-Beacon-LPD-SOM-.patch \
+	file://0025-arm64-defconfig-Enable-AT24-and-MFG-EEPROM-support.patch \
+	file://0026-arm64-dts-beacon-renesom-som-Fix-RZ-G2H-and-RZ-G2N-B.patch \
+	file://0027-arm64-dts-beacon-renesom-baseboard-Move-display-unit.patch \
+	file://0028-arm64-dts-beacon-renesom-baseboard-Fix-PWM-for-LVDS-.patch \
+	file://0029-arm64-dts-beacon-renesom-baseboard-Fix-Audio-clockin.patch \
 	"
