@@ -44,5 +44,8 @@ RDEPENDS_${PN}-net += " ppp libmbim glibc-gconvs glibc-utils"
 #GNSS
 RDEPENDS_${PN}-net += " gpsd gps-utils"
 
+#Misc network utilities
+RDEPENDS_${PN}-net += " curl"
+
 SUMMARY_${PN}-fs = "File system support"
 RDEPENDS_${PN}-fs = "ntfs-3g ntfsprogs libntfs-3g"
