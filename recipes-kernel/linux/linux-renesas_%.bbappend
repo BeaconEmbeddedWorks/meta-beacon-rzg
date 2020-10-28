@@ -48,4 +48,5 @@ SRC_URI += " \
 	file://0027-arm64-dts-beacon-renesom-baseboard-Move-display-unit.patch \
 	file://0028-arm64-dts-beacon-renesom-baseboard-Fix-PWM-for-LVDS-.patch \
 	file://0029-arm64-dts-beacon-renesom-baseboard-Fix-Audio-clockin.patch \
+	file://0030-RSOM-222.patch \
 	"
