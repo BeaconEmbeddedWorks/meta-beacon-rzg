@@ -1,20 +1,22 @@
-From 48331ad5a114428ec5a8efcd07dba5ea1ca5ee89 Mon Sep 17 00:00:00 2001
+From 26e4d6c94902cee2e22f2ecaa104f6d0afe364bd Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@compasses.com>
 Date: Thu, 13 Aug 2020 17:38:54 -0500
 Subject: [PATCH] Modify to support Beacon EmbeddedWorks development kits. For
  RZ/G2 SoCs H, M and N
 
 Signed-off-by: Charles Stevens <charles.stevens@compasses.com>
+
+%% original patch: 0001-Modify-to-support-Beacon-EmbeddedWorks-development-k.patch
 ---
- ddr/lpddr4/boot_init_dram_config.c | 267 ++--------------------------
+ ddr/lpddr4/boot_init_dram_config.c | 269 ++--------------------------
  dgmodul4.c                         |   2 +-
  makefile                           |   8 +-
  makefile.linaro                    | 275 -----------------------------
- 4 files changed, 21 insertions(+), 531 deletions(-)
+ 4 files changed, 22 insertions(+), 532 deletions(-)
  delete mode 100644 makefile.linaro
 
 diff --git a/ddr/lpddr4/boot_init_dram_config.c b/ddr/lpddr4/boot_init_dram_config.c
-index 8247ddd..460352f 100644
+index 8247ddd..f1ac98b 100644
 --- a/ddr/lpddr4/boot_init_dram_config.c
 +++ b/ddr/lpddr4/boot_init_dram_config.c
 @@ -11,7 +11,7 @@
@@ -155,37 +157,29 @@ index 8247ddd..460352f 100644
   */
  {
  	0x01,		/* phyvalid */
-@@ -253,116 +185,10 @@ static const struct _boardcnf boardcnfs[BOARDNUM] = {
+@@ -253,10 +185,10 @@ static const struct _boardcnf boardcnfs[BOARDNUM] = {
  	0x00a0,		/* dqdm_dly_r */
  	{
  /*ch[0]*/	{
 -/*ddr_density[]*/	{ 0x02, 0x02 },
--/*ca_swap*/		0x00345201,
--/*dqs_swap*/		0x3201,
++/*ddr_density[]*/	{ 0x04, 0xff },
+ /*ca_swap*/		0x00345201,
+ /*dqs_swap*/		0x3201,
 -/*dq_swap[]*/		{ 0x01672543, 0x45361207, 0x45632107, 0x60715234 },
--/*dm_swap[]*/		{ 0x08, 0x08, 0x08, 0x08 },
--/*wdqlvl_patt[]*/	WDQLVL_PAT,
--/*cacs_adj*/		{ 0, 0, 0, 0, 0, 0, 0, 0,
--			  0, 0 },
--/*dm_adj_w*/		{ 0, 0, 0, 0 },
--/*dqdm_adj_w*/		{ 0, 0, 0, 0, 0, 0, 0, 0,
--			  0, 0, 0, 0, 0, 0, 0, 0,
--			  0, 0, 0, 0, 0, 0, 0, 0,
--			  0, 0, 0, 0, 0, 0, 0, 0 },
--/*dm_adj_r*/		{ 0, 0, 0, 0 },
--/*dqdm_adj_r*/		{ 0, 0, 0, 0, 0, 0, 0, 0,
--			  0, 0, 0, 0, 0, 0, 0, 0,
--			  0, 0, 0, 0, 0, 0, 0, 0,
--			  0, 0, 0, 0, 0, 0, 0, 0 }
--		}
--	}
--},
--/*
++/*dq_swap[]*/		{ 0x23617540, 0x54061237, 0x43251607, 0x71605243 },
+ /*dm_swap[]*/		{ 0x08, 0x08, 0x08, 0x08 },
+ /*wdqlvl_patt[]*/	WDQLVL_PAT,
+ /*cacs_adj*/		{ 0, 0, 0, 0, 0, 0, 0, 0,
+@@ -275,138 +207,12 @@ static const struct _boardcnf boardcnfs[BOARDNUM] = {
+ 	}
+ },
+ /*
 - * boardcnf[3] Jiangsu HopeRun Software Co., Ltd. HiHope RZ/G2N board 16Gbit/2rank/1ch board with G2N/SOC
-- */
--{
--	0x01,		/* phyvalid */
--	0x01,		/* dbi_en */
++ * boardcnf[2] Beacon EmbeddedWorks RZ/G2H Development Kit with 16Gbit/1rank/2ch SOM with G2H/SOC (4 GiB)
+  */
+ {
+ 	0x01,		/* phyvalid */
+ 	0x01,		/* dbi_en */
 -	0x0300,		/* cacs_dly */
 -	0,		/* cacs_dly_adj */
 -	0x0300,		/* dqdm_dly_w */
@@ -226,9 +220,8 @@ index 8247ddd..460352f 100644
 -	{
 -/*ch[0]*/	{
 -/*ddr_density[]*/	{ 0x02, 0x02 },
-+/*ddr_density[]*/	{ 0x04, 0xff },
- /*ca_swap*/		0x00345201,
- /*dqs_swap*/		0x3201,
+-/*ca_swap*/		0x00345201,
+-/*dqs_swap*/		0x3201,
 -/*dq_swap[]*/		{ 0x01672543, 0x45367012, 0x45632107, 0x60715234 },
 -/*dm_swap[]*/		{ 0x08, 0x08, 0x08, 0x08 },
 -/*wdqlvl_patt[]*/	WDQLVL_PAT,
@@ -270,14 +263,16 @@ index 8247ddd..460352f 100644
 -/*ca_swap*/		0x00302154,
 -/*dqs_swap*/		0x2310,
 -/*dq_swap[]*/		{ 0x01672543, 0x45361207, 0x45632107, 0x60715234 },
-+/*dq_swap[]*/		{ 0x23617540, 0x54061237, 0x43251607, 0x71605243 },
- /*dm_swap[]*/		{ 0x08, 0x08, 0x08, 0x08 },
- /*wdqlvl_patt[]*/	WDQLVL_PAT,
- /*cacs_adj*/		{ 0, 0, 0, 0, 0, 0, 0, 0,
-@@ -373,26 +199,6 @@ static const struct _boardcnf boardcnfs[BOARDNUM] = {
- 			  0, 0, 0, 0, 0, 0, 0, 0,
- 			  0, 0, 0, 0, 0, 0, 0, 0 },
- /*dm_adj_r*/		{ 0, 0, 0, 0 },
+-/*dm_swap[]*/		{ 0x08, 0x08, 0x08, 0x08 },
+-/*wdqlvl_patt[]*/	WDQLVL_PAT,
+-/*cacs_adj*/		{ 0, 0, 0, 0, 0, 0, 0, 0,
+-			  0, 0 },
+-/*dm_adj_w*/		{ 0, 0, 0, 0 },
+-/*dqdm_adj_w*/		{ 0, 0, 0, 0, 0, 0, 0, 0,
+-			  0, 0, 0, 0, 0, 0, 0, 0,
+-			  0, 0, 0, 0, 0, 0, 0, 0,
+-			  0, 0, 0, 0, 0, 0, 0, 0 },
+-/*dm_adj_r*/		{ 0, 0, 0, 0 },
 -/*dqdm_adj_r*/		{ 0, 0, 0, 0, 0, 0, 0, 0,
 -			  0, 0, 0, 0, 0, 0, 0, 0,
 -			  0, 0, 0, 0, 0, 0, 0, 0,
@@ -298,35 +293,29 @@ index 8247ddd..460352f 100644
 -			  0, 0, 0, 0, 0, 0, 0, 0,
 -			  0, 0, 0, 0, 0, 0, 0, 0 },
 -/*dm_adj_r*/		{ 0, 0, 0, 0 },
- /*dqdm_adj_r*/		{ 0, 0, 0, 0, 0, 0, 0, 0,
- 			  0, 0, 0, 0, 0, 0, 0, 0,
- 			  0, 0, 0, 0, 0, 0, 0, 0,
-@@ -401,7 +207,7 @@ static const struct _boardcnf boardcnfs[BOARDNUM] = {
- 	}
- },
- /*
+-/*dqdm_adj_r*/		{ 0, 0, 0, 0, 0, 0, 0, 0,
+-			  0, 0, 0, 0, 0, 0, 0, 0,
+-			  0, 0, 0, 0, 0, 0, 0, 0,
+-			  0, 0, 0, 0, 0, 0, 0, 0 }
+-		}
+-	}
+-},
+-/*
 - * boardcnf[5] Jiangsu HopeRun Software Co., Ltd. HiHope RZ/G2H board 16Gbit/1rank/2ch board with G2H/SOC
-+ * boardcnf[2] Beacon EmbeddedWorks RZ/G2H Development Kit with 16Gbit/1rank/2ch SOM with G2H/SOC (4 GiB)
-  */
- {
- 	0x05,		/* phyvalid */
-@@ -415,7 +221,7 @@ static const struct _boardcnf boardcnfs[BOARDNUM] = {
+- */
+-{
+-	0x05,		/* phyvalid */
+-	0x01,		/* dbi_en */
+-	0x0300,		/* cacs_dly */
++	0x0320,		/* cacs_dly */
+ 	0,		/* cacs_dly_adj */
+ 	0x0300,		/* dqdm_dly_w */
+ 	0x00a0,		/* dqdm_dly_r */
+@@ -415,27 +221,7 @@ static const struct _boardcnf boardcnfs[BOARDNUM] = {
  /*ddr_density[]*/	{ 0x04, 0xff },
  /*ca_swap*/		0x00345201,
  /*dqs_swap*/		0x3201,
 -/*dq_swap[]*/		{ 0x01672543, 0x45367012, 0x45632107, 0x60715234 },
-+/*dq_swap[]*/		{ 0x23617540, 0x54061237, 0x43251607, 0x71605243 },
- /*dm_swap[]*/		{ 0x08, 0x08, 0x08, 0x08 },
- /*wdqlvl_patt[]*/	WDQLVL_PAT,
- /*cacs_adj*/		{ 0, 0, 0, 0, 0, 0, 0, 0,
-@@ -432,54 +238,13 @@ static const struct _boardcnf boardcnfs[BOARDNUM] = {
- 			  0, 0, 0, 0, 0, 0, 0, 0 }
- 		},
- /*ch[1]*/	{	// for DRAM_SPLIT_2CH
--/*ddr_density[]*/	{ 0x04, 0xff },
--/*ca_swap*/		0x00302154,
--/*dqs_swap*/		0x2310,
--/*dq_swap[]*/		{ 0x01672543, 0x45361207, 0x45632107, 0x60715234 },
 -/*dm_swap[]*/		{ 0x08, 0x08, 0x08, 0x08 },
 -/*wdqlvl_patt[]*/	WDQLVL_PAT,
 -/*cacs_adj*/		{ 0, 0, 0, 0, 0, 0, 0, 0,
@@ -342,13 +331,26 @@ index 8247ddd..460352f 100644
 -			  0, 0, 0, 0, 0, 0, 0, 0,
 -			  0, 0, 0, 0, 0, 0, 0, 0 }
 -		},
--/*ch[2]*/	{	// for DRAM_SPLIT_NON
+-/*ch[1]*/	{	// for DRAM_SPLIT_2CH
 -/*ddr_density[]*/	{ 0x04, 0xff },
-+/*ddr_density[]*/	{ 0x02, 0x02 },
+-/*ca_swap*/		0x00302154,
+-/*dqs_swap*/		0x2310,
+-/*dq_swap[]*/		{ 0x01672543, 0x45361207, 0x45632107, 0x60715234 },
++/*dq_swap[]*/		{ 0x23617540, 0x54067312, 0x43251607, 0x71605243 },
+ /*dm_swap[]*/		{ 0x08, 0x08, 0x08, 0x08 },
+ /*wdqlvl_patt[]*/	WDQLVL_PAT,
+ /*cacs_adj*/		{ 0, 0, 0, 0, 0, 0, 0, 0,
+@@ -451,35 +237,14 @@ static const struct _boardcnf boardcnfs[BOARDNUM] = {
+ 			  0, 0, 0, 0, 0, 0, 0, 0,
+ 			  0, 0, 0, 0, 0, 0, 0, 0 }
+ 		},
+-/*ch[2]*/	{	// for DRAM_SPLIT_NON
++/*ch[1]*/	{
+ /*ddr_density[]*/	{ 0x04, 0xff },
  /*ca_swap*/		0x00302154,
  /*dqs_swap*/		0x2310,
 -/*dq_swap[]*/		{ 0x01672543, 0x45361207, 0x45632107, 0x60715234 },
-+/*dq_swap[]*/		{ 0x23617540, 0x54061237, 0x43251607, 0x71605243 },
++/*dq_swap[]*/		{ 0x26015734, 0x04531276, 0x43251607, 0x10647532 },
  /*dm_swap[]*/		{ 0x08, 0x08, 0x08, 0x08 },
  /*wdqlvl_patt[]*/	WDQLVL_PAT,
 -/*cacs_adj*/		{ 0, 0, 0, 0, 0, 0, 0, 0,
