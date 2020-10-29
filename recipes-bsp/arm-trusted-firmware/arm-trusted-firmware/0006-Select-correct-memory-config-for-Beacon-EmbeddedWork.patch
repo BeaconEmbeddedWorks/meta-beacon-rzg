@@ -1,0 +1,82 @@
+From 26640450bbf11106c6b37eeb198f0fd6476dca97 Mon Sep 17 00:00:00 2001
+From: Charles Stevens <charles.stevens@compasses.com>
+Date: Thu, 29 Oct 2020 16:15:40 -0500
+Subject: [PATCH 6/6] Select correct memory config for Beacon EmbeddedWorks
+ RZ/G2 M SOM Modify memory config for BeaconEmbeddedWorks RZ/G2 H SOM
+
+Signed-off-by: Charles Stevens <charles.stevens@compasses.com>
+---
+ .../rcar/ddr/ddr_b/boot_init_dram_config.c    | 29 ++++---------------
+ 1 file changed, 5 insertions(+), 24 deletions(-)
+
+diff --git a/plat/renesas/rcar/ddr/ddr_b/boot_init_dram_config.c b/plat/renesas/rcar/ddr/ddr_b/boot_init_dram_config.c
+index a9be0cc1..37826439 100644
+--- a/plat/renesas/rcar/ddr/ddr_b/boot_init_dram_config.c
++++ b/plat/renesas/rcar/ddr/ddr_b/boot_init_dram_config.c
+@@ -20,26 +20,7 @@
+ #define	LPDDR4_2RANK	(0x01 << 25)
+ 
+ static uint32_t boardcnf_get_brd_type(void){
+-	uint32_t reg;
+-	uint32_t boardInfo;
+-
+-	reg = mmio_read_32(RCAR_PRR);
+-	if (RCAR_M3_CUT_VER11 == (reg & RCAR_CUT_MASK))
+-	{
+-		return (23);
+-	}
+-	else
+-	{
+-		boardInfo = mmio_read_32(GPIO_INDT5);
+-		if (boardInfo & LPDDR4_2RANK)
+-		{
+-			return (23);
+-		}
+-		else
+-		{
+-			return (22);
+-		}
+-	}
++	return (22);
+ }
+ #elif (RZG_HIHOPE_RZG2N) // RZG_HIHOPE_RZG2N
+ static uint32_t boardcnf_get_brd_type(void){
+@@ -1892,7 +1873,7 @@ static const struct _boardcnf boardcnfs[BOARDNUM] = {
+ {
+ 	0x05,		/* phyvalid */
+ 	0x01,		/* dbi_en */
+-	0x0300,		/* cacs_dly */
++	0x0320,		/* cacs_dly */
+ 	0,		/* cacs_dly_adj */
+ 	0x0300,		/* dqdm_dly_w */
+ 	0x00a0,		/* dqdm_dly_r */
+@@ -1901,7 +1882,7 @@ static const struct _boardcnf boardcnfs[BOARDNUM] = {
+ /*ddr_density[]*/	{ 0x04, 0xff },
+ /*ca_swap*/		0x00345201,
+ /*dqs_swap*/		0x3201,
+-/*dq_swap[]*/		{ 0x01672543, 0x45367012, 0x45632107, 0x60715234 },
++/*dq_swap[]*/		{ 0x23617540, 0x54067312, 0x43251607, 0x71605243 },
+ /*dm_swap[]*/		{ 0x08, 0x08, 0x08, 0x08 },
+ /*wdqlvl_patt[]*/	WDQLVL_PAT,
+ /*cacs_adj*/		{ 0, 0, 0, 0, 0, 0, 0, 0,
+@@ -1921,7 +1902,7 @@ static const struct _boardcnf boardcnfs[BOARDNUM] = {
+ /*ddr_density[]*/	{ 0x04, 0xff },
+ /*ca_swap*/		0x00302154,
+ /*dqs_swap*/		0x2310,
+-/*dq_swap[]*/		{ 0x01672543, 0x45361207, 0x45632107, 0x60715234 },
++/*dq_swap[]*/		{ 0x26015734, 0x04531276, 0x43251607, 0x10647532 },
+ /*dm_swap[]*/		{ 0x08, 0x08, 0x08, 0x08 },
+ /*wdqlvl_patt[]*/	WDQLVL_PAT,
+ /*cacs_adj*/		{ 0, 0, 0, 0, 0, 0, 0, 0,
+@@ -1941,7 +1922,7 @@ static const struct _boardcnf boardcnfs[BOARDNUM] = {
+ /*ddr_density[]*/	{ 0x04, 0xff },
+ /*ca_swap*/		0x00302154,
+ /*dqs_swap*/		0x2310,
+-/*dq_swap[]*/		{ 0x01672543, 0x45361207, 0x45632107, 0x60715234 },
++/*dq_swap[]*/		{ 0x26015734, 0x04531276, 0x43251607, 0x10647532 },
+ /*dm_swap[]*/		{ 0x08, 0x08, 0x08, 0x08 },
+ /*wdqlvl_patt[]*/	WDQLVL_PAT,
+ /*cacs_adj*/		{ 0, 0, 0, 0, 0, 0, 0, 0,
+-- 
+2.17.1
+
