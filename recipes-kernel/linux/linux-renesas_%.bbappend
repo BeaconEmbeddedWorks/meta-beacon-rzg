@@ -50,4 +50,6 @@ SRC_URI += " \
 	file://0029-arm64-dts-beacon-renesom-baseboard-Fix-Audio-clockin.patch \
 	file://0030-RSOM-222.patch \
 	file://0031-RSOM-233.patch \
+	file://0032-RSOM-229.patch \
+	file://0033-RSOM-229.patch \
 	"
