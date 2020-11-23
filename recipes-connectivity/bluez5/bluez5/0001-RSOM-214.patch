@@ -1,0 +1,37 @@
+From 36907be4b0e66c53c412eab56a84fb09a231b6c2 Mon Sep 17 00:00:00 2001
+From: Charles Stevens <charles.stevens@compasses.com>
+Date: Mon, 23 Nov 2020 15:50:04 -0600
+Subject: [PATCH] RSOM-214
+
+Make bluezutils.py Python3 compatible
+
+Signed-off-by: Charles Stevens <charles.stevens@compasses.com>
+---
+ test/bluezutils.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/test/bluezutils.py b/test/bluezutils.py
+index de08cbd..cd89640 100644
+--- a/test/bluezutils.py
++++ b/test/bluezutils.py
+@@ -15,7 +15,7 @@ def find_adapter(pattern=None):
+ 
+ def find_adapter_in_objects(objects, pattern=None):
+ 	bus = dbus.SystemBus()
+-	for path, ifaces in objects.iteritems():
++	for path, ifaces in objects.items():
+ 		adapter = ifaces.get(ADAPTER_INTERFACE)
+ 		if adapter is None:
+ 			continue
+@@ -35,7 +35,7 @@ def find_device_in_objects(objects, device_address, adapter_pattern=None):
+ 	if adapter_pattern:
+ 		adapter = find_adapter_in_objects(objects, adapter_pattern)
+ 		path_prefix = adapter.object_path
+-	for path, ifaces in objects.iteritems():
++	for path, ifaces in objects.items():
+ 		device = ifaces.get(DEVICE_INTERFACE)
+ 		if device is None:
+ 			continue
+-- 
+2.17.1
+
