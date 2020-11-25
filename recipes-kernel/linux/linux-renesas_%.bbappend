@@ -11,6 +11,7 @@ SRC_URI += " \
 	   file://Enable-GNSS.cfg \
 	   file://bluetooth.cfg \
 	   file://wifi.cfg \
+           file://mfg_eeprom.cfg \
 	   file://Enable-fuse.cfg \
            "
 
@@ -52,4 +53,7 @@ SRC_URI += " \
 	file://0031-RSOM-233.patch \
 	file://0032-RSOM-229.patch \
 	file://0033-RSOM-229.patch \
+	file://0034-RSOM-186.patch \
+	file://0035-RSOM-186.patch \
+	file://0036-RSOM-221-Spidev-warning.patch \
 	"
