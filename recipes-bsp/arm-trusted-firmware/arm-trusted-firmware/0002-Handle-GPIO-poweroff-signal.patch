@@ -1,17 +1,16 @@
-From 5d2fe522c88be24fbd186431dcc1ab31a2e2d669 Mon Sep 17 00:00:00 2001
+From e2241b8a00501fbe1f9208ad44448c7df6e27299 Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@logicpd.com>
 Date: Tue, 5 May 2020 14:23:18 -0500
-Subject: [PATCH 2/4] Handle GPIO poweroff signal
-
+Subject: [PATCH 2/7] Handle GPIO poweroff signal
 ---
- plat/renesas/rcar/rcar_pm.c | 43 +++++++------------------------------
- 1 file changed, 8 insertions(+), 35 deletions(-)
+ plat/renesas/rcar/rcar_pm.c | 42 +++++++------------------------------
+ 1 file changed, 7 insertions(+), 35 deletions(-)
 
 diff --git a/plat/renesas/rcar/rcar_pm.c b/plat/renesas/rcar/rcar_pm.c
-index a94e7970..bca36835 100644
+index a94e7970..be2e9052 100644
 --- a/plat/renesas/rcar/rcar_pm.c
 +++ b/plat/renesas/rcar/rcar_pm.c
-@@ -310,41 +310,14 @@ void rcar_affinst_suspend_finish(unsigned int afflvl, unsigned int state)
+@@ -310,41 +310,13 @@ void rcar_affinst_suspend_finish(unsigned int afflvl, unsigned int state)
   ******************************************************************************/
  static void __dead2 rcar_system_off(void)
  {
@@ -54,10 +53,9 @@ index a94e7970..bca36835 100644
 +#define GPIO_BASE               (0xE6050000U)
 +#define GPIO_INOUTSEL6          (GPIO_BASE + 0x5404U)
 +#define GPIO_OUTDT6             (GPIO_BASE + 0x5408U)
-+	/* Make sure power kill is output */
-+	mmio_write_32(GPIO_INOUTSEL6, 0x00013F00U);
++	/* Assume power kill is output GP 6_11 (configured by BL2) */
 +	/* Set GP 6_11 Low to power off */
-+	mmio_write_32(GPIO_OUTDT6, 0x00000000U);
++	mmio_write_32(GPIO_OUTDT6, (mmio_read_32(GPIO_OUTDT6)&~(1<<11)));
  	wfi();
  	ERROR("RCAR System Off: operation not handled.\n");
  	panic();
