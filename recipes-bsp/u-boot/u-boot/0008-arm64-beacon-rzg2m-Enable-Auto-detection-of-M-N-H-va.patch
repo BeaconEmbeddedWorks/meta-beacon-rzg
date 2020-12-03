@@ -1,0 +1,93 @@
+From c660050a52032c2b8ac33fd44c96bf0426798467 Mon Sep 17 00:00:00 2001
+From: Adam Ford <aford173@gmail.com>
+Date: Fri, 4 Sep 2020 12:13:43 -0500
+Subject: [PATCH 08/10] arm64: beacon-rzg2m: Enable Auto-detection of M/N/H
+ variants
+
+Currently, the config file specifies the device tree file,but it
+may be possible to use one U-Boot with all three boards.
+
+This patch removes the fdt_file definition from beacon-rzg2m.h and
+a late initialization function checks the processor type and sets
+the fdt_file based on the SoC type.
+
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+ arch/arm/mach-rmobile/Kconfig.64             |  1 +
+ arch/arm/mach-rmobile/include/mach/rmobile.h |  2 ++
+ board/beacon/beacon-rzg2m/beacon-rzg2m.c     | 21 ++++++++++++++++++++
+ include/configs/beacon-rzg2m.h               |  1 -
+ 4 files changed, 24 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-rmobile/Kconfig.64 b/arch/arm/mach-rmobile/Kconfig.64
+index 087e1518a4..df61340c23 100644
+--- a/arch/arm/mach-rmobile/Kconfig.64
++++ b/arch/arm/mach-rmobile/Kconfig.64
+@@ -70,6 +70,7 @@ config TARGET_BEACON_RZG2M
+ 	bool "Beacon Embedded Works RZ/G2M board"
+ 	help
+           Support for Beacon RZG2M platform
++	select BOARD_LATE_INIT
+ 
+ config TARGET_HIHOPE_RZG2M
+ 	bool "HiHope RZ/G2M board"
+diff --git a/arch/arm/mach-rmobile/include/mach/rmobile.h b/arch/arm/mach-rmobile/include/mach/rmobile.h
+index fd2c130c87..c369a4fd91 100644
+--- a/arch/arm/mach-rmobile/include/mach/rmobile.h
++++ b/arch/arm/mach-rmobile/include/mach/rmobile.h
+@@ -34,6 +34,8 @@
+ #define RMOBILE_CPU_TYPE_R8A774E1	0x4F
+ #define RMOBILE_CPU_TYPE_R8A774A1	0x52
+ #define RMOBILE_CPU_TYPE_R8A774B1	0x55
++#define RMOBILE_CPU_TYPE_R8A774E1	0x4F
++
+ #define RMOBILE_CPU_TYPE_R8A77970	0x54
+ #define RMOBILE_CPU_TYPE_R8A774C0	0x57
+ #define RMOBILE_CPU_TYPE_R8A77995	0x58
+diff --git a/board/beacon/beacon-rzg2m/beacon-rzg2m.c b/board/beacon/beacon-rzg2m/beacon-rzg2m.c
+index 5ed919a522..3040849df5 100644
+--- a/board/beacon/beacon-rzg2m/beacon-rzg2m.c
++++ b/board/beacon/beacon-rzg2m/beacon-rzg2m.c
+@@ -85,6 +85,27 @@ int board_init(void)
+ 	return 0;
+ }
+ 
++int board_late_init(void)
++{
++	/* If already defined, exit */
++	if (env_get("fdt_file"))
++		return 0;
++
++	switch (rmobile_get_cpu_type()) {
++	case RMOBILE_CPU_TYPE_R8A774A1:
++		env_set("fdt_file", "r8a774a1-beacon-rzg2m-kit.dtb");
++		break;
++	case RMOBILE_CPU_TYPE_R8A774B1:
++		env_set("fdt_file", "r8a774b1-beacon-rzg2n-kit.dtb");
++		break;
++	case RMOBILE_CPU_TYPE_R8A774E1:
++		env_set("fdt_file", "r8a774e1-beacon-rzg2h-kit.dtb");
++		break;
++	}
++
++	return 0;
++}
++
+ int dram_init(void)
+ {
+ 	if (fdtdec_setup_mem_size_base() != 0)
+diff --git a/include/configs/beacon-rzg2m.h b/include/configs/beacon-rzg2m.h
+index 96b1d1fe4c..6df0705147 100644
+--- a/include/configs/beacon-rzg2m.h
++++ b/include/configs/beacon-rzg2m.h
+@@ -33,7 +33,6 @@
+ 	"loadaddr=0x48080000\0"	\
+ 	"fdt_high=0xffffffffffffffff\0"		\
+ 	"boot_fdt=try\0" \
+-	"fdt_file=" CONFIG_DEFAULT_FDT_FILE "\0" \
+ 	"initrd_addr=0x43800000\0"		\
+ 	"initrd_high=0xffffffffffffffff\0" \
+ 	"ramdisk_file=rootfs.cpio.uboot\0" \
+-- 
+2.17.1
+

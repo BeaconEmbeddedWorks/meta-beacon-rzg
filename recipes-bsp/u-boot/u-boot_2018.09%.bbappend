@@ -14,4 +14,7 @@ SRC_URI += " \
 	file://0005-configs-r8a774a1_beacon-rzg2m-Enable-CMD_PART.patch \
 	file://0006-configs-beacon-rzg2m.h-Fix-loading-addresses.patch \
 	file://0007-beacon-rzg2m-Configure-RAMdisk-scripts-for-booting.patch \
+	file://0008-arm64-beacon-rzg2m-Enable-Auto-detection-of-M-N-H-va.patch \
+	file://0009-RSOM-212-u-boot-for-each-SOM-type.patch \
+	file://0010-RSOM-212-u-boot-for-each-SOM-type.patch \
 	"
