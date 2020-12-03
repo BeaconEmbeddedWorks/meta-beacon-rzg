@@ -1,0 +1,30 @@
+From a423b4eaf803f10cc2d77910cf5183a6d1ae18f7 Mon Sep 17 00:00:00 2001
+From: Charles Stevens <charles.stevens@compasses.com>
+Date: Wed, 2 Dec 2020 17:28:48 -0600
+Subject: [PATCH 37/40] RSOM-186 - Fix AVB TXC refclock reference
+
+arm64: dts: Remove hack for obtaining AVB refclock using EHCI clock(s)
+
+Signed-off-by: Charles Stevens <charles.stevens@compasses.com>
+---
+ arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+index aa6f1e51f8cf..7b2a4445bf2f 100755
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+@@ -295,9 +295,7 @@
+ 
+ &ehci1 {
+ 	status = "okay";
+-	/* Hack, we are asking the EHCI to take a clk ref to the Ethernet
+-	refclock so Ethernet will work (AVB_TXCREFCLK) */
+-	clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>, <&versaclock5 3>, <&versaclock5 4>;
++	clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>, <&versaclock5 3>;
+ };
+ 
+ &hdmi0 {
+-- 
+2.17.1
+

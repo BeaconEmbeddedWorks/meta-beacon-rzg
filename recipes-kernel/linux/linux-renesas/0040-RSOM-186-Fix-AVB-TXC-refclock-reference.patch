@@ -1,0 +1,55 @@
+From d77be6f46dea012e60d9a433fc68894ce3fc6470 Mon Sep 17 00:00:00 2001
+From: Charles Stevens <charles.stevens@compasses.com>
+Date: Wed, 2 Dec 2020 17:45:00 -0600
+Subject: [PATCH 40/40] RSOM-186 - Fix AVB TXC refclock reference
+
+The RZ/G2 Ethernet AVB has an external pin requiring a 125MHz clock input;
+add code to allow specification of an optional clock (reference) to drive
+this pin.
+
+Signed-off-by: Charles Stevens <charles.stevens@compasses.com>
+---
+ drivers/net/ethernet/renesas/ravb.h      |  1 +
+ drivers/net/ethernet/renesas/ravb_main.c | 14 ++++++++++++++
+ 2 files changed, 15 insertions(+)
+
+diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
+index ac9195add811..6733b48b9b18 100644
+--- a/drivers/net/ethernet/renesas/ravb.h
++++ b/drivers/net/ethernet/renesas/ravb.h
+@@ -997,6 +997,7 @@ struct ravb_private {
+ 	struct platform_device *pdev;
+ 	void __iomem *addr;
+ 	struct clk *clk;
++	struct clk *ref_clk;
+ 	struct mdiobb_ctrl mdiobb;
+ 	u32 num_rx_ring[NUM_RX_QUEUE];
+ 	u32 num_tx_ring[NUM_TX_QUEUE];
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index b996eddf0861..8f1ee495fa8e 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -2085,6 +2085,20 @@ static int ravb_probe(struct platform_device *pdev)
+ 		goto out_release;
+ 	}
+ 
++	priv->ref_clk = devm_clk_get(&pdev->dev, "txc_refclk");
++	if (IS_ERR(priv->ref_clk)) {
++		if (PTR_ERR(priv->ref_clk) == -EPROBE_DEFER)
++		{
++			/* for Probe defer return error */
++			error = PTR_ERR(priv->ref_clk);
++			goto out_release;
++		}
++		/* otherwise ignore the error, clock is optional
++		   since most DTs don't include it */
++	} else {
++		(void)clk_prepare_enable(priv->ref_clk);
++	}
++
+ 	ndev->max_mtu = 2048 - (ETH_HLEN + VLAN_HLEN + ETH_FCS_LEN);
+ 	ndev->min_mtu = ETH_MIN_MTU;
+ 
+-- 
+2.17.1
+

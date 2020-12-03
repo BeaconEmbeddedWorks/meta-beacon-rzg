@@ -56,4 +56,8 @@ SRC_URI += " \
 	file://0034-RSOM-186.patch \
 	file://0035-RSOM-186.patch \
 	file://0036-RSOM-221-Spidev-warning.patch \
+	file://0037-RSOM-186-Fix-AVB-TXC-refclock-reference.patch \
+	file://0038-RSOM-186-Fix-AVB-TXC-refclock-reference.patch \
+	file://0039-RSOM-186-Fix-AVB-TXC-refclock-reference.patch \
+	file://0040-RSOM-186-Fix-AVB-TXC-refclock-reference.patch \
 	"
