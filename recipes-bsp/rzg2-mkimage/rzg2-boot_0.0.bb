@@ -66,13 +66,13 @@ do_compile () {
 
 	# eMMC copies
 	dd if=${ATF_BL2_NAME}     of=${img} bs=1 seek=`printf "%d" 0x003C00` conv=notrunc
-	dd if=cert_header_sa6.bin of=${img} bs=1 seek=`printf "%d" 0x030000p` conv=notrunc
+	dd if=cert_header_sa6.bin of=${img} bs=1 seek=`printf "%d" 0x030000` conv=notrunc
 	# QSPI copies
-	dd if=${ATF_BL2_NAME}     of=${img} bs=1 seek=`printf "%d" 0x040000p` conv=notrunc
-	dd if=cert_header_sa6.bin of=${img} bs=1 seek=`printf "%d" 0x180000p` conv=notrunc
+	dd if=${ATF_BL2_NAME}     of=${img} bs=1 seek=`printf "%d" 0x040000` conv=notrunc
+	dd if=cert_header_sa6.bin of=${img} bs=1 seek=`printf "%d" 0x180000` conv=notrunc
 
-	dd if=${ATF_BL31_NAME}    of=${img} bs=1 seek=`printf "%d" 0x1C0000p` conv=notrunc
-	dd if=${UBOOT_NAME}       of=${img} bs=1 seek=`printf "%d" 0x300000p` conv=notrunc
+	dd if=${ATF_BL31_NAME}    of=${img} bs=1 seek=`printf "%d" 0x1C0000` conv=notrunc
+	dd if=${UBOOT_NAME}       of=${img} bs=1 seek=`printf "%d" 0x300000` conv=notrunc
 
 	srec_cat ${img} -binary -offset 0x50000000 -un_fill 0 16 -output ${img_name}.srec -address-length=4
 
