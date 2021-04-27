@@ -28,7 +28,8 @@ RDEPENDS_${PN}-touch = "tslib tslib-conf tslib-tests tslib-calibrate \
 
 SUMMARY_${PN}-test = "Test software"
 RDEPENDS_${PN}-test = "fbset evtest spitools test-neon \
-			memtester linpack whetstone cpufrequtils"
+			memtester linpack whetstone dhrystone \
+			cpufrequtils"
 
 SUMMARY_${PN}-net = "Networking / Cellular"
 
