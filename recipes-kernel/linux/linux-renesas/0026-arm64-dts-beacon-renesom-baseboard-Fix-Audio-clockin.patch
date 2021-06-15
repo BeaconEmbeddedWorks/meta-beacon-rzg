@@ -1,7 +1,7 @@
-From e6b0822e44442e9b493346d38b3e7a2fb966616d Mon Sep 17 00:00:00 2001
+From c0a01e6aa91cab7ba977ffb019a171f7d91f60d9 Mon Sep 17 00:00:00 2001
 From: Adam Ford <aford173@gmail.com>
 Date: Tue, 22 Sep 2020 11:41:58 -0500
-Subject: [PATCH 29/29] arm64: dts: beacon-renesom-baseboard: Fix Audio
+Subject: [PATCH 26/44] arm64: dts: beacon-renesom-baseboard: Fix Audio
  clocking on beta hardware
 
 The audio on alpha hardware did not support both 44.1 and 48KHz clocks.

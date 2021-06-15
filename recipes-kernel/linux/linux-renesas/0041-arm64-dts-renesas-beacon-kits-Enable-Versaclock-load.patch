@@ -1,0 +1,46 @@
+From c0d187924b5abb7f172ba435ce5e63bd9a790b31 Mon Sep 17 00:00:00 2001
+From: Adam Ford <aford173@gmail.com>
+Date: Thu, 7 Jan 2021 13:13:19 -0600
+Subject: [PATCH 41/44] arm64: dts: renesas: beacon kits: Enable Versaclock
+ loadings caps
+
+There is a programmable loading capacitance which can help better
+stablize the crystal on the versaclock.  In order to better refine
+the output stability, this needs to be around 11.5pF
+
+Fixes: RSOM-242
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+ arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi | 2 ++
+ arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi       | 2 ++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+index 9a0d59c392c1..a800b9fd7804 100755
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+@@ -398,6 +398,8 @@
+ 		#clock-cells = <1>;
+ 		clocks = <&x304_clk>;
+ 		clock-names = "xin";
++		idt,xtal1-load-femtofarads = <11590>;
++		idt,xtal2-load-femtofarads = <11590>;
+ 		/* CSI0_MCLK, CSI1_MCLK, AUDIO_CLK_CODEC, AUDIO_CLKA */
+ 		clock-output-names = "versaclock6_bb.out0_sel_i2cb", "versaclock6_bb.out1", "versaclock6_bb.out2", "versaclock6_bb.out3", "versaclock6_bb.out4";
+ 		assigned-clocks = <&versaclock6_bb 1>, <&versaclock6_bb 2>, <&versaclock6_bb 3>, <&versaclock6_bb 4>;
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
+index 16aad98d9922..81133b0f51da 100644
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
+@@ -334,6 +334,8 @@
+ 		#clock-cells = <1>;
+ 		clocks = <&x304_clk>;
+ 		clock-names = "xin";
++		idt,xtal1-load-femtofarads = <11590>;
++		idt,xtal2-load-femtofarads = <11590>;
+ 		/* du_dotclkin0, du_dotclkin2, usb_extal, avb_txcrefclk */
+ 		assigned-clocks =	<&versaclock6_som 1>, <&versaclock6_som 2>, <&versaclock6_som 3>, <&versaclock6_som 4>;
+ 		assigned-clock-rates =	<33333333>, <33333333>, <50000000>, <125000000>;
+-- 
+2.17.1
+

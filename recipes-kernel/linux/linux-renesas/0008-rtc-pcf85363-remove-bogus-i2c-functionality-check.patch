@@ -1,7 +1,7 @@
-From 4ac8b249cf92750575ecdd0a6572152b17631d5d Mon Sep 17 00:00:00 2001
+From 0a5fc0f054c1a2b13884f21476e4e79603d5d18a Mon Sep 17 00:00:00 2001
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Date: Wed, 10 Apr 2019 22:56:02 +0200
-Subject: [PATCH 08/12] rtc: pcf85363: remove bogus i2c functionality check
+Subject: [PATCH 08/44] rtc: pcf85363: remove bogus i2c functionality check
 
 regmap is abstracting the i2c functionalities the best it can, there is no
 need to check.

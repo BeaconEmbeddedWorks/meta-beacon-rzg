@@ -1,7 +1,7 @@
-From 49a6fe75f527fcff7c711b25c833e01061f1027d Mon Sep 17 00:00:00 2001
+From a22cc6bf9c1923525720ce330081579ee749d61b Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@compasses.com>
 Date: Wed, 2 Dec 2020 17:31:57 -0600
-Subject: [PATCH 38/40] RSOM-186 - Fix AVB TXC refclock reference
+Subject: [PATCH 34/44] RSOM-186 - Fix AVB TXC refclock reference
 
 arm64: dts: Add new clock reference and name for revised AVB driver
 

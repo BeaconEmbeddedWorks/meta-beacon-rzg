@@ -1,7 +1,7 @@
-From 5202882b44063d862dda45281c6de2a919d98abc Mon Sep 17 00:00:00 2001
+From d08ac4e89b6fda4b2d72895dbaad27254e950b07 Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@compasses.com>
 Date: Wed, 2 Dec 2020 17:43:08 -0600
-Subject: [PATCH 39/40] RSOM-186 - Fix AVB TXC refclock reference
+Subject: [PATCH 35/44] RSOM-186 - Fix AVB TXC refclock reference
 
 arm64: dts: Rename symbol for SOM versaclock to match actual part.
 

@@ -1,7 +1,7 @@
-From 5bc2e75b9a58f0354085e5a1a271418b9390a690 Mon Sep 17 00:00:00 2001
+From d50459b783af277e26568cab33e6b05f996d87b4 Mon Sep 17 00:00:00 2001
 From: Adam Ford <aford173@gmail.com>
 Date: Thu, 9 Jul 2020 12:24:07 -0500
-Subject: [PATCH 21/23] arm64: dts: r8a774a1-beacon-rzg2m: Update device tree
+Subject: [PATCH 18/44] arm64: dts: r8a774a1-beacon-rzg2m: Update device tree
  to support Beta Hardware
 
 The hardware between the Alpha and Beta revisions have undergone significant change.

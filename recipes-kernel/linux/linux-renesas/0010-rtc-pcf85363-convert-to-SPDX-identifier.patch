@@ -1,7 +1,7 @@
-From 8248c01b407ee1e92ffe9d7edf87f94196917bb6 Mon Sep 17 00:00:00 2001
+From 16e3797f4d66d40cf508e0ed10461631025403ae Mon Sep 17 00:00:00 2001
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Date: Wed, 10 Apr 2019 22:56:04 +0200
-Subject: [PATCH 10/12] rtc: pcf85363: convert to SPDX identifier
+Subject: [PATCH 10/44] rtc: pcf85363: convert to SPDX identifier
 
 Use SPDX-License-Identifier instead of a verbose license text.
 

@@ -1,7 +1,7 @@
-From 3d64dab64513f4d68f9ca378112ce789367ad201 Mon Sep 17 00:00:00 2001
+From af61aadb95730471bf81ad1e91999b96f7018a45 Mon Sep 17 00:00:00 2001
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Date: Wed, 10 Apr 2019 22:56:01 +0200
-Subject: [PATCH 07/12] rtc: pcf85363: set range
+Subject: [PATCH 07/44] rtc: pcf85363: set range
 
 This is a standard BCD RTC that will fail in 2100.
 

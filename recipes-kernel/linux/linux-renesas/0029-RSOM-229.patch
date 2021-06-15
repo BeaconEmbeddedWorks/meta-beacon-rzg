@@ -1,10 +1,9 @@
-From e9fd15f986cb917588e99a35447fd083deee565e Mon Sep 17 00:00:00 2001
+From 950c1abb782b346b5e2a8b803d469347f54fedd9 Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@compasses.com>
-Date: Wed, 28 Oct 2020 15:30:15 -0500
-Subject: [PATCH 31/31] RSOM-233
+Date: Fri, 30 Oct 2020 16:54:07 -0500
+Subject: [PATCH 29/44] RSOM-229
 
-Change name of backlight for parallel display to backlight-dpi for
-consistancy with the display it is attached to.
+Change PWM frequency to 40kHz from 20kHz
 
 Signed-off-by: Charles Stevens <charles.stevens@compasses.com>
 ---
@@ -12,27 +11,27 @@ Signed-off-by: Charles Stevens <charles.stevens@compasses.com>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-index f68c17385de3..051fc5345e4c 100755
+index 2e55a1228a0f..cdaa9172ca69 100755
 --- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
 +++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-@@ -19,7 +19,7 @@
+@@ -14,7 +14,7 @@
+ 		compatible = "pwm-backlight";
+ 		power-supply = <&reg_lcd>;
+ 		enable-gpios = <&gpio_exp1 3 GPIO_ACTIVE_HIGH>;
+-		pwms = <&pwm2 0 50000>;
++		pwms = <&pwm2 0 25000>;
+ 		brightness-levels = <0 4 8 16 32 64 128 255>;
  		default-brightness-level = <6>;
  	};
- 
--	backlight_rgb: backlight-rgb {
-+	backlight_dpi: backlight-dpi {
+@@ -23,7 +23,7 @@
  		compatible = "pwm-backlight";
  		power-supply = <&reg_lcd>;
  		enable-gpios = <&gpio_exp1 7 GPIO_ACTIVE_LOW>;
-@@ -138,7 +138,7 @@
- 	rgb {
- 		/* Some random LCD with similar timings */
- 		compatible = "rocktech,rk070er9427";
--		backlight = <&backlight_rgb>;
-+		backlight = <&backlight_dpi>;
- 		enable-gpios = <&gpio1 21 GPIO_ACTIVE_HIGH>;
- 		port {
- 			rgb_panel: endpoint {
+-		pwms = <&pwm0 0 50000>;
++		pwms = <&pwm0 0 25000>;
+ 		brightness-levels = <0 25 33 50 63 75 88 100>;
+ 		default-brightness-level = <6>;
+ 	};	
 -- 
 2.17.1
 

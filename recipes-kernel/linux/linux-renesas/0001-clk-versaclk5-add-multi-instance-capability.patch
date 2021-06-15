@@ -1,7 +1,7 @@
-From 1cd104976cd9eda88c04aa3d601333f8f46bf407 Mon Sep 17 00:00:00 2001
+From 9a96b64074aa938f3a58d793ae573a323860f231 Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@logicpd.com>
 Date: Wed, 1 Jul 2020 18:51:36 -0500
-Subject: [PATCH 01/12] clk: versaclk5 - add multi-instance capability
+Subject: [PATCH 01/44] clk: versaclk5 - add multi-instance capability
 
 ---
  drivers/clk/clk-versaclock5.c        | 337 ++++++++++++++++++++-------

@@ -1,7 +1,7 @@
-From 05d253c1f06c550bd4621f28e39bad76d06597f7 Mon Sep 17 00:00:00 2001
+From 666532eae94bae3c3e4367d562c26777ab8f2a3b Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@compasses.com>
 Date: Fri, 30 Oct 2020 10:51:01 -0500
-Subject: [PATCH 32/33] RSOM-229
+Subject: [PATCH 28/44] RSOM-229
 
 Change brightness levels to recommended settings based on EE feedback for DPI
 display.

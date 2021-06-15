@@ -1,7 +1,7 @@
-From d14e9e23320a1741785534625f1d1ce8c6be9e66 Mon Sep 17 00:00:00 2001
+From 490170ec518d2f544b298407187269d9fcb77df1 Mon Sep 17 00:00:00 2001
 From: Adam Ford <aford173@gmail.com>
 Date: Thu, 13 Aug 2020 14:12:33 -0500
-Subject: [PATCH 24/29] eeprom: Enable MFG EEPROM decoder for Beacon/LPD SOM's
+Subject: [PATCH 21/44] eeprom: Enable MFG EEPROM decoder for Beacon/LPD SOM's
 
 The SOM's devices have an AT24 EEPROM on them which contain
 data programmed from manufacturing.

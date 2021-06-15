@@ -1,7 +1,7 @@
-From 075b17a7882b217094a180e2c1cbdd7e1dc734fe Mon Sep 17 00:00:00 2001
+From ce304b131e12216046f5d3c9ba4e3f1e582be11d Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@compasses.com>
 Date: Mon, 9 Nov 2020 10:53:44 -0600
-Subject: [PATCH 35/36] RSOM-186
+Subject: [PATCH 31/44] RSOM-186
 
 Quiet warning message related to unsupport BCLK divisor. This message is only
 relevent when runing in I2S master mode.

@@ -1,7 +1,7 @@
-From 5a89f6f87720abfb14740beca4a1f5b0b48334ee Mon Sep 17 00:00:00 2001
+From 3d17fc89cf80d47228878c5ff05722242f35f461 Mon Sep 17 00:00:00 2001
 From: Adam Ford <aford173@gmail.com>
 Date: Tue, 22 Sep 2020 10:32:36 -0500
-Subject: [PATCH 26/29] arm64: dts: beacon-renesom-som: Fix RZ/G2H and RZ/G2N
+Subject: [PATCH 23/44] arm64: dts: beacon-renesom-som: Fix RZ/G2H and RZ/G2N
  Booting
 
 A memory node for one of the memory banks on the common SOM dtsi

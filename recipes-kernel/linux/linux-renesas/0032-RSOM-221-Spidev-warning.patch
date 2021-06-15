@@ -1,7 +1,7 @@
-From c12de5788483d90914eb31703da20cf8e24ba307 Mon Sep 17 00:00:00 2001
+From 3bc79871ce2b8c6b020c54ac67d8bf1cb016d520 Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@compasses.com>
 Date: Mon, 23 Nov 2020 17:11:13 -0600
-Subject: [PATCH 36/36] RSOM-221 Spidev warning
+Subject: [PATCH 32/44] RSOM-221 Spidev warning
 
 Remove SPIDEV warning from code about using spidev compatible string directly.
 
@@ -14,10 +14,10 @@ Signed-off-by: Charles Stevens <charles.stevens@compasses.com>
  1 file changed, 9 deletions(-)
 
 diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
-index 028725573e63..a5399e44770a 100644
+index e444e7cc6968..7b652bc59ced 100644
 --- a/drivers/spi/spidev.c
 +++ b/drivers/spi/spidev.c
-@@ -722,15 +722,6 @@ static int spidev_probe(struct spi_device *spi)
+@@ -727,15 +727,6 @@ static int spidev_probe(struct spi_device *spi)
  	int			status;
  	unsigned long		minor;
  

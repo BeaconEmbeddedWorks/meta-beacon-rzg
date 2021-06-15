@@ -1,7 +1,7 @@
-From 526b08ac2d3a447e94bf84cc2e2ddc6fa45bf8bf Mon Sep 17 00:00:00 2001
+From 3430b9607cbe5f28e37cd66cfb5b8b4d70a5f452 Mon Sep 17 00:00:00 2001
 From: Adam Ford <aford173@gmail.com>
-Date: Thu, 13 Aug 2020 14:16:27 -0500
-Subject: [PATCH 25/29] arm64: defconfig: Enable AT24 and MFG EEPROM support
+Date: Mon, 14 Jun 2021 16:38:25 -0500
+Subject: [PATCH 22/44] arm64: defconfig: Enable AT24 and MFG EEPROM support
 
 The driver is now available.  This patch configures them as modules
 so the filesystem is present and mounted before it can be used.
@@ -12,18 +12,18 @@ Signed-off-by: Adam Ford <aford173@gmail.com>
  1 file changed, 2 insertions(+)
 
 diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 5f5e0bf608e4..8b90b14780da 100644
+index 881cd2df79e0..561d349f23bd 100644
 --- a/arch/arm64/configs/defconfig
 +++ b/arch/arm64/configs/defconfig
-@@ -113,6 +113,8 @@ CONFIG_MTD_SPI_NOR=y
+@@ -112,6 +112,8 @@ CONFIG_BLK_DEV_INTEGRITY=y
  CONFIG_BLK_DEV_LOOP=y
  CONFIG_VIRTIO_BLK=y
  CONFIG_SRAM=y
 +CONFIG_EEPROM_AT24=m
 +CONFIG_LPD_EEPROM=m
+ CONFIG_PCI_ENDPOINT_TEST=m
  # CONFIG_SCSI_PROC_FS is not set
  CONFIG_BLK_DEV_SD=y
- CONFIG_SCSI_SAS_LIBSAS=y
 -- 
 2.17.1
 

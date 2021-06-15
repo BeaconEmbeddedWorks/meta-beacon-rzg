@@ -1,7 +1,7 @@
-From f9bd6ad064df08cf8f219133504be5b35bea92f6 Mon Sep 17 00:00:00 2001
+From 594aaae3e49f3cc9a7391ad333317fda40594243 Mon Sep 17 00:00:00 2001
 From: Adam Ford <aford173@gmail.com>
 Date: Tue, 22 Sep 2020 11:37:53 -0500
-Subject: [PATCH 28/29] arm64: dts: beacon-renesom-baseboard: Fix PWM for LVDS
+Subject: [PATCH 25/44] arm64: dts: beacon-renesom-baseboard: Fix PWM for LVDS
  backlight
 
 This patch fixes some PWM pin mux and polarity issues with the

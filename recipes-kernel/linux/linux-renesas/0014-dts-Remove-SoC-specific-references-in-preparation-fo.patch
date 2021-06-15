@@ -1,13 +1,13 @@
-From 344537fc916ae2096df332cce89f48626b565c58 Mon Sep 17 00:00:00 2001
+From 376c745b81d664eeb8dff5d61f34b83c6ab07dcc Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@compasses.com>
 Date: Tue, 4 Aug 2020 13:31:00 -0500
-Subject: [PATCH 17/20] dts: Remove SoC specific references in preparation for
+Subject: [PATCH 14/44] dts: Remove SoC specific references in preparation for
  introducing other SoC variants.
 
 ---
  .../dts/renesas/beacon-renesom-baseboard.dtsi   | 17 -----------------
- .../boot/dts/renesas/beacon-renesom-som.dtsi    | 10 ++++++++--
- 2 files changed, 8 insertions(+), 19 deletions(-)
+ .../boot/dts/renesas/beacon-renesom-som.dtsi    | 13 +++++++++++--
+ 2 files changed, 11 insertions(+), 19 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
 index 576cddb60c6e..f69df9603101 100644
@@ -38,17 +38,20 @@ index 576cddb60c6e..f69df9603101 100644
          #address-cells = <1>;
          #size-cells = <0>;
 diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
-index 2ecbef0c7641..61f1f74d913e 100644
+index 2ecbef0c7641..e5f1c1e2f584 100644
 --- a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
 +++ b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
-@@ -365,8 +365,14 @@
+@@ -365,8 +365,17 @@
  	};
  };
  
 -&vspb {
 -	status = "okay";
-+/* FIXME: Use explicit path to node to enable since SoC dts files
-+ *  seem to have different node names for this node */
++/* Use explicit path to node to enable since SoC dts files
++ *  seem to have different node names for this node.
++    M and N refer to this peripheral as &vspb while the H
++    calls it &vspd.
++ */
 +/ {
 +	soc {
 +		vspm@fe960000 {

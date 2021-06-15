@@ -1,7 +1,7 @@
-From d77be6f46dea012e60d9a433fc68894ce3fc6470 Mon Sep 17 00:00:00 2001
+From 424625b5f1d1d4918b6e81be5c1d35fdd7d5cba7 Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@compasses.com>
 Date: Wed, 2 Dec 2020 17:45:00 -0600
-Subject: [PATCH 40/40] RSOM-186 - Fix AVB TXC refclock reference
+Subject: [PATCH 36/44] RSOM-186 - Fix AVB TXC refclock reference
 
 The RZ/G2 Ethernet AVB has an external pin requiring a 125MHz clock input;
 add code to allow specification of an optional clock (reference) to drive
@@ -26,10 +26,10 @@ index ac9195add811..6733b48b9b18 100644
  	u32 num_rx_ring[NUM_RX_QUEUE];
  	u32 num_tx_ring[NUM_TX_QUEUE];
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index b996eddf0861..8f1ee495fa8e 100644
+index a455b4210e4e..85cb6ba0a629 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -2085,6 +2085,20 @@ static int ravb_probe(struct platform_device *pdev)
+@@ -2111,6 +2111,20 @@ static int ravb_probe(struct platform_device *pdev)
  		goto out_release;
  	}
  

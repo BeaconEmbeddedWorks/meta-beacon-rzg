@@ -1,7 +1,7 @@
-From a423b4eaf803f10cc2d77910cf5183a6d1ae18f7 Mon Sep 17 00:00:00 2001
+From c3d858f249c6f792daa0e01a09cd7bbad0fab4f5 Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@compasses.com>
 Date: Wed, 2 Dec 2020 17:28:48 -0600
-Subject: [PATCH 37/40] RSOM-186 - Fix AVB TXC refclock reference
+Subject: [PATCH 33/44] RSOM-186 - Fix AVB TXC refclock reference
 
 arm64: dts: Remove hack for obtaining AVB refclock using EHCI clock(s)
 

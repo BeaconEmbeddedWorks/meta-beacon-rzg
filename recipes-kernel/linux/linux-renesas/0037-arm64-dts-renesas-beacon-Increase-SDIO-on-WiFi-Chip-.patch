@@ -1,0 +1,43 @@
+From 6843d517d660736f73a33438b46684deb6d3691b Mon Sep 17 00:00:00 2001
+From: Adam Ford <aford173@gmail.com>
+Date: Mon, 14 Dec 2020 07:01:16 -0600
+Subject: [PATCH 37/44] arm64: dts: renesas: beacon: Increase SDIO on WiFi Chip
+ to SDR104
+
+The datasheet for the WiFi chip states it supports SDR104, so add
+the pinmux option and the flags for sdr50 and sdr104.
+
+This should increase throughput on the SDIO bus.
+
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+ arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
+index 599b3d874c37..ab7d5281e442 100644
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
+@@ -237,8 +237,9 @@
+ &sdhi2 {
+ 	#address-cells = <1>;
+ 	#size-cells = <0>;
+-	pinctrl-names = "default";
++	pinctrl-names = "default", "state_uhs";
+ 	pinctrl-0 = <&sdhi2_pins>;
++	pinctrl-1 = <&sdhi2_pins>;
+ 	bus-width = <4>;
+ 	vmmc-supply = <&reg_3p3v>;
+ 	vqmmc-supply = <&reg_1p8v>;
+@@ -247,6 +248,8 @@
+ 	pm-ignore-notify;
+ 	keep-power-in-suspend;
+ 	mmc-pwrseq = <&wlan_pwrseq>;
++	sd-uhs-sdr50;
++	sd-ush-sdr104;
+ 	status = "okay";
+ 
+ 	brcmf: bcrmf@1 {
+-- 
+2.17.1
+

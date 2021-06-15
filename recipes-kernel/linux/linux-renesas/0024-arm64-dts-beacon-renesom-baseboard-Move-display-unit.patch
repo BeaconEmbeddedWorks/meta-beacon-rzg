@@ -1,7 +1,7 @@
-From 268c77d4e6a8e86fb1d42bb6ad9d0fd83153fd27 Mon Sep 17 00:00:00 2001
+From ec79dbe2fbc113d9dc00ba454ac60cde9c0eeb17 Mon Sep 17 00:00:00 2001
 From: Adam Ford <aford173@gmail.com>
 Date: Tue, 22 Sep 2020 11:29:21 -0500
-Subject: [PATCH 27/29] arm64: dts: beacon-renesom-baseboard: Move display unit
+Subject: [PATCH 24/44] arm64: dts: beacon-renesom-baseboard: Move display unit
  note to SoC file
 
 The beacon-renesom-baseboard file is common to the RZ/G2M, RZ/G2N, and

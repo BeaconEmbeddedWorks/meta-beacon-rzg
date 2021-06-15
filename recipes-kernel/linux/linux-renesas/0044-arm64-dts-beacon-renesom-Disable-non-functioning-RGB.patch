@@ -1,0 +1,99 @@
+From e35f34ee95b41045c89e16f44a8c9493157821f6 Mon Sep 17 00:00:00 2001
+From: Adam Ford <aford173@gmail.com>
+Date: Fri, 30 Apr 2021 07:52:05 -0500
+Subject: [PATCH 44/44] arm64: dts: beacon-renesom: Disable non-functioning RGB
+ display
+
+The baseboard has pins used for either SCIF4 or RGB display.  Since the
+standard configuration enables the SCIF, there is no need to enable the
+RGB since it wont' work anyway.  Mark the RGB as disabled by default.
+
+Since the RGB variants of the device trees explicitly mux the pins for
+RGB and disable SCIF4, add nodes to enable the RGB panel there.
+
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+ arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi | 5 ++++-
+ .../boot/dts/renesas/r8a774a1-beacon-rzg2m-kit-rgb.dts    | 8 ++++++++
+ .../boot/dts/renesas/r8a774b1-beacon-rzg2n-kit-rgb.dts    | 8 ++++++++
+ .../boot/dts/renesas/r8a774e1-beacon-rzg2h-kit-rgb.dts    | 8 ++++++++
+ 4 files changed, 28 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+index 519b2e9b1d07..386d812f543e 100755
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+@@ -135,11 +135,13 @@
+ 		};
+ 	};
+ 
+-	rgb {
++	rgb: display-rgb {
+ 		/* Some random LCD with similar timings */
+ 		compatible = "rocktech,rk070er9427";
+ 		backlight = <&backlight_dpi>;
+ 		enable-gpios = <&gpio1 21 GPIO_ACTIVE_HIGH>;
++		status = "disabled";
++
+ 		port {
+ 			rgb_panel: endpoint {
+ 				remote-endpoint = <&du_out_rgb>;
+@@ -293,6 +295,7 @@
+ 
+ &du_out_rgb {
+ 	remote-endpoint = <&rgb_panel>;
++	status = "disabled";
+ };
+ 
+ &ehci0 {
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit-rgb.dts b/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit-rgb.dts
+index 182411b67035..a823005aaef9 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit-rgb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit-rgb.dts
+@@ -16,3 +16,11 @@
+ 	pinctrl-0 = <&du_pins>;
+ 	pinctrl-names = "default";
+ };
++
++&du_out_rgb {
++	status = "okay";
++};
++
++&rgb {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit-rgb.dts b/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit-rgb.dts
+index 56a7e7e26df6..77b831135cfd 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit-rgb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit-rgb.dts
+@@ -16,3 +16,11 @@
+ 	pinctrl-0 = <&du_pins>;
+ 	pinctrl-names = "default";
+ };
++
++&du_out_rgb {
++	status = "okay";
++};
++
++&rgb {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/renesas/r8a774e1-beacon-rzg2h-kit-rgb.dts b/arch/arm64/boot/dts/renesas/r8a774e1-beacon-rzg2h-kit-rgb.dts
+index e71d8c545d16..6f7f28ff7c00 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774e1-beacon-rzg2h-kit-rgb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774e1-beacon-rzg2h-kit-rgb.dts
+@@ -16,3 +16,11 @@
+ 	pinctrl-0 = <&du_pins>;
+ 	pinctrl-names = "default";
+ };
++
++&du_out_rgb {
++	status = "okay";
++};
++
++&rgb {
++	status = "okay";
++};
+-- 
+2.17.1
+

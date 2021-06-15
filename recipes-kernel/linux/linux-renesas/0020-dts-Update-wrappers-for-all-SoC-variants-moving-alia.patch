@@ -1,7 +1,7 @@
-From 0961025acf3e74c741612799a3d0f0bba8ecc7f3 Mon Sep 17 00:00:00 2001
+From 94fc1e83ad3ea46db0d44515865817ff80d91d43 Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@compasses.com>
 Date: Mon, 10 Aug 2020 17:26:52 -0500
-Subject: [PATCH 23/23] dts: Update wrappers for all SoC variants moving
+Subject: [PATCH 20/44] dts: Update wrappers for all SoC variants moving
  aliases to wrappers.
 
 ---

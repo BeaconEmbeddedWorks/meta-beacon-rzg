@@ -1,0 +1,28 @@
+From d9f5d62c5d13f7e19cf74278cfee76bae0cbc7c1 Mon Sep 17 00:00:00 2001
+From: Adam Ford <aford173@gmail.com>
+Date: Mon, 14 Dec 2020 08:05:54 -0600
+Subject: [PATCH 38/44] arm64: dts: renesas: beacon-som: Enable HS400 on eMMC.
+
+The eMMC used on the Beacon modules are capable of HS400, so add
+them to the list of capabilities while negotiating speed.
+
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+ arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
+index ab7d5281e442..28f474ed3741 100644
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
+@@ -270,6 +270,7 @@
+ 	vqmmc-supply = <&reg_1p8v>;
+ 	bus-width = <8>;
+ 	mmc-hs200-1_8v;
++	mmc-hs400-1_8v;
+ 	non-removable;
+ 	fixed-emmc-driver-type = <1>;
+ 	status = "okay";
+-- 
+2.17.1
+

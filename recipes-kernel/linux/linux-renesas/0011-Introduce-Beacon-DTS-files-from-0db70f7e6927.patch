@@ -1,7 +1,7 @@
-From 60fc47670331aba0475b486dce50a1dc9cecc52e Mon Sep 17 00:00:00 2001
+From c7c6e892920cf58530872156b8264d82515eda51 Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@logicpd.com>
 Date: Thu, 2 Jul 2020 09:04:03 -0500
-Subject: [PATCH 11/12] Introduce Beacon DTS files from 0db70f7e6927
+Subject: [PATCH 11/44] Introduce Beacon DTS files from 0db70f7e6927
 
 ---
  .../dts/renesas/beacon-renesom-baseboard.dtsi | 874 ++++++++++++++++++

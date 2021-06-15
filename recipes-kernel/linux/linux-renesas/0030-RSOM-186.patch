@@ -1,7 +1,7 @@
-From 87a60891978af033fa913938e189e7650b2c03af Mon Sep 17 00:00:00 2001
+From a62ae4a2b457e084a489d44453cee7bd993a3193 Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@compasses.com>
 Date: Mon, 9 Nov 2020 09:12:04 -0600
-Subject: [PATCH 34/36] RSOM-186
+Subject: [PATCH 30/44] RSOM-186
 
 arm64: dts: Beacon EmbededdedWorks: Make clocking more explicit
 add clock [parent] to wm8962 codec
