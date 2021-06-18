@@ -1,0 +1,106 @@
+From 98d53f58e45ded855e164028f7e5a66b953a8369 Mon Sep 17 00:00:00 2001
+From: Adam Ford <aford173@gmail.com>
+Date: Wed, 2 Jun 2021 14:27:58 -0500
+Subject: [PATCH 5/6] arm64: dts: renesas: Resync beacon-renesom files with
+ Kernel 5.14
+
+The files are in the staging area destined for 5.14
+
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+ arch/arm/dts/beacon-renesom-baseboard.dtsi |  6 +++---
+ arch/arm/dts/beacon-renesom-som.dtsi       | 19 ++++++++-----------
+ 2 files changed, 11 insertions(+), 14 deletions(-)
+
+diff --git a/arch/arm/dts/beacon-renesom-baseboard.dtsi b/arch/arm/dts/beacon-renesom-baseboard.dtsi
+index 5f998d4706..9bc1b95d01 100644
+--- a/arch/arm/dts/beacon-renesom-baseboard.dtsi
++++ b/arch/arm/dts/beacon-renesom-baseboard.dtsi
+@@ -276,7 +276,7 @@
+ 
+ &ehci1 {
+ 	status = "okay";
+-	clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>;
++	clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>, <&versaclock5 3>;
+ };
+ 
+ &hdmi0 {
+@@ -615,7 +615,7 @@
+ };
+ 
+ &rcar_sound {
+-	pinctrl-0 = <&sound_pins &sound_clk_pins>;
++	pinctrl-0 = <&sound_pins>, <&sound_clk_pins>;
+ 	pinctrl-names = "default";
+ 
+ 	/* Single DAI */
+@@ -639,7 +639,7 @@
+ 				bitclock-master = <&rsnd_endpoint0>;
+ 				frame-master = <&rsnd_endpoint0>;
+ 
+-				playback = <&ssi1 &dvc1 &src1>;
++				playback = <&ssi1>, <&dvc1>, <&src1>;
+ 				capture = <&ssi0>;
+ 			};
+ 		};
+diff --git a/arch/arm/dts/beacon-renesom-som.dtsi b/arch/arm/dts/beacon-renesom-som.dtsi
+index 9565495b49..090dc9c4f5 100644
+--- a/arch/arm/dts/beacon-renesom-som.dtsi
++++ b/arch/arm/dts/beacon-renesom-som.dtsi
+@@ -10,12 +10,7 @@
+ 	memory@48000000 {
+ 		device_type = "memory";
+ 		/* first 128MB is reserved for secure area. */
+-		reg = <0x0 0x48000000 0x0 0xc000000>;
+-	};
+-
+-	memory@57000000 {
+-		device_type = "memory";
+-		reg = <0x0 0x57000000 0x0 0x29000000>;
++		reg = <0x0 0x48000000 0x0 0x78000000>;
+ 	};
+ 
+ 	osc_32k: osc_32k {
+@@ -58,6 +53,8 @@
+ 	phy-handle = <&phy0>;
+ 	rx-internal-delay-ps = <1800>;
+ 	tx-internal-delay-ps = <2000>;
++	clocks = <&cpg CPG_MOD 812>, <&versaclock5 4>;
++	clock-names = "fck", "refclk";
+ 	status = "okay";
+ 
+ 	phy0: ethernet-phy@0 {
+@@ -149,7 +146,7 @@
+ 	};
+ 
+ 	eeprom@50 {
+-		compatible = "microchip,at24c64", "atmel,24c64";
++		compatible = "microchip,24c64", "atmel,24c64";
+ 		pagesize = <32>;
+ 		read-only;	/* Manufacturing EEPROM programmed at factory */
+ 		reg = <0x50>;
+@@ -317,17 +314,17 @@
+ 	vqmmc-supply = <&reg_1p8v>;
+ 	bus-width = <8>;
+ 	mmc-hs200-1_8v;
++	no-sd;
++	no-sdio;
+ 	non-removable;
+ 	fixed-emmc-driver-type = <1>;
+ 	status = "okay";
+ };
+ 
+ &usb2_clksel {
+-	status = "okay";
+ 	clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>,
+-		 <&versaclock5 3>, <&usb3s0_clk>;
+-	clock-names = "ehci_ohci", "hs-usb-if",
+-		      "usb_extal", "usb_xtal";
++		  <&versaclock5 3>, <&usb3s0_clk>;
++	status = "okay";
+ };
+ 
+ &usb3s0_clk {
+-- 
+2.25.1
+

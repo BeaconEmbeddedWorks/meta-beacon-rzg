@@ -1,0 +1,68 @@
+From b65aa366184287b1a74cab3c80640972fb26a1c4 Mon Sep 17 00:00:00 2001
+From: Adam Ford <aford173@gmail.com>
+Date: Tue, 25 May 2021 12:47:09 -0500
+Subject: [PATCH 3/6] net: ravb: Add additional refclk
+
+The ethernet requires an external reference clock, and the driver
+currently assumes the clock is always running.  For devices using
+a programmable clock, this may not be true.  Add an optional clock
+called 'refclk' to open and enable the refclk for hardware running
+with programmable clocks.
+
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+ drivers/net/ravb.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/drivers/net/ravb.c b/drivers/net/ravb.c
+index 6953b7286a..ced80485de 100644
+--- a/drivers/net/ravb.c
++++ b/drivers/net/ravb.c
+@@ -130,6 +130,7 @@ struct ravb_priv {
+ 	struct mii_dev		*bus;
+ 	void __iomem		*iobase;
+ 	struct clk		clk;
++	struct clk		*refclk;
+ 	struct gpio_desc	reset_gpio;
+ };
+ 
+@@ -489,6 +490,8 @@ static int ravb_probe(struct udevice *dev)
+ 	if (ret < 0)
+ 		goto err_mdio_alloc;
+ 
++	eth->refclk = devm_clk_get_optional(dev, "refclk");
++
+ 	ret = dev_read_phandle_with_args(dev, "phy-handle", NULL, 0, 0, &phandle_args);
+ 	if (!ret) {
+ 		gpio_request_by_name_nodev(phandle_args.node, "reset-gpios", 0,
+@@ -522,6 +525,10 @@ static int ravb_probe(struct udevice *dev)
+ 	if (ret)
+ 		goto err_mdio_register;
+ 
++	ret = clk_enable(eth->refclk);
++	if (ret)
++		goto err_disable_clk;
++
+ 	ret = ravb_reset(dev);
+ 	if (ret)
+ 		goto err_mdio_reset;
+@@ -533,6 +540,8 @@ static int ravb_probe(struct udevice *dev)
+ 	return 0;
+ 
+ err_mdio_reset:
++	clk_disable(eth->refclk);
++err_disable_clk:
+ 	clk_disable(&eth->clk);
+ err_mdio_register:
+ 	mdio_free(mdiodev);
+@@ -545,6 +554,7 @@ static int ravb_remove(struct udevice *dev)
+ {
+ 	struct ravb_priv *eth = dev_get_priv(dev);
+ 
++	clk_disable(eth->refclk);
+ 	clk_disable(&eth->clk);
+ 
+ 	free(eth->phydev);
+-- 
+2.25.1
+

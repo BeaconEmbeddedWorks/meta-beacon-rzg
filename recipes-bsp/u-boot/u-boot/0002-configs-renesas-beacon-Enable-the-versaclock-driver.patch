@@ -1,0 +1,60 @@
+From 07f3a715bb11ee974cc3b551dad2b31b5ac1cdd7 Mon Sep 17 00:00:00 2001
+From: Adam Ford <aford173@gmail.com>
+Date: Wed, 2 Jun 2021 13:33:23 -0500
+Subject: [PATCH 2/6] configs: renesas: beacon:  Enable the versaclock driver
+
+The versaclock driver is necessary to use USB and Ethernet
+in U-Boot.  Enable the driver so it can be used.
+
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+ configs/r8a774a1_beacon_defconfig | 2 ++
+ configs/r8a774b1_beacon_defconfig | 2 ++
+ configs/r8a774e1_beacon_defconfig | 2 ++
+ 3 files changed, 6 insertions(+)
+
+diff --git a/configs/r8a774a1_beacon_defconfig b/configs/r8a774a1_beacon_defconfig
+index 2f45edd92e..3066229127 100644
+--- a/configs/r8a774a1_beacon_defconfig
++++ b/configs/r8a774a1_beacon_defconfig
+@@ -36,7 +36,9 @@ CONFIG_VERSION_VARIABLE=y
+ CONFIG_REGMAP=y
+ CONFIG_SYSCON=y
+ CONFIG_CLK=y
++CONFIG_CLK_CCF=y
+ CONFIG_CLK_RENESAS=y
++CONFIG_CLK_VERSACLOCK=y
+ CONFIG_RCAR_GPIO=y
+ CONFIG_DM_PCA953X=y
+ CONFIG_DM_I2C=y
+diff --git a/configs/r8a774b1_beacon_defconfig b/configs/r8a774b1_beacon_defconfig
+index ca514bb1aa..31d3c22902 100644
+--- a/configs/r8a774b1_beacon_defconfig
++++ b/configs/r8a774b1_beacon_defconfig
+@@ -36,7 +36,9 @@ CONFIG_VERSION_VARIABLE=y
+ CONFIG_REGMAP=y
+ CONFIG_SYSCON=y
+ CONFIG_CLK=y
++CONFIG_CLK_CCF=y
+ CONFIG_CLK_RENESAS=y
++CONFIG_CLK_VERSACLOCK=y
+ CONFIG_RCAR_GPIO=y
+ CONFIG_DM_PCA953X=y
+ CONFIG_DM_I2C=y
+diff --git a/configs/r8a774e1_beacon_defconfig b/configs/r8a774e1_beacon_defconfig
+index b89729d92a..594ebf94bf 100644
+--- a/configs/r8a774e1_beacon_defconfig
++++ b/configs/r8a774e1_beacon_defconfig
+@@ -36,7 +36,9 @@ CONFIG_VERSION_VARIABLE=y
+ CONFIG_REGMAP=y
+ CONFIG_SYSCON=y
+ CONFIG_CLK=y
++CONFIG_CLK_CCF=y
+ CONFIG_CLK_RENESAS=y
++CONFIG_CLK_VERSACLOCK=y
+ CONFIG_RCAR_GPIO=y
+ CONFIG_DM_PCA953X=y
+ CONFIG_DM_I2C=y
+-- 
+2.25.1
+
