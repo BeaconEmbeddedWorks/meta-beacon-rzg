@@ -1,0 +1,400 @@
+From 1f2534581f9fb25cfbf198db8739dc1bc766c2b1 Mon Sep 17 00:00:00 2001
+From: Adam Ford <aford173@gmail.com>
+Date: Mon, 21 Jun 2021 11:18:59 -0500
+Subject: [PATCH 1/2] plat:rzg:  Add support for Beacon RZ/G2M SOM
+
+The SOM has 4GB of non-ECC DDR.  Enable it, support the Lossy compression
+and keep the QSPI unlocked for being able to read/write ATF in U-Boot.
+
+Build with the following invocations:
+
+RZ/G2M:
+make rzg bl2 bl31 PLAT=rzg RZG_LOSSY_ENABLE=1 LSI=G2M RZG_DRAM_SPLIT=0 \
+     RZG_DRAM_ECC=0 SPD="none" LIFEC_DBSC_PROTECT_ENABLE=0 \
+     RZG_RPC_HYPERFLASH_LOCKED=0 MBEDTLS_DIR=../mbedtls \
+     CROSS_COMPILE=aarch64-linux-gnu- BOARD=BEACON
+
+RZ/G2N:
+make rzg bl2 bl31 PLAT=rzg RZG_LOSSY_ENABLE=1 LSI=G2N RZG_DRAM_SPLIT=0 \
+         RZG_DRAM_ECC=0 SPD="none" LIFEC_DBSC_PROTECT_ENABLE=0 \
+         RZG_RPC_HYPERFLASH_LOCKED=0 MBEDTLS_DIR=../mbedtls \
+         CROSS_COMPILE=aarch64-linux-gnu- BOARD=BEACON
+
+RZ/G2H:
+make rzg bl2 bl31 PLAT=rzg RZG_LOSSY_ENABLE=1 LSI=G2H RZG_DRAM_SPLIT=0 \
+         RZG_DRAM_ECC=0 SPD="none" LIFEC_DBSC_PROTECT_ENABLE=0 \
+         RZG_RPC_HYPERFLASH_LOCKED=0 MBEDTLS_DIR=../mbedtls \
+         CROSS_COMPILE=aarch64-linux-gnu- BOARD=BEACON
+
+Signed-off-by: Adam Ford <aford@beaconembedded.com>
+---
+ drivers/renesas/rzg/board/board.c             |  18 ++
+ drivers/renesas/rzg/board/board.h             |   5 +-
+ .../renesas/rzg/ddr/ddr_b/boot_init_dram.c    |   1 +
+ .../rzg/ddr/ddr_b/boot_init_dram_config.c     | 195 +++++++++++++++++-
+ plat/renesas/rzg/bl2_plat_setup.c             |   9 +
+ plat/renesas/rzg/platform.mk                  |   5 +
+ 6 files changed, 229 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/renesas/rzg/board/board.c b/drivers/renesas/rzg/board/board.c
+index 7e2643798..afd2edab7 100644
+--- a/drivers/renesas/rzg/board/board.c
++++ b/drivers/renesas/rzg/board/board.c
+@@ -19,13 +19,25 @@
+ #if (RZG_LSI == RZG_G2E)
+ #define BOARD_DEFAULT		(BOARD_EK874 << BOARD_CODE_SHIFT)
+ #elif (RZG_LSI == RZG_G2N)
++#if (BOARD == BEACON)
++#define BOARD_DEFAULT		(BOARD_BEACON_RZG2N << BOARD_CODE_SHIFT)
++#else
+ #define BOARD_DEFAULT		(BOARD_HIHOPE_RZG2N << BOARD_CODE_SHIFT)
++#endif
+ #elif (RZG_LSI == RZG_G2H)
++#if (BOARD == BEACON)
++#define BOARD_DEFAULT		(BOARD_BEACON_RZG2H << BOARD_CODE_SHIFT)
++#else
+ #define BOARD_DEFAULT		(BOARD_HIHOPE_RZG2H << BOARD_CODE_SHIFT)
++#endif
++#else
++#if (BOARD == BEACON)
++#define BOARD_DEFAULT		(BOARD_BEACON_RZG2M << BOARD_CODE_SHIFT)
+ #else
+ #define BOARD_DEFAULT		(BOARD_HIHOPE_RZG2M << BOARD_CODE_SHIFT)
+ #endif
+ #endif
++#endif
+ 
+ #define BOARD_CODE_MASK		(0xF8)
+ #define BOARD_REV_MASK		(0x07)
+@@ -52,6 +64,9 @@ const char *g_board_tbl[] = {
+ 	[BOARD_HIHOPE_RZG2N]	= "HiHope RZ/G2N",
+ 	[BOARD_HIHOPE_RZG2H]	= "HiHope RZ/G2H",
+ 	[BOARD_EK874]		= "EK874 RZ/G2E",
++	[BOARD_BEACON_RZG2M]	= "Beacon RZ/G2M",
++	[BOARD_BEACON_RZG2N]	= "Beacon RZ/G2N",
++	[BOARD_BEACON_RZG2H]	= "Beacon RZ/G2H",
+ 	[BOARD_UNKNOWN]		= "unknown"
+ };
+ 
+@@ -62,6 +77,9 @@ int32_t rzg_get_board_type(uint32_t *type, uint32_t *rev)
+ 		[BOARD_HIHOPE_RZG2M] = HM_ID,
+ 		[BOARD_HIHOPE_RZG2N] = HN_ID,
+ 		[BOARD_HIHOPE_RZG2H] = HH_ID,
++		[BOARD_BEACON_RZG2M] = HM_ID,
++		[BOARD_BEACON_RZG2N] = HN_ID,
++		[BOARD_BEACON_RZG2H] = HH_ID,
+ 		[BOARD_EK874] = EK_ID,
+ 	};
+ 	static uint8_t board_id = BOARD_ID_UNKNOWN;
+diff --git a/drivers/renesas/rzg/board/board.h b/drivers/renesas/rzg/board/board.h
+index e8c0e9fb6..199632827 100644
+--- a/drivers/renesas/rzg/board/board.h
++++ b/drivers/renesas/rzg/board/board.h
+@@ -12,7 +12,10 @@
+ #define BOARD_HIHOPE_RZG2M		(0x01U)
+ #define BOARD_HIHOPE_RZG2N		(0x02U)
+ #define BOARD_HIHOPE_RZG2H		(0x03U)
+-#define BOARD_UNKNOWN			(BOARD_HIHOPE_RZG2H + 1U)
++#define BOARD_BEACON_RZG2M		(0x04U)
++#define BOARD_BEACON_RZG2N		(0x05U)
++#define BOARD_BEACON_RZG2H		(0x06U)
++#define BOARD_UNKNOWN			(0x07U)
+ 
+ #define BOARD_REV_UNKNOWN		(0xFF)
+ 
+diff --git a/drivers/renesas/rzg/ddr/ddr_b/boot_init_dram.c b/drivers/renesas/rzg/ddr/ddr_b/boot_init_dram.c
+index 629ea0ec9..e16c21f7f 100644
+--- a/drivers/renesas/rzg/ddr/ddr_b/boot_init_dram.c
++++ b/drivers/renesas/rzg/ddr/ddr_b/boot_init_dram.c
+@@ -3636,6 +3636,7 @@ int32_t rzg_dram_init(void)
+ 		FATAL_MSG("BL2: DDR:Unknown Board\n");
+ 		return 0xff;
+ 	}
++
+ 	board_cnf = (const struct _boardcnf *)&boardcnfs[cnf_boardtype];
+ 
+ /* RZG_DRAM_SPLIT_2CH           (2U) */
+diff --git a/drivers/renesas/rzg/ddr/ddr_b/boot_init_dram_config.c b/drivers/renesas/rzg/ddr/ddr_b/boot_init_dram_config.c
+index 0c00d84dd..137495901 100644
+--- a/drivers/renesas/rzg/ddr/ddr_b/boot_init_dram_config.c
++++ b/drivers/renesas/rzg/ddr/ddr_b/boot_init_dram_config.c
+@@ -5,7 +5,8 @@
+  * SPDX-License-Identifier: BSD-3-Clause
+  */
+ 
+-#define BOARDNUM 5
++#define BOARDNUM 8
++
+ #define BOARD_JUDGE_AUTO
+ 
+ #ifdef BOARD_JUDGE_AUTO
+@@ -66,7 +67,7 @@ struct _boardcnf {
+ 	0x000F,\
+ 	0x010F}
+ 
+-static const struct _boardcnf boardcnfs[BOARDNUM] = {
++static const struct _boardcnf boardcnfs[] = {
+ /* boardcnf[0] Jiangsu HopeRun Software Co., Ltd. HiHope RZ/G2M board 16Gbit/1rank/2ch board with G2M/SOC */
+ 	{
+ 	 .phyvalid = 0x03,
+@@ -385,7 +386,183 @@ static const struct _boardcnf boardcnfs[BOARDNUM] = {
+ 	    0, 0, 0, 0, 0, 0, 0, 0}
+ 	}
+ 	}
+-},
++	},
++
++/* boardcnf[5] Beacon Embedded G2M/SOC */
++	{
++	 0x03,
++	 0x01,
++	 0x0320,
++	 0,
++	 0x0300,
++	 0x00a0,
++	{
++	{
++		{0x04, 0xff},
++		 0x00345201,
++		 0x3201,
++		{0x23617540, 0x54061237, 0x43251607, 0x71605243},
++		{0x08, 0x08, 0x08, 0x08},
++		WDQLVL_PAT,
++		{0, 0, 0, 0, 0, 0, 0, 0,
++		 0, 0},
++		{0, 0, 0, 0},
++		{0, 0, 0, 0, 0, 0, 0, 0,
++		 0, 0, 0, 0, 0, 0, 0, 0,
++		 0, 0, 0, 0, 0, 0, 0, 0,
++		 0, 0, 0, 0, 0, 0, 0, 0},
++		{0, 0, 0, 0},
++		{0, 0, 0, 0, 0, 0, 0, 0,
++		 0, 0, 0, 0, 0, 0, 0, 0,
++		 0, 0, 0, 0, 0, 0, 0, 0,
++		 0, 0, 0, 0, 0, 0, 0, 0}
++		},
++	{
++		{0x04, 0xff},
++		 0x00302154,
++		 0x2310,
++		{0x26015734, 0x04531276, 0x43251607, 0x10647532},
++		{0x08, 0x08, 0x08, 0x08},
++		WDQLVL_PAT,
++		{0, 0, 0, 0, 0, 0, 0, 0,
++		 0, 0},
++		{0, 0, 0, 0},
++		{0, 0, 0, 0, 0, 0, 0, 0,
++		 0, 0, 0, 0, 0, 0, 0, 0,
++		 0, 0, 0, 0, 0, 0, 0, 0,
++		 0, 0, 0, 0, 0, 0, 0, 0},
++		{0, 0, 0, 0},
++		{0, 0, 0, 0, 0, 0, 0, 0,
++		 0, 0, 0, 0, 0, 0, 0, 0,
++		 0, 0, 0, 0, 0, 0, 0, 0,
++		 0, 0, 0, 0, 0, 0, 0, 0}
++	}
++	}
++	},
++
++/* boardcnf[6] Beacon Embedded G2N/SOC */
++{
++	0x01,
++	0x01,
++	0x0320,
++	0,
++	0x0300,
++	0x00a0,
++	{
++	{
++	   {0x04, 0xff},
++	   0x00345201,
++	   0x3201,
++	   {0x23617540, 0x54061237, 0x43251607, 0x71605243},
++	   {0x08, 0x08, 0x08, 0x08},
++	   WDQLVL_PAT,
++	   {0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0},
++	   {0, 0, 0, 0},
++	   {0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0},
++	   {0, 0, 0, 0},
++	   {0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0}
++	   },
++	
++	}
++	},
++/* boardcnf[7] Beacon Embedded G2H/SOC */
++{
++	0x05,
++	0x01,
++	0x0320,
++	0,
++	0x0300,
++	0x00a0,
++	{
++	{
++	   {0x04, 0xff},
++	   0x00345201,
++	   0x3201,
++	   {0x23617540, 0x54067312, 0x43251607, 0x71605243},
++	   {0x08, 0x08, 0x08, 0x08},
++	   WDQLVL_PAT,
++	   {0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0},
++	   {0, 0, 0, 0},
++	   {0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0},
++	   {0, 0, 0, 0},
++	   {0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0}
++	},
++	{
++	   {0x04, 0xff},
++	    0x00302154,
++	    0x2310,
++	   {0x26015734, 0x04531276, 0x43251607, 0x10647532},
++	   {0x08, 0x08, 0x08, 0x08},
++	   WDQLVL_PAT,
++	   {0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0},
++	   {0, 0, 0, 0 },
++	   {0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0},
++	   {0, 0, 0, 0},
++	   {0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0}
++	   },
++	{
++	   {0x04, 0xff},
++	    0x00302154,
++	    0x2310,
++	   {0x26015734, 0x04531276, 0x43251607, 0x10647532},
++	   {0x08, 0x08, 0x08, 0x08},
++	   WDQLVL_PAT,
++	   {0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0},
++	   {0, 0, 0, 0},
++	   {0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0},
++	   {0, 0, 0, 0},
++	   {0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0}
++	},
++	{
++	   {0xff, 0xff},
++	    0,
++	    0,
++	   {0, 0, 0, 0},
++	   {0, 0, 0, 0},
++	   WDQLVL_PAT,
++	   {0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0},
++	   {0, 0, 0, 0},
++	   {0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0},
++	   {0, 0, 0, 0},
++	   {0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0,
++	    0, 0, 0, 0, 0, 0, 0, 0}
++	}
++	}
++	},
+ };
+ 
+ void boardcnf_get_brd_clk(uint32_t brd, uint32_t *clk, uint32_t *div)
+@@ -483,8 +660,15 @@ static uint32_t _board_judge(void)
+ 	uint32_t brd;
+ 
+ 	if (prr_product == PRR_PRODUCT_G2H) {
++#if (BOARD == BEACON)
++		brd = 7;
++#else
+ 		brd = 4;
++#endif
+ 	} else if (prr_product == PRR_PRODUCT_G2M) {
++#if (BOARD == BEACON)
++		brd = 5;
++#else
+ 		if (prr_cut <= RZG_G2M_CUT_VER11) {
+ 			brd = 1;
+ 		} else {
+@@ -495,8 +679,13 @@ static uint32_t _board_judge(void)
+ 				brd = 0;
+ 			}
+ 		}
++#endif
+ 	} else {
++#if (BOARD == BEACON)
++		brd = 6;
++#else
+ 		brd = 2;
++#endif
+ 	}
+ 
+ 	return brd;
+diff --git a/plat/renesas/rzg/bl2_plat_setup.c b/plat/renesas/rzg/bl2_plat_setup.c
+index 98664299e..dd18a5fc9 100644
+--- a/plat/renesas/rzg/bl2_plat_setup.c
++++ b/plat/renesas/rzg/bl2_plat_setup.c
+@@ -406,6 +406,12 @@ static void bl2_populate_compatible_string(void *dt)
+ 		ret = fdt_setprop_string(fdt, 0, "compatible",
+ 					 "renesas,ek874");
+ 		break;
++	case BOARD_BEACON_RZG2M:
++	case BOARD_BEACON_RZG2N:
++	case BOARD_BEACON_RZG2H:
++		ret = fdt_setprop_string(fdt, 0, "compatible",
++					 "renesas,beacon");
++		break;
+ 	default:
+ 		NOTICE("BL2: Cannot set compatible string, board unsupported\n");
+ 		panic();
+@@ -729,6 +735,9 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
+ 	case BOARD_HIHOPE_RZG2H:
+ 	case BOARD_HIHOPE_RZG2M:
+ 	case BOARD_HIHOPE_RZG2N:
++	case BOARD_BEACON_RZG2M:
++	case BOARD_BEACON_RZG2N:
++	case BOARD_BEACON_RZG2H:
+ 	case BOARD_EK874:
+ 		break;
+ 	default:
+diff --git a/plat/renesas/rzg/platform.mk b/plat/renesas/rzg/platform.mk
+index 8834492e4..ec448ded0 100644
+--- a/plat/renesas/rzg/platform.mk
++++ b/plat/renesas/rzg/platform.mk
+@@ -259,6 +259,11 @@ ifeq (${RZG_SYSTEM_RESET_KEEPON_DDR},1)
+   endif
+ endif
+ 
++#Process BOARD_DEFAULT
++ifdef BOARD
++$(eval $(call add_define,BOARD))
++endif
++
+ # Process RZG_DRAM_ECC flag
+ ifndef RZG_DRAM_ECC
+ RZG_DRAM_ECC :=0
+-- 
+2.17.1
+
