@@ -64,4 +64,6 @@ SRC_URI += " \
 	file://0042-arm64-dts-renesas-beacon-som-Reserve-memory-for-loss.patch \
 	file://0043-arm64-dts-renesas-beacon-baseboard-Enable-Microphone.patch \
 	file://0044-arm64-dts-beacon-renesom-Disable-non-functioning-RGB.patch \
+	file://0045-arm64-dts-beacon-renesom-Add-missing-misof-clock-nod.patch \
+	file://0046-drm-rcar-du-backport-panel-bridge.patch \
 	"

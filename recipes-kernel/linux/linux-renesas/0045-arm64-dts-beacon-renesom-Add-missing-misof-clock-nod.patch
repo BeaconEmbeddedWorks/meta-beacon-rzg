@@ -1,0 +1,33 @@
+From 2e9571eb729e3da21be0166f5c647afa347f8d2e Mon Sep 17 00:00:00 2001
+From: Charles Stevens <charles.stevens@compasses.com>
+Date: Fri, 9 Jul 2021 14:22:24 -0500
+Subject: [PATCH 45/46] arm64: dts: beacon-renesom: Add missing misof clock
+ node
+
+RZ/G2H SoC DTSI file is missing an overridable clock node used to set the
+SPI clock for high speed SPI communications
+---
+ arch/arm64/boot/dts/renesas/r8a774e1.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
+index f633d8423ecd..321226368669 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
+@@ -349,6 +349,13 @@
+ 		clock-frequency = <0>;
+ 	};
+ 
++        /* MSIOF reference clock - to be overridden by boards that provide it */
++        msiof_ref_clk: msiof-ref-clock {
++                compatible = "fixed-clock";
++                #clock-cells = <0>;
++                clock-frequency = <0>;
++        };
++
+ 	gsx_opp0: gsx_opp_table0 {
+ 		compatible = "operating-points-v2";
+ 
+-- 
+2.17.1
+
