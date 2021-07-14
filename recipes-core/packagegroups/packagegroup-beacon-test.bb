@@ -29,7 +29,7 @@ RDEPENDS_${PN}-touch = "tslib tslib-conf tslib-tests tslib-calibrate \
 SUMMARY_${PN}-test = "Test software"
 RDEPENDS_${PN}-test = "fbset evtest spitools test-neon \
 			memtester linpack whetstone dhrystone \
-			cpufrequtils"
+			cpufrequtils devmem2"
 
 SUMMARY_${PN}-net = "Networking / Cellular"
 
@@ -49,4 +49,8 @@ RDEPENDS_${PN}-net += " gpsd gps-utils"
 RDEPENDS_${PN}-net += " curl"
 
 SUMMARY_${PN}-fs = "File system support"
+#Support for NTFS
 RDEPENDS_${PN}-fs = "ntfs-3g ntfsprogs libntfs-3g"
+
+#Support for additional ext2/3/4
+RDEPENDS_${PN}-fs = " e2fsprogs-resize2fs e2fsprogs-tune2fs"
