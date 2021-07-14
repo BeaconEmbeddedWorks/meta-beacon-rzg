@@ -1,17 +1,16 @@
-From 9a268a3b35d95f26d81320f1a83026e2bf88904c Mon Sep 17 00:00:00 2001
+From 466d8759fa942655eaa0b55f77fcc122ae61469a Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@logicpd.com>
 Date: Thu, 28 May 2020 16:44:29 -0500
 Subject: [PATCH] kms-steal-crtc: Fix crash. Add screen cmd line parameter.
 
 ---
- tests/kms/kms-steal-crtc.c     | 15 +++++----------
+ tests/kms/kms-steal-crtc.c     | 36 +++++++++++++++-------------------
  tests/kms/libkms-test-device.c |  1 +
  tests/kms/libkms-test-screen.c |  2 +-
- 3 files changed, 7 insertions(+), 11 deletions(-)
- mode change 100644 => 100755 tests/kms/libkms-test-screen.c
+ 3 files changed, 18 insertions(+), 21 deletions(-)
 
 diff --git a/tests/kms/kms-steal-crtc.c b/tests/kms/kms-steal-crtc.c
-index 4b830d2..2bc47b6 100644
+index 4b830d2..84e2b7f 100644
 --- a/tests/kms/kms-steal-crtc.c
 +++ b/tests/kms/kms-steal-crtc.c
 @@ -88,8 +88,10 @@ int main(int argc, char *argv[])
@@ -23,7 +22,7 @@ index 4b830d2..2bc47b6 100644
 +	if ((argc > 2) && (*argv[2] >= '0') && (*argv[2] <= '9'))
 +		screen = device->screens[*argv[2]-'0'];
 +	else
-+		screen = device->screens[2];
++		screen = device->screens[0];
  
  	printf("Using screen %s, resolution %ux%u\n", screen->name,
  	       screen->width, screen->height);
@@ -40,20 +39,44 @@ index 4b830d2..2bc47b6 100644
  	while (true) {
  		int nfds = STDIN_FILENO + 1;
  		struct timeval timeout;
-@@ -146,12 +142,11 @@ int main(int argc, char *argv[])
+@@ -127,6 +123,18 @@ int main(int argc, char *argv[])
+ 		timeout.tv_sec = 5;
+ 		timeout.tv_usec = 0;
  
- 		/* switch CRTC */
- 		if (index >= device->num_crtcs)
--			index = 0;
++		/* switch CRTC */
++		if (index >= device->num_crtcs)
++			index = 0;
++
++		err = kms_screen_set(screen, device->crtcs[index], fb);
++		index++;
++		if (err == -EINVAL) continue;
++		if (err < 0) {
++			fprintf(stderr, "kms_screen_set() failed: %d\n", err);
 +			break;
++		}
++
+ 		FD_ZERO(&fds);
+ 		FD_SET(STDIN_FILENO, &fds);
  
- 		err = kms_screen_set(screen, device->crtcs[index], fb);
- 		if (err < 0) {
- 			fprintf(stderr, "kms_screen_set() failed: %d\n", err);
--			break;
+@@ -143,18 +151,6 @@ int main(int argc, char *argv[])
+ 			if (FD_ISSET(STDIN_FILENO, &fds))
+ 				break;
  		}
+-
+-		/* switch CRTC */
+-		if (index >= device->num_crtcs)
+-			index = 0;
+-
+-		err = kms_screen_set(screen, device->crtcs[index], fb);
+-		if (err < 0) {
+-			fprintf(stderr, "kms_screen_set() failed: %d\n", err);
+-			break;
+-		}
+-
+-		index++;
+ 	}
  
- 		index++;
+ 	kms_framebuffer_free(fb);
 diff --git a/tests/kms/libkms-test-device.c b/tests/kms/libkms-test-device.c
 index 53c7349..aeece5b 100644
 --- a/tests/kms/libkms-test-device.c
@@ -67,9 +90,7 @@ index 53c7349..aeece5b 100644
  
  static void kms_device_probe_screens(struct kms_device *device)
 diff --git a/tests/kms/libkms-test-screen.c b/tests/kms/libkms-test-screen.c
-old mode 100644
-new mode 100755
-index 3369022..6ab1ef6
+index 3369022..6ab1ef6 100644
 --- a/tests/kms/libkms-test-screen.c
 +++ b/tests/kms/libkms-test-screen.c
 @@ -46,7 +46,7 @@ static void kms_screen_probe(struct kms_screen *screen)
