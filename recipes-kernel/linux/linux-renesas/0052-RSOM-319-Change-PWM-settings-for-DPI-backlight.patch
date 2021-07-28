@@ -1,0 +1,31 @@
+From 41a202fcea77ba651b6471f8872dec075a4c7673 Mon Sep 17 00:00:00 2001
+From: Charles Stevens <charles.stevens@compasses.com>
+Date: Thu, 22 Jul 2021 16:14:00 -0500
+Subject: [PATCH 52/57] RSOM-319 - Change PWM settings for DPI backlight
+
+Increasing the PWM frequency caused some of steps not to display.
+Reduce frequency to 22.22 kHz and move the min DC% up to 30%
+
+Signed-off-by: Charles Stevens <charles.stevens@compasses.com>
+---
+ arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+index 5185564e9da1..109ac85e923e 100644
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+@@ -23,8 +23,8 @@
+ 		compatible = "pwm-backlight";
+ 		power-supply = <&reg_lcd>;
+ 		enable-gpios = <&gpio_exp1 7 GPIO_ACTIVE_LOW>;
+-		pwms = <&pwm0 0 25000>;
+-		brightness-levels = <0 25 33 50 63 75 88 100>;
++		pwms = <&pwm0 0 45000>;
++		brightness-levels = <0 30 40 50 63 75 88 100>;
+ 		default-brightness-level = <6>;
+ 	};	
+ 
+-- 
+2.17.1
+

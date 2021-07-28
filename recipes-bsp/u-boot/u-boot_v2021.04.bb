@@ -7,7 +7,7 @@ UBOOT_URL = "git://bitbucket.logicpd.com/scm/loix/renesas-u-boot-cip.git"
 BRANCH = "v2021.04-renesom"
 
 SRC_URI = "${UBOOT_URL};branch=${BRANCH};protocol=https"
-SRCREV = "1a04a9a59830705dd65116354e862fd6a658722e"
+SRCREV = "2f5dcf6b9d1a69676bb67a22299b309b191cad73"
 PV = "v2021.04+git${SRCPV}"
 
 UBOOT_SREC_SUFFIX = "srec"

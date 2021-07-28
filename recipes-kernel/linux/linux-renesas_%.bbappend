@@ -66,4 +66,15 @@ SRC_URI += " \
 	file://0044-arm64-dts-beacon-renesom-Disable-non-functioning-RGB.patch \
 	file://0045-arm64-dts-beacon-renesom-Add-missing-misof-clock-nod.patch \
 	file://0046-drm-rcar-du-backport-panel-bridge.patch \
+	file://0047-RSOM-324-update-device-tree-with-global-CMA-phandle-.patch \
+	file://0048-RSOM-222-Add-simple-panel-for-APlus-display.patch \
+	file://0049-RSOM-222-change-RGB-display-compatible-string.patch \
+	file://0050-RSOM-222-rcar-du-support-display-bus_flags.patch \
+	file://0051-RSOM-257-Change-rise-time-to-more-closely-match-boar.patch \
+	file://0052-RSOM-319-Change-PWM-settings-for-DPI-backlight.patch \
+	file://0053-RSOM-102-Update-RZ-G2H-SoC-dtsi-file.patch \
+	file://0054-RSOM-102-Add-SPI-controller-nodes-and-SPIDEV-for-SPI.patch \
+	file://0055-RSOM-102-update-outer-files-for-RZ-G2M-kits-for-SPI.patch \
+	file://0056-RSOM-102-update-outer-files-for-RZ-G2N-kits-for-SPI.patch \
+	file://0057-RSOM-102-update-outer-files-for-RZ-G2H-kits-for-SPI.patch \
 	"

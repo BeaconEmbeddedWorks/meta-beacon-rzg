@@ -1,0 +1,49 @@
+From cc4ec66f89c6f3ef8b07da87e78bf1a8a3cad5ac Mon Sep 17 00:00:00 2001
+From: Charles Stevens <charles.stevens@compasses.com>
+Date: Wed, 28 Jul 2021 16:55:15 -0500
+Subject: [PATCH 56/57] RSOM-102 - update outer files for RZ/G2N kits for SPI
+
+Add SPI aliases and disable SPI3 for -rgb kit
+
+Signed-off-by: Charles Stevens <charles.stevens@compasses.com>
+---
+ .../arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit-rgb.dts | 5 +++++
+ arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit.dts    | 3 +++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit-rgb.dts b/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit-rgb.dts
+index 77b831135cfd..210e9c8dc383 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit-rgb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit-rgb.dts
+@@ -5,9 +5,14 @@
+ 
+ 	aliases {
+ 		/delete-property/ serial6;
++		/delete-property/ spi3;
+ 	};
+ };
+ 
++&msiof3 {
++	status = "disabled";
++};
++
+ &scif4 {
+ 	status = "disabled";
+ };
+diff --git a/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit.dts b/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit.dts
+index 60c4c15c138d..92b170569894 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit.dts
+@@ -17,6 +17,9 @@
+ 		serial5 = &scif5;
+ 		serial6 = &scif4;
+ 		ethernet0 = &avb;
++		spi1 = &msiof1;
++		spi2 = &msiof2;
++		spi3 = &msiof3;
+ 	};
+ 
+ 	chosen {
+-- 
+2.17.1
+

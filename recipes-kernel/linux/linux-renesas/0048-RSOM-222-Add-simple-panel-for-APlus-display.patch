@@ -1,0 +1,68 @@
+From 032457fa0cb7250e7f575fd75567f25397f6869d Mon Sep 17 00:00:00 2001
+From: Charles Stevens <charles.stevens@compasses.com>
+Date: Mon, 19 Jul 2021 17:51:58 -0500
+Subject: [PATCH 48/57] RSOM-222 - Add simple panel for APlus display
+
+Add panel definition for APlus AF50BSIAGDNG0 RGB display to
+panel-simple driver.
+
+Signed-off-by: Charles Stevens <charles.stevens@compasses.com>
+---
+ drivers/gpu/drm/panel/panel-simple.c | 34 ++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index 8814aa38c5e7..1f5d44edc4de 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -1952,6 +1952,37 @@ static const struct panel_desc rocktech_rk070er9427 = {
+ 	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
+ };
+ 
++static const struct display_timing aplus_AF50BSIAGDNG0_timing = {
++	.pixelclock = { 26400000, 33300000, 46800000 },
++	.hactive = { 800, 800, 800 },
++	.hfront_porch = { 16, 210, 354 },
++	.hback_porch = { 46, 46, 46 },
++	.hsync_len = { 1, 1, 1 },
++	.vactive = { 480, 480, 480 },
++	.vfront_porch = { 7, 22, 147 },
++	.vback_porch = { 23, 23, 23 },
++	.vsync_len = { 1, 1, 1 },
++	.flags = DISPLAY_FLAGS_DE_HIGH | DISPLAY_FLAGS_PIXDATA_POSEDGE,
++};
++
++static const struct panel_desc aplus_AF50BSIAGDNG0 = {
++	.timings = &aplus_AF50BSIAGDNG0_timing,
++	.num_timings = 1,
++	.bpc = 6,
++	.size = {
++		.width = 108,
++		.height = 65,		/* 64.8 mm */
++	},
++	.delay = {
++		.prepare = 41,
++		.enable = 50,
++		.unprepare = 41,
++		.disable = 50,
++	},
++	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
++	.bus_flags = DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_POSEDGE,
++};
++
+ static const struct drm_display_mode samsung_lsn122dl01_c01_mode = {
+ 	.clock = 271560,
+ 	.hdisplay = 2560,
+@@ -2539,6 +2570,9 @@ static const struct of_device_id platform_of_match[] = {
+ 	}, {
+ 		.compatible = "rocktech,rk070er9427",
+ 		.data = &rocktech_rk070er9427,
++	}, {
++		.compatible = "aplus,AF50BSIAGDNG0",
++		.data = &aplus_AF50BSIAGDNG0,
+ 	}, {
+ 		.compatible = "samsung,lsn122dl01-c01",
+ 		.data = &samsung_lsn122dl01_c01,
+-- 
+2.17.1
+
