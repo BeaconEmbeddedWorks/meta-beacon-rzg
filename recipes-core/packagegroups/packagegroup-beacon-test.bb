@@ -20,7 +20,7 @@ RDEPENDS_${PN}-audio = "pulseaudio pulseaudio-server pulseaudio-misc"
 RDEPENDS_${PN}-audio += " packagegroup-tools-bluetooth"
 
 SUMMARY_${PN}-misc = "Misc utilities"
-RDEPENDS_${PN}-misc = "htop mmc-utils minicom less lrzsz mtools procps"
+RDEPENDS_${PN}-misc = "htop mmc-utils minicom less lrzsz mtools procps ldd"
 
 SUMMARY_${PN}-touch = "Touch software"
 RDEPENDS_${PN}-touch = "tslib tslib-conf tslib-tests tslib-calibrate \
