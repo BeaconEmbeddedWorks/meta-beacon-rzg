@@ -92,6 +92,7 @@ do_compile () {
                 then
                     oe_runmake -C ${S} O=${B}/${config} ${config}
                     oe_runmake -C ${S} O=${B}/${config} ${UBOOT_MAKE_TARGET}
+                    oe_runmake -C ${S} O=${B}/${config} u-boot-initial-env
                     for binary in ${UBOOT_BINARIES}; do
                         k=$(expr $k + 1);
                         if [ $k -eq $i ]; then
@@ -107,6 +108,7 @@ do_compile () {
     else
         oe_runmake -C ${S} O=${B} ${UBOOT_MACHINE}
         oe_runmake -C ${S} O=${B} ${UBOOT_MAKE_TARGET}
+        oe_runmake -C ${S} O=${B} u-boot-initial-env
     fi
 
 }
@@ -124,6 +126,9 @@ do_install () {
                     install -m 644 ${B}/${config}/u-boot-${type}.${UBOOT_SUFFIX} ${D}/boot/u-boot-${type}-${PV}-${PR}.${UBOOT_SUFFIX}
                     ln -sf u-boot-${type}-${PV}-${PR}.${UBOOT_SUFFIX} ${D}/boot/${UBOOT_BINARY}-${type}
                     ln -sf u-boot-${type}-${PV}-${PR}.${UBOOT_SUFFIX} ${D}/boot/${UBOOT_BINARY}
+
+		    # Install the uboot-initial-env
+		    install -D -m 644 ${B}/${config}/u-boot-initial-env ${D}/${sysconfdir}/u-boot-initial-env
                 fi
             done
             unset  j
@@ -133,6 +138,9 @@ do_install () {
         install -d ${D}/boot
         install -m 644 ${B}/${UBOOT_BINARY} ${D}/boot/${UBOOT_IMAGE}
         ln -sf ${UBOOT_IMAGE} ${D}/boot/${UBOOT_BINARY}
+
+	# Install the uboot-initial-env
+        install -D -m 644 ${B}/u-boot-initial-env ${D}/${sysconfdir}/u-boot-initial-env
     fi
 
     if [ -n "${UBOOT_ELF}" ]
@@ -219,6 +227,9 @@ do_deploy () {
                     ln -sf u-boot-${type}-${PV}-${PR}.${UBOOT_SUFFIX} ${UBOOT_SYMLINK}
                     ln -sf u-boot-${type}-${PV}-${PR}.${UBOOT_SUFFIX} ${UBOOT_BINARY}-${type}
                     ln -sf u-boot-${type}-${PV}-${PR}.${UBOOT_SUFFIX} ${UBOOT_BINARY}
+
+		    # Deploy the uboot-initial-env
+                    install -D -m 644 ${B}/${config}/u-boot-initial-env ${D}/${sysconfdir}/u-boot-initial-env
                 fi
             done
             unset  j
