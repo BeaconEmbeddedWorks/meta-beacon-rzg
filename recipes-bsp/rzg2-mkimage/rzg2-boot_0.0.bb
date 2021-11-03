@@ -18,6 +18,7 @@ DEPENDS_append = " \
 DEPENDS_append = " \
 	u-boot \
 	arm-trusted-firmware \
+	optee-os \
 "
 
 # This package aggregates output deployed by other packages,
@@ -25,10 +26,12 @@ DEPENDS_append = " \
 do_compile[depends] += " \
 	virtual/bootloader:do_deploy \
 	arm-trusted-firmware:do_deploy \
+	optee-os:do_deploy \
 "
 
 ATF_BL31_NAME = "bl31-${MACHINE}.bin"
 ATF_BL2_NAME = "bl2-${MACHINE}.bin"
+TEE_NAME = "tee-${MACHINE}.bin"
 
 UBOOT_NAME = "u-boot-${MACHINE}.bin"
 
@@ -47,6 +50,7 @@ do_compile () {
 	cp ${DEPLOY_DIR_IMAGE}/cert_header_sa6.bin	${S}/${SOC_DIR}/
 	cp ${DEPLOY_DIR_IMAGE}/${ATF_BL31_NAME}    	${S}/${SOC_DIR}/
 	cp ${DEPLOY_DIR_IMAGE}/${UBOOT_NAME}   		${S}/${SOC_DIR}/
+	cp ${DEPLOY_DIR_IMAGE}/${TEE_NAME}   		${S}/${SOC_DIR}/
 
 	cd ${S}/${SOC_DIR}/
 	# Edit SA6 file to add partition information for use in eMMC boot
@@ -72,6 +76,7 @@ do_compile () {
 	dd if=cert_header_sa6.bin of=${img} bs=1 seek=`printf "%d" 0x180000` conv=notrunc
 
 	dd if=${ATF_BL31_NAME}    of=${img} bs=1 seek=`printf "%d" 0x1C0000` conv=notrunc
+	dd if=${TEE_NAME}         of=${img} bs=1 seek=`printf "%d" 0x200000` conv=notrunc
 	dd if=${UBOOT_NAME}       of=${img} bs=1 seek=`printf "%d" 0x300000` conv=notrunc
 
 	srec_cat ${img} -binary -offset 0x50000000 -un_fill 0 16 -output ${img_name}.srec -address-length=4

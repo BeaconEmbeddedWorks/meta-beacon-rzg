@@ -1,0 +1,70 @@
+From 27782eae045a5618a3d66ee3beb13d0530a423ff Mon Sep 17 00:00:00 2001
+From: Charles Stevens <cstevens@beaconembedded.com>
+Date: Thu, 23 Sep 2021 16:31:39 -0500
+Subject: [PATCH] Recognize Beacon Embedded RZ/G2 boards
+
+---
+ core/arch/arm/plat-rzg/conf.mk      | 15 +++++++++++++++
+ core/arch/arm/plat-rzg/rzg_common.h |  6 +++---
+ 2 files changed, 18 insertions(+), 3 deletions(-)
+
+diff --git a/core/arch/arm/plat-rzg/conf.mk b/core/arch/arm/plat-rzg/conf.mk
+index 71e40485..17977af6 100644
+--- a/core/arch/arm/plat-rzg/conf.mk
++++ b/core/arch/arm/plat-rzg/conf.mk
+@@ -34,6 +34,21 @@ ifeq ($(PLATFORM_FLAVOR),hihope_rzg2h)
+ $(call force,CFG_TEE_CORE_NB_CORE,8)
+ endif
+ 
++ifeq ($(PLATFORM_FLAVOR),beacon_rzg2m)
++$(call force,CFG_TEE_CORE_NB_CORE,6)
++# RZ/G2M have 6 cores for 2 clusters, but the number isn't contiguous.
++# One cluster has ids 0, 1, other has ids 3, 4, 5, 6.
++# CFG_CORE_CLUSTER_SHIFT will process to make the right numbering.
++$(call force,CFG_CORE_CLUSTER_SHIFT,1)
++endif
++ifeq ($(PLATFORM_FLAVOR),beacon_rzg2n)
++$(call force,CFG_TEE_CORE_NB_CORE,2)
++PMIC_ROHM_BD9571 ?= 0
++endif
++ifeq ($(PLATFORM_FLAVOR),beacon_rzg2h)
++$(call force,CFG_TEE_CORE_NB_CORE,8)
++endif
++
+ CFG_TZDRAM_START ?= 0x44100000
+ CFG_TZDRAM_SIZE ?= 0x03D00000
+ CFG_TEE_RAM_VA_SIZE ?= 0x100000
+diff --git a/core/arch/arm/plat-rzg/rzg_common.h b/core/arch/arm/plat-rzg/rzg_common.h
+index 5c3a03cb..b255b14e 100644
+--- a/core/arch/arm/plat-rzg/rzg_common.h
++++ b/core/arch/arm/plat-rzg/rzg_common.h
+@@ -22,7 +22,7 @@
+ #define NSEC_DDR_0_SIZE		0x78200000
+ #endif //(RZG_DRAM_ECC == 1 && RZG_ECC_FULL == 2)
+ 
+-#elif defined(PLATFORM_FLAVOR_hihope_rzg2h)
++#elif defined(PLATFORM_FLAVOR_hihope_rzg2h) || defined(PLATFORM_FLAVOR_beacon_rzg2h)
+ #if (RZG_DRAM_ECC == 1)
+ #if (RZG_ECC_FULL == 1)
+ /* Apply for ECC Full Dual setting */
+@@ -50,7 +50,7 @@
+ #define NSEC_DDR_1_SIZE		0x80000000
+ #endif //(RZG_DRAM_ECC == 1
+ 
+-#elif defined(PLATFORM_FLAVOR_hihope_rzg2m)
++#elif defined(PLATFORM_FLAVOR_hihope_rzg2m) || defined(PLATFORM_FLAVOR_beacon_rzg2m)
+ 
+ #if (RZG_DRAM_ECC == 1 && RZG_ECC_FULL == 1)
+ /* Apply for ECC Full Dual setting */
+@@ -71,7 +71,7 @@
+ #define NSEC_DDR_1_SIZE		0x80000000
+ #endif
+ 
+-#elif defined(PLATFORM_FLAVOR_hihope_rzg2n)
++#elif defined(PLATFORM_FLAVOR_hihope_rzg2n) || defined(PLATFORM_FLAVOR_beacon_rzg2n)
+ 
+ #if (RZG_DRAM_ECC == 1 && RZG_ECC_FULL == 2)
+ /* Apply for ECC Full Single setting */
+-- 
+2.17.1
+
