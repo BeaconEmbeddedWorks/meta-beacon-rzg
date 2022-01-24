@@ -77,4 +77,15 @@ SRC_URI += " \
 	file://0055-RSOM-102-update-outer-files-for-RZ-G2M-kits-for-SPI.patch \
 	file://0056-RSOM-102-update-outer-files-for-RZ-G2N-kits-for-SPI.patch \
 	file://0057-RSOM-102-update-outer-files-for-RZ-G2H-kits-for-SPI.patch \
+	file://0058-drm-panel-simple-add-panel-dpi-support.patch \
+	file://0059-arm64-dts-beacon-renesas-baseboard-Move-RGB-LCD-to-p.patch \
+	file://0060-Revert-RSOM-222-Add-simple-panel-for-APlus-display.patch \
+	file://0061-usb-host-xhci-rcar-Don-t-reload-firmware-after-the-c.patch \
+	file://0062-arm64-dts-r8a774-abe-1-Add-usb-clock-select.patch \
+	file://0063-arm64-dts-renesas-beacon-Enable-usb-clock-selector.patch \
+	file://0064-arm64-dts-renesas-beacon-Reduce-WiFi-IRQ-flood.patch \
+	file://0065-arm64-dts-beacon-renesom-Fix-broken-video-on-Pilot.patch \
+	file://0066-RSOM-364-Add-SPI-chipselect.patch \
+	file://0067-RSOM-360-dts-beacon-add-missing-usb-phy-ref.patch \
+	file://0068-arm64-renesas-beacon-Fix-USB-C-device-mode.patch \
 	"

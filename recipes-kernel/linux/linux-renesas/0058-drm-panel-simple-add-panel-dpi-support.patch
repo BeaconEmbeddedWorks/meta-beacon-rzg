@@ -1,0 +1,231 @@
+From 74c7ab87072df847f01269115425ff0a5156763f Mon Sep 17 00:00:00 2001
+From: Adam Ford <aford173@gmail.com>
+Date: Wed, 18 Aug 2021 08:48:48 -0500
+Subject: [PATCH 58/65] drm/panel: simple: add panel-dpi support The panel-dpi
+ compatible is a fallback that allows the DT to specify the timing.
+
+When matching panel-dpi expect the device tree to include the
+timing information for the display-panel.
+
+Background for this change:
+There are a lot of panels and new models hits the market very often.
+It is a lost cause trying to chase them all and users of new panels
+will often find them in situations that the panel they ues are not
+supported by the kernel.
+On top of this a lot of panels are customized based on customer
+specifications.
+
+Including the panel timing in the device tree allows for a simple
+way to describe the actual HW and use this description in a generic
+way in the kernel.
+This allows uses of proprietary panels, or panels which are not
+included in the kernel, to specify the timing in the device tree
+together with all the other HW descriptions.
+And thus, using the device tree it is then easy to add support
+for an otherwise unknown panel.
+
+The current support expect panels that do not require any
+delays for prepare/enable/disable/unprepare.
+
+Oleksandr Suvorov replied:
+I've just tested this patch on Apalis iMX6Q and Colibri iMX7D using
+panel settings from the following patch:
+https://lore.kernel.org/linux-arm-kernel/20200115123401.2264293-4-oleksandr.suvorov@toradex.com/
+
+It works for me, thanks!
+
+Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+Reviewed-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+Tested-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+Acked-by: Maxime Ripard <mripard@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Maxime Ripard <mripard@kernel.org>
+Cc: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20200216181513.28109-6-sam@ravnborg.org
+
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+ drivers/gpu/drm/panel/panel-simple.c | 127 +++++++++++++++++++++++++++
+ 1 file changed, 127 insertions(+)
+
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index 1f5d44edc4de..3ab7c078f3db 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -34,6 +34,7 @@
+ #include <drm/drm_panel.h>
+ 
+ #include <video/display_timing.h>
++#include <video/of_display_timing.h>
+ #include <video/videomode.h>
+ 
+ struct panel_desc {
+@@ -73,6 +74,9 @@ struct panel_desc {
+ 
+ 	u32 bus_format;
+ 	u32 bus_flags;
++
++	/** @connector_type: LVDS, eDP, DSI, DPI, etc. */
++	int connector_type;
+ };
+ 
+ struct panel_simple {
+@@ -87,6 +91,8 @@ struct panel_simple {
+ 	struct i2c_adapter *ddc;
+ 
+ 	struct gpio_desc *enable_gpio;
++	struct drm_display_mode override_mode;
++
+ };
+ 
+ static inline struct panel_simple *to_panel_simple(struct drm_panel *panel)
+@@ -291,10 +297,117 @@ static const struct drm_panel_funcs panel_simple_funcs = {
+ 	.get_timings = panel_simple_get_timings,
+ };
+ 
++static struct panel_desc panel_dpi;
++
++static int panel_dpi_probe(struct device *dev,
++			   struct panel_simple *panel)
++{
++	struct display_timing *timing;
++	const struct device_node *np;
++	struct panel_desc *desc;
++	unsigned int bus_flags;
++	struct videomode vm;
++	const char *mapping;
++	int ret;
++
++	np = dev->of_node;
++	desc = devm_kzalloc(dev, sizeof(*desc), GFP_KERNEL);
++	if (!desc)
++		return -ENOMEM;
++
++	timing = devm_kzalloc(dev, sizeof(*timing), GFP_KERNEL);
++	if (!timing)
++		return -ENOMEM;
++
++	ret = of_get_display_timing(np, "panel-timing", timing);
++	if (ret < 0) {
++		dev_err(dev, "%pOF: no panel-timing node found for \"panel-dpi\" binding\n",
++			np);
++		return ret;
++	}
++
++	desc->timings = timing;
++	desc->num_timings = 1;
++
++	of_property_read_u32(np, "width-mm", &desc->size.width);
++	of_property_read_u32(np, "height-mm", &desc->size.height);
++
++	of_property_read_string(np, "data-mapping", &mapping);
++	if (!strcmp(mapping, "rgb24"))
++		desc->bus_format = MEDIA_BUS_FMT_RGB888_1X24;
++	else if (!strcmp(mapping, "rgb565"))
++		desc->bus_format = MEDIA_BUS_FMT_RGB565_1X16;
++	else if (!strcmp(mapping, "bgr666"))
++		desc->bus_format = MEDIA_BUS_FMT_RGB666_1X18;
++	else if (!strcmp(mapping, "lvds666"))
++		desc->bus_format = MEDIA_BUS_FMT_RGB666_1X24_CPADHI;
++
++	/* Extract bus_flags from display_timing */
++	bus_flags = 0;
++	vm.flags = timing->flags;
++	drm_bus_flags_from_videomode(&vm, &bus_flags);
++	desc->bus_flags = bus_flags;
++
++	/* We do not know the connector for the DT node, so guess it */
++	desc->connector_type = DRM_MODE_CONNECTOR_DPI;
++
++	panel->desc = desc;
++
++	return 0;
++}
++
++#define PANEL_SIMPLE_BOUNDS_CHECK(to_check, bounds, field) \
++	(to_check->field.typ >= bounds->field.min && \
++	 to_check->field.typ <= bounds->field.max)
++static void panel_simple_parse_panel_timing_node(struct device *dev,
++						 struct panel_simple *panel,
++						 const struct display_timing *ot)
++{
++	const struct panel_desc *desc = panel->desc;
++	struct videomode vm;
++	unsigned int i;
++
++	if (WARN_ON(desc->num_modes)) {
++		dev_err(dev, "Reject override mode: panel has a fixed mode\n");
++		return;
++	}
++	if (WARN_ON(!desc->num_timings)) {
++		dev_err(dev, "Reject override mode: no timings specified\n");
++		return;
++	}
++
++	for (i = 0; i < panel->desc->num_timings; i++) {
++		const struct display_timing *dt = &panel->desc->timings[i];
++
++		if (!PANEL_SIMPLE_BOUNDS_CHECK(ot, dt, hactive) ||
++		    !PANEL_SIMPLE_BOUNDS_CHECK(ot, dt, hfront_porch) ||
++		    !PANEL_SIMPLE_BOUNDS_CHECK(ot, dt, hback_porch) ||
++		    !PANEL_SIMPLE_BOUNDS_CHECK(ot, dt, hsync_len) ||
++		    !PANEL_SIMPLE_BOUNDS_CHECK(ot, dt, vactive) ||
++		    !PANEL_SIMPLE_BOUNDS_CHECK(ot, dt, vfront_porch) ||
++		    !PANEL_SIMPLE_BOUNDS_CHECK(ot, dt, vback_porch) ||
++		    !PANEL_SIMPLE_BOUNDS_CHECK(ot, dt, vsync_len))
++			continue;
++
++		if (ot->flags != dt->flags)
++			continue;
++
++		videomode_from_timing(ot, &vm);
++		drm_display_mode_from_videomode(&vm, &panel->override_mode);
++		panel->override_mode.type |= DRM_MODE_TYPE_DRIVER |
++					     DRM_MODE_TYPE_PREFERRED;
++		break;
++	}
++
++	if (WARN_ON(!panel->override_mode.type))
++		dev_err(dev, "Reject override mode: No display_timing found\n");
++}
++
+ static int panel_simple_probe(struct device *dev, const struct panel_desc *desc)
+ {
+ 	struct device_node *backlight, *ddc;
+ 	struct panel_simple *panel;
++	struct display_timing dt;
+ 	int err;
+ 
+ 	panel = devm_kzalloc(dev, sizeof(*panel), GFP_KERNEL);
+@@ -338,6 +451,16 @@ static int panel_simple_probe(struct device *dev, const struct panel_desc *desc)
+ 		}
+ 	}
+ 
++	if (desc == &panel_dpi) {
++		/* Handle the generic panel-dpi binding */
++		err = panel_dpi_probe(dev, panel);
++		if (err)
++			goto free_ddc;
++	} else {
++		if (!of_get_display_timing(dev->of_node, "panel-timing", &dt))
++			panel_simple_parse_panel_timing_node(dev, panel, &dt);
++	}
++
+ 	drm_panel_init(&panel->base);
+ 	panel->base.dev = dev;
+ 	panel->base.funcs = &panel_simple_funcs;
+@@ -2636,6 +2759,10 @@ static const struct of_device_id platform_of_match[] = {
+ 	}, {
+ 		.compatible = "winstar,wf35ltiacd",
+ 		.data = &winstar_wf35ltiacd,
++	},  {
++		/* Must be the last entry */
++		.compatible = "panel-dpi",
++		.data = &panel_dpi,
+ 	}, {
+ 		/* sentinel */
+ 	}
+-- 
+2.17.1
+

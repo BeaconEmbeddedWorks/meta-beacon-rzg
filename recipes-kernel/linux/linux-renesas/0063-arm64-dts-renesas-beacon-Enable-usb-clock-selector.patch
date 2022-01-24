@@ -1,0 +1,60 @@
+From aeb01301ba788e2896429b4d48e390b63d7abd59 Mon Sep 17 00:00:00 2001
+From: Adam Ford <aford173@gmail.com>
+Date: Wed, 25 Aug 2021 14:50:36 -0500
+Subject: [PATCH 63/65] arm64: dts: renesas: beacon: Enable usb clock selector
+
+The default clock selector needs to see either xtal or extal.
+If xtal is present, it ignores extal.  To remove xtal, the
+clocks and clocks-names needs to be redefined.
+
+Since the EHCI nodes will enable the versaclock which actually
+drives this, it's ok to leave the usb_extal node at 50MHz, since
+it will throw an error of the versaclock isn't enabled yet.
+
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+ arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi | 2 ++
+ arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi       | 7 +++++++
+ 2 files changed, 9 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+index 5879324a71bf..d4b01fd4abae 100644
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+@@ -921,6 +921,7 @@
+ 
+ &ehci0 {
+         memory-region = <&global_cma>;
++        clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>, <&usb2_clksel>, <&versaclock6_som 3>;
+ };
+ 
+ &ohci0 {
+@@ -929,6 +930,7 @@
+ 
+ &ehci1 {
+         memory-region = <&global_cma>;
++        clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>, <&usb2_clksel>, <&versaclock6_som 3>;
+ };
+ 
+ &ohci1 {
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
+index c7052eb9b81d..f36d64ac921e 100644
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
+@@ -135,6 +135,13 @@
+ 	clock-frequency = <50000000>;
+ };
+ 
++&usb2_clksel {
++	clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>,
++		  <&usb_extal_clk>;
++	clock-names = "ehci_ohci", "hs-usb-if", "usb_extal";
++	status = "okay";
++};
++
+ &usb3s0_clk {
+ 	clock-frequency = <100000000>;
+ };
+-- 
+2.17.1
+
