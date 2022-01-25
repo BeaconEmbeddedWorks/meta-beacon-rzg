@@ -1,7 +1,7 @@
-From 9c18ea7c70978ce2904f2181ab5b3e533b28850d Mon Sep 17 00:00:00 2001
+From fabacf42c27e225da01cd5d1f225702d214515d2 Mon Sep 17 00:00:00 2001
 From: Adam Ford <aford173@gmail.com>
 Date: Thu, 24 Jun 2021 07:31:31 -0500
-Subject: [PATCH 2/2] rzg: drivers: pfc:  Support Beacon Boards
+Subject: [PATCH 2/2] rzg: drivers: pfc: Support Beacon Boards
 
 There are few GPIO configuration changes needed for the Beacon
 boards.  Insert those changes only when the BOARD is configured
@@ -9,34 +9,34 @@ for BEACON without breaking backwards compatibility
 
 Signed-off-by: Adam Ford <aford173@gmail.com>
 ---
- drivers/renesas/rzg/pfc/G2H/pfc_init_g2h.c | 18 +++++++++++++++++-
+ drivers/renesas/rzg/pfc/G2H/pfc_init_g2h.c | 16 ++++++++++++++++
  drivers/renesas/rzg/pfc/G2M/pfc_init_g2m.c | 16 ++++++++++++++++
- drivers/renesas/rzg/pfc/G2N/pfc_init_g2n.c | 18 +++++++++++++++++-
- 3 files changed, 50 insertions(+), 2 deletions(-)
+ drivers/renesas/rzg/pfc/G2N/pfc_init_g2n.c | 16 ++++++++++++++++
+ 3 files changed, 48 insertions(+)
 
 diff --git a/drivers/renesas/rzg/pfc/G2H/pfc_init_g2h.c b/drivers/renesas/rzg/pfc/G2H/pfc_init_g2h.c
-index ec0d0356a..7987cf742 100644
+index 90a1c9988..46d8bc0e6 100644
 --- a/drivers/renesas/rzg/pfc/G2H/pfc_init_g2h.c
 +++ b/drivers/renesas/rzg/pfc/G2H/pfc_init_g2h.c
-@@ -894,6 +894,15 @@ void pfc_init_g2h(void)
- 		      | POC_SD0_DAT2_33V
- 		      | POC_SD0_DAT1_33V
- 		      | POC_SD0_DAT0_33V
+@@ -951,6 +951,15 @@ void pfc_init_g2h(void)
+ 		      POC_SD0_DAT2_33V |
+ 		      POC_SD0_DAT1_33V |
+ 		      POC_SD0_DAT0_33V |
 +#if (BOARD == BEACON)
-+		      | POC_SD1_DAT3_33V
-+		      | POC_SD1_DAT2_33V
-+		      | POC_SD1_DAT1_33V
-+		      | POC_SD1_DAT0_33V
-+		      | POC_SD1_CMD_33V
-+		      | POC_SD1_CLK_33V
-+		      | POC_SD0_DAT3_33V
++		      POC_SD1_DAT3_33V |
++		      POC_SD1_DAT2_33V |
++		      POC_SD1_DAT1_33V |
++		      POC_SD1_DAT0_33V |
++		      POC_SD1_CMD_33V  |
++		      POC_SD1_CLK_33V  |
++		      POC_SD0_DAT3_33V |
 +#endif
- 		      | POC_SD0_CMD_33V
- 		      | POC_SD0_CLK_33V);
+ 		      POC_SD0_CMD_33V |
+ 		      POC_SD0_CLK_33V);
  
-@@ -1196,9 +1205,16 @@ void pfc_init_g2h(void)
+@@ -1302,9 +1311,16 @@ void pfc_init_g2h(void)
  	mmio_write_32(GPIO_INOUTSEL0, 0x00000001U);
- 	mmio_write_32(GPIO_INOUTSEL1, 0x00100A00U);
+ 	mmio_write_32(GPIO_INOUTSEL1, 0x00100B00U);
  	mmio_write_32(GPIO_INOUTSEL2, 0x00000418U);
 +#if (BOARD == BEACON)
 +	mmio_write_32(GPIO_INOUTSEL3, 0x00000000U);
@@ -46,20 +46,19 @@ index ec0d0356a..7987cf742 100644
 +#else
  	mmio_write_32(GPIO_INOUTSEL3, 0x00002000U);
  	mmio_write_32(GPIO_INOUTSEL4, 0x00000040U);
--	mmio_write_32(GPIO_INOUTSEL5, 0x00000208U);
-+        mmio_write_32(GPIO_INOUTSEL5, 0x00000208U);
+ 	mmio_write_32(GPIO_INOUTSEL5, 0x00000208U);
  	mmio_write_32(GPIO_INOUTSEL6, 0x00013F00U);
 +#endif
  	mmio_write_32(GPIO_INOUTSEL7, 0x00000003U);
  }
 diff --git a/drivers/renesas/rzg/pfc/G2M/pfc_init_g2m.c b/drivers/renesas/rzg/pfc/G2M/pfc_init_g2m.c
-index ae4808a3c..ce80c9838 100644
+index f76b83f9a..f85c863ea 100644
 --- a/drivers/renesas/rzg/pfc/G2M/pfc_init_g2m.c
 +++ b/drivers/renesas/rzg/pfc/G2M/pfc_init_g2m.c
-@@ -934,6 +934,15 @@ void pfc_init_g2m(void)
- 		      | POC_SD0_DAT2_33V
+@@ -990,6 +990,15 @@ void pfc_init_g2m(void)
  		      | POC_SD0_DAT1_33V
  		      | POC_SD0_DAT0_33V
+ 		      | POC_SD0_CMD_33V
 +#if (BOARD == BEACON)
 +		      | POC_SD1_DAT3_33V
 +		      | POC_SD1_DAT2_33V
@@ -69,12 +68,12 @@ index ae4808a3c..ce80c9838 100644
 +		      | POC_SD1_CLK_33V
 +		      | POC_SD0_DAT3_33V
 +#endif
- 		      | POC_SD0_CMD_33V
  		      | POC_SD0_CLK_33V);
  
-@@ -1236,10 +1245,17 @@ void pfc_init_g2m(void)
+ 	/* initialize DRV control register */
+@@ -1291,10 +1300,17 @@ void pfc_init_g2m(void)
  	mmio_write_32(GPIO_INOUTSEL0, 0x00000001U);
- 	mmio_write_32(GPIO_INOUTSEL1, 0x00100A00U);
+ 	mmio_write_32(GPIO_INOUTSEL1, 0x00100B00U);
  	mmio_write_32(GPIO_INOUTSEL2, 0x00000418U);
 +#if (BOARD == BEACON)
 +	mmio_write_32(GPIO_INOUTSEL3, 0x00000000U);
@@ -91,28 +90,28 @@ index ae4808a3c..ce80c9838 100644
  
  }
 diff --git a/drivers/renesas/rzg/pfc/G2N/pfc_init_g2n.c b/drivers/renesas/rzg/pfc/G2N/pfc_init_g2n.c
-index 73735233d..6836906ac 100644
+index c951e0a58..9ac004a07 100644
 --- a/drivers/renesas/rzg/pfc/G2N/pfc_init_g2n.c
 +++ b/drivers/renesas/rzg/pfc/G2N/pfc_init_g2n.c
-@@ -894,6 +894,15 @@ void pfc_init_g2n(void)
- 		      | POC_SD0_DAT2_33V
- 		      | POC_SD0_DAT1_33V
- 		      | POC_SD0_DAT0_33V
+@@ -947,6 +947,15 @@ void pfc_init_g2n(void)
+ 		      POC_SD0_DAT2_33V |
+ 		      POC_SD0_DAT1_33V |
+ 		      POC_SD0_DAT0_33V |
 +#if (BOARD == BEACON)
-+		      | POC_SD1_DAT3_33V
-+		      | POC_SD1_DAT2_33V
-+		      | POC_SD1_DAT1_33V
-+		      | POC_SD1_DAT0_33V
-+		      | POC_SD1_CMD_33V
-+		      | POC_SD1_CLK_33V
-+		      | POC_SD0_DAT3_33V
++		      POC_SD1_DAT3_33V |
++		      POC_SD1_DAT2_33V |
++		      POC_SD1_DAT1_33V |
++		      POC_SD1_DAT0_33V |
++		      POC_SD1_CMD_33V  |
++		      POC_SD1_CLK_33V  |
++		      POC_SD0_DAT3_33V |
 +#endif
- 		      | POC_SD0_CMD_33V
- 		      | POC_SD0_CLK_33V);
+ 		      POC_SD0_CMD_33V |
+ 		      POC_SD0_CLK_33V);
  
-@@ -1196,9 +1205,16 @@ void pfc_init_g2n(void)
+@@ -1298,9 +1307,16 @@ void pfc_init_g2n(void)
  	mmio_write_32(GPIO_INOUTSEL0, 0x00000001U);
- 	mmio_write_32(GPIO_INOUTSEL1, 0x00100A00U);
+ 	mmio_write_32(GPIO_INOUTSEL1, 0x00100B00U);
  	mmio_write_32(GPIO_INOUTSEL2, 0x00000418U);
 +#if (BOARD == BEACON)
 +	mmio_write_32(GPIO_INOUTSEL3, 0x00000000U);
@@ -122,8 +121,7 @@ index 73735233d..6836906ac 100644
 +#else
  	mmio_write_32(GPIO_INOUTSEL3, 0x00002000U);
  	mmio_write_32(GPIO_INOUTSEL4, 0x00000040U);
--	mmio_write_32(GPIO_INOUTSEL5, 0x00000208U);
-+        mmio_write_32(GPIO_INOUTSEL5, 0x00000208U);
+ 	mmio_write_32(GPIO_INOUTSEL5, 0x00000208U);
  	mmio_write_32(GPIO_INOUTSEL6, 0x00013F00U);
 +#endif
  	mmio_write_32(GPIO_INOUTSEL7, 0x00000003U);

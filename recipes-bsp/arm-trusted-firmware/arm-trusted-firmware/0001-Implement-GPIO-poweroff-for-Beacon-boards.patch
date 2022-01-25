@@ -1,42 +1,43 @@
-From a8d8229f2acead423ec635689e691e5966bdc4e4 Mon Sep 17 00:00:00 2001
-From: Charles Stevens <charles.stevens@compasses.com>
-Date: Wed, 7 Jul 2021 11:02:07 -0500
+From 24102d59055c321553e7ef778af5dd722583d14b Mon Sep 17 00:00:00 2001
+From: Charles Stevens <cstevens@beaconembedded.com>
+Date: Mon, 24 Jan 2022 15:48:14 -0600
 Subject: [PATCH] Implement GPIO poweroff for Beacon boards
 
+Signed-off-by: Charles Stevens <cstevens@beaconembedded.com>
 ---
- plat/renesas/rzg/plat_pm.c | 31 +++++++------------------------
+ plat/renesas/common/plat_pm.c | 31 +++++++------------------------
  1 file changed, 7 insertions(+), 24 deletions(-)
 
-diff --git a/plat/renesas/rzg/plat_pm.c b/plat/renesas/rzg/plat_pm.c
-index e16fb6244..6ff464b42 100644
---- a/plat/renesas/rzg/plat_pm.c
-+++ b/plat/renesas/rzg/plat_pm.c
-@@ -155,30 +155,13 @@ finish:
+diff --git a/plat/renesas/common/plat_pm.c b/plat/renesas/common/plat_pm.c
+index 6a9ad450d..6c8a2c756 100644
+--- a/plat/renesas/common/plat_pm.c
++++ b/plat/renesas/common/plat_pm.c
+@@ -162,30 +162,13 @@ finish:
  
- static void __dead2 rzg_system_off(void)
+ static void __dead2 rcar_system_off(void)
  {
 -#if PMIC_ROHM_BD9571
 -#if PMIC_LEVEL_MODE
--	if (rzg_iic_dvfs_send(PMIC, DVFS_SET_VID, DVFS_SET_VID_0V))
+-	if (rcar_iic_dvfs_send(PMIC, DVFS_SET_VID, DVFS_SET_VID_0V))
 -		ERROR("BL3-1:Failed the SYSTEM-OFF.\n");
 -#else
--	if (rzg_iic_dvfs_send(PMIC, BKUP_MODE_CNT, P_ALL_OFF))
+-	if (rcar_iic_dvfs_send(PMIC, BKUP_MODE_CNT, P_ALL_OFF))
 -		ERROR("BL3-1:Failed the SYSTEM-RESET.\n");
 -#endif
 -#else
 -	uint64_t cpu = read_mpidr_el1() & 0x0000ffff;
 -	int32_t rtn_on;
 -
--	rtn_on = rzg_pwrc_cpu_on_check(cpu);
+-	rtn_on = rcar_pwrc_cpu_on_check(cpu);
 -
--	if (cpu == rzg_boot_mpidr)
+-	if (cpu == rcar_boot_mpidr)
 -		panic();
 -
 -	if (rtn_on)
 -		panic();
 -
--	rzg_pwrc_cpuoff(cpu);
--	rzg_pwrc_clusteroff(cpu);
+-	rcar_pwrc_cpuoff(cpu);
+-	rcar_pwrc_clusteroff(cpu);
 -
 -#endif /* PMIC_ROHM_BD9571 */
 +	/* I stole these lines from pfc initialization code */
@@ -47,7 +48,7 @@ index e16fb6244..6ff464b42 100644
 +	/* Set GP 6_11 Low to power off */
 +	mmio_write_32(GPIO_OUTDT6, (mmio_read_32(GPIO_OUTDT6)&~(1<<11)));
  	wfi();
- 	ERROR("RZG System Off: operation not handled.\n");
+ 	ERROR("RCAR System Off: operation not handled.\n");
  	panic();
 -- 
 2.17.1
