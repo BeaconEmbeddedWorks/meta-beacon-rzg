@@ -1,34 +1,24 @@
-From 26e4d6c94902cee2e22f2ecaa104f6d0afe364bd Mon Sep 17 00:00:00 2001
-From: Charles Stevens <charles.stevens@compasses.com>
-Date: Thu, 13 Aug 2020 17:38:54 -0500
+From c6220fdd4987a8daebc96d5cda84a9fb8b4ca7f4 Mon Sep 17 00:00:00 2001
+From: Charles Stevens <cstevens@beaconembedded.com>
+Date: Mon, 24 Jan 2022 15:01:49 -0600
 Subject: [PATCH] Modify to support Beacon EmbeddedWorks development kits. For
  RZ/G2 SoCs H, M and N
 
-Signed-off-by: Charles Stevens <charles.stevens@compasses.com>
-
-%% original patch: 0001-Modify-to-support-Beacon-EmbeddedWorks-development-k.patch
+Signed-off-by: Charles Stevens <cstevens@beaconembedded.com>
 ---
- ddr/lpddr4/boot_init_dram_config.c | 269 ++--------------------------
- dgmodul4.c                         |   2 +-
- makefile                           |   8 +-
- makefile.linaro                    | 275 -----------------------------
- 4 files changed, 22 insertions(+), 532 deletions(-)
+ ddr/lpddr4/boot_init_dram_config-preset.c | 267 ++-------------------
+ ddr/lpddr4/boot_init_dram_config.h        |   2 +-
+ dgmodul4.c                                |   2 +-
+ makefile                                  |   6 +-
+ makefile.linaro                           | 276 ----------------------
+ 5 files changed, 21 insertions(+), 532 deletions(-)
  delete mode 100644 makefile.linaro
 
-diff --git a/ddr/lpddr4/boot_init_dram_config.c b/ddr/lpddr4/boot_init_dram_config.c
-index 8247ddd..f1ac98b 100644
---- a/ddr/lpddr4/boot_init_dram_config.c
-+++ b/ddr/lpddr4/boot_init_dram_config.c
-@@ -11,7 +11,7 @@
-  *	NUMBER OF BOARD CONFIGRATION
-  *	PLEASE DEFINE
-  ******************************************************************************/
--#define BOARDNUM 6
-+#define BOARDNUM 3
- /*******************************************************************************
-  *	PLEASE SET board number or board judge function
-  ******************************************************************************/
-@@ -26,30 +26,15 @@ static uint32_t boardcnf_get_brd_type(void)
+diff --git a/ddr/lpddr4/boot_init_dram_config-preset.c b/ddr/lpddr4/boot_init_dram_config-preset.c
+index 600d1f3..73b49f8 100644
+--- a/ddr/lpddr4/boot_init_dram_config-preset.c
++++ b/ddr/lpddr4/boot_init_dram_config-preset.c
+@@ -28,30 +28,15 @@ uint32_t boardcnf_get_brd_type(void)
  	Prr_Product = reg & PRR_PRODUCT_MASK;
  	if (Prr_Product == PRR_PRODUCT_G2M)
  	{
@@ -62,9 +52,9 @@ index 8247ddd..f1ac98b 100644
  	}
  	return (judge);
  }
-@@ -136,12 +121,12 @@ struct _boardcnf {
+@@ -59,12 +44,12 @@ uint32_t boardcnf_get_brd_type(void)
  
- static const struct _boardcnf boardcnfs[BOARDNUM] = {
+ const struct _boardcnf __attribute__((weak)) boardcnfs[BOARDNUM] = {
  /*
 - * boardcnf[0] Jiangsu HopeRun Software Co., Ltd. HiHope RZ/G2M board 16Gbit/1rank/2ch board with G2M/SOC
 + * boardcnf[0] Beacon EmbeddedWorks RZ/G2M Development Kit with 16Gbit/1rank/2ch SOM with G2M/SOC (4 GiB)
@@ -77,7 +67,7 @@ index 8247ddd..f1ac98b 100644
  	0,		/* cacs_dly_adj */
  	0x0300,		/* dqdm_dly_w */
  	0x00a0,		/* dqdm_dly_r */
-@@ -150,7 +135,7 @@ static const struct _boardcnf boardcnfs[BOARDNUM] = {
+@@ -73,7 +58,7 @@ const struct _boardcnf __attribute__((weak)) boardcnfs[BOARDNUM] = {
  /*ddr_density[]*/	{ 0x04, 0xff },
  /*ca_swap*/		0x00345201,
  /*dqs_swap*/		0x3201,
@@ -86,7 +76,7 @@ index 8247ddd..f1ac98b 100644
  /*dm_swap[]*/		{ 0x08, 0x08, 0x08, 0x08 },
  /*wdqlvl_patt[]*/	WDQLVL_PAT,
  /*cacs_adj*/		{ 0, 0, 0, 0, 0, 0, 0, 0,
-@@ -170,60 +155,7 @@ static const struct _boardcnf boardcnfs[BOARDNUM] = {
+@@ -93,60 +78,7 @@ const struct _boardcnf __attribute__((weak)) boardcnfs[BOARDNUM] = {
  /*ddr_density[]*/	{ 0x04, 0xff },
  /*ca_swap*/		0x00302154,
  /*dqs_swap*/		0x2310,
@@ -148,7 +138,7 @@ index 8247ddd..f1ac98b 100644
  /*dm_swap[]*/		{ 0x08, 0x08, 0x08, 0x08 },
  /*wdqlvl_patt[]*/	WDQLVL_PAT,
  /*cacs_adj*/		{ 0, 0, 0, 0, 0, 0, 0, 0,
-@@ -242,7 +174,7 @@ static const struct _boardcnf boardcnfs[BOARDNUM] = {
+@@ -165,7 +97,7 @@ const struct _boardcnf __attribute__((weak)) boardcnfs[BOARDNUM] = {
  	}
  },
  /*
@@ -157,7 +147,7 @@ index 8247ddd..f1ac98b 100644
   */
  {
  	0x01,		/* phyvalid */
-@@ -253,10 +185,10 @@ static const struct _boardcnf boardcnfs[BOARDNUM] = {
+@@ -176,10 +108,10 @@ const struct _boardcnf __attribute__((weak)) boardcnfs[BOARDNUM] = {
  	0x00a0,		/* dqdm_dly_r */
  	{
  /*ch[0]*/	{
@@ -170,7 +160,7 @@ index 8247ddd..f1ac98b 100644
  /*dm_swap[]*/		{ 0x08, 0x08, 0x08, 0x08 },
  /*wdqlvl_patt[]*/	WDQLVL_PAT,
  /*cacs_adj*/		{ 0, 0, 0, 0, 0, 0, 0, 0,
-@@ -275,138 +207,12 @@ static const struct _boardcnf boardcnfs[BOARDNUM] = {
+@@ -198,138 +130,12 @@ const struct _boardcnf __attribute__((weak)) boardcnfs[BOARDNUM] = {
  	}
  },
  /*
@@ -311,7 +301,7 @@ index 8247ddd..f1ac98b 100644
  	0,		/* cacs_dly_adj */
  	0x0300,		/* dqdm_dly_w */
  	0x00a0,		/* dqdm_dly_r */
-@@ -415,27 +221,7 @@ static const struct _boardcnf boardcnfs[BOARDNUM] = {
+@@ -338,27 +144,7 @@ const struct _boardcnf __attribute__((weak)) boardcnfs[BOARDNUM] = {
  /*ddr_density[]*/	{ 0x04, 0xff },
  /*ca_swap*/		0x00345201,
  /*dqs_swap*/		0x3201,
@@ -340,7 +330,7 @@ index 8247ddd..f1ac98b 100644
  /*dm_swap[]*/		{ 0x08, 0x08, 0x08, 0x08 },
  /*wdqlvl_patt[]*/	WDQLVL_PAT,
  /*cacs_adj*/		{ 0, 0, 0, 0, 0, 0, 0, 0,
-@@ -451,35 +237,14 @@ static const struct _boardcnf boardcnfs[BOARDNUM] = {
+@@ -374,35 +160,14 @@ const struct _boardcnf __attribute__((weak)) boardcnfs[BOARDNUM] = {
  			  0, 0, 0, 0, 0, 0, 0, 0,
  			  0, 0, 0, 0, 0, 0, 0, 0 }
  		},
@@ -379,11 +369,24 @@ index 8247ddd..f1ac98b 100644
  /*dm_adj_w*/		{ 0, 0, 0, 0 },
  /*dqdm_adj_w*/		{ 0, 0, 0, 0, 0, 0, 0, 0,
  			  0, 0, 0, 0, 0, 0, 0, 0,
+diff --git a/ddr/lpddr4/boot_init_dram_config.h b/ddr/lpddr4/boot_init_dram_config.h
+index 03d5f7a..b2b771a 100644
+--- a/ddr/lpddr4/boot_init_dram_config.h
++++ b/ddr/lpddr4/boot_init_dram_config.h
+@@ -4,7 +4,7 @@
+  * SPDX-License-Identifier: BSD-3-Clause
+  */
+ 
+-#define BOARDNUM 6
++#define BOARDNUM 3
+ 
+ /*******************************************************************************
+  *	BOARD CONFIGRATION
 diff --git a/dgmodul4.c b/dgmodul4.c
-index d5456e9..eb823ad 100644
+index ddef91c..22ae898 100644
 --- a/dgmodul4.c
 +++ b/dgmodul4.c
-@@ -643,7 +643,7 @@ void XLoadSpiflash0_2(uint32_t mode)
+@@ -680,7 +680,7 @@ void XLoadSpiflash0_2(uint32_t mode)
  	}
  	// WorkMemory CLEAR (Write H'FF)
  	PutStr("Work RAM(H'50000000-H'53FFFFFF) Clear....",1);
@@ -393,22 +396,19 @@ index d5456e9..eb823ad 100644
  	if (0U == mode)
  	{
 diff --git a/makefile b/makefile
-index 0a590e0..4a93477 100644
+index 21935c0..a1c57b5 100644
 --- a/makefile
 +++ b/makefile
-@@ -28,9 +28,9 @@
- # POSSIBILITY OF SUCH DAMAGE.
- #
+@@ -30,7 +30,7 @@
  
--#/* Select BOARD("HIHOPE"or"EK874" )**************
-+#/* Select BOARD("BEACON"or"EK874" )**************
+ #/* Select BOARD("HIHOPE"or"EK874" )**************
  ifeq ("$(BOARD)", "")
 -BOARD = HIHOPE
 +BOARD = BEACON
  endif
  
  #/* Select USB("ENABLE"or"DISABLE" )********************************************
-@@ -79,8 +79,8 @@ ifeq ("$(BOARD)", "EK874")
+@@ -80,8 +80,8 @@ ifeq ("$(BOARD)", "EK874")
  	FILENAME_ADD = _ek874
  	CFLAGS += -DRZG2_EK874=1
  else
@@ -421,10 +421,10 @@ index 0a590e0..4a93477 100644
  
 diff --git a/makefile.linaro b/makefile.linaro
 deleted file mode 100644
-index 48728db..0000000
+index 4bd6ff6..0000000
 --- a/makefile.linaro
 +++ /dev/null
-@@ -1,275 +0,0 @@
+@@ -1,276 +0,0 @@
 -#
 -# Copyright (c) 2015-2019, Renesas Electronics Corporation. All rights reserved.
 -#
@@ -489,7 +489,7 @@ index 48728db..0000000
 -endif
 -
 -#CPU
--CPU     = -march=armv8-a
+-CPU     = 
 -AArch   = 64
 -THUMB   = 
 -AS_NEON = 
@@ -500,6 +500,7 @@ index 48728db..0000000
 -OUTPUT_DIR  = AArch64_output
 -OBJECT_DIR  = AArch64_obj
 -CROSS_COMPILE ?= aarch64-elf-
+-CFLAGS = -fno-stack-protector
 -
 -ifeq ("$(BOARD)", "EK874")
 -	BOARD_NAME   =  EK874
