@@ -1,0 +1,107 @@
+From c29a61b8d2dc8375ca1065fd0b39af3f01d6c255 Mon Sep 17 00:00:00 2001
+From: Charles Stevens <charles.stevens@compasses.com>
+Date: Mon, 19 Jul 2021 18:04:06 -0500
+Subject: [PATCH 46/63] RSOM-222 - rcar-du: support display bus_flags
+
+Add support specifically for DRM_BUS_FLAG_PIXDATA_POSEDGE by
+inverting the clk0 output.
+
+Signed-off-by: Charles Stevens <charles.stevens@compasses.com>
+---
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c    | 15 +++++++++++++++
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.h    |  1 +
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.c |  9 +++++----
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.h |  1 +
+ 4 files changed, 22 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+index 3362ccced05a..5424b2e3963e 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+@@ -19,6 +19,7 @@
+ #include <drm/drm_atomic.h>
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_crtc.h>
++#include <drm/drm_panel.h>
+ #include <drm/drm_crtc_helper.h>
+ #include <drm/drm_fb_cma_helper.h>
+ #include <drm/drm_gem_cma_helper.h>
+@@ -288,6 +289,20 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+ 		escr = params.escr;
+ 	}
+ 
++	{
++		struct drm_encoder *encoder;
++
++		drm_for_each_encoder (encoder, rcrtc->group->dev->ddev) {
++			struct rcar_du_encoder *renc = to_rcar_encoder(encoder);
++
++			if (renc->base.crtc == rcar_crtc_to_drm_crtc(rcrtc)) {
++				if (renc->panel && renc->panel->connector && renc->panel->connector->display_info.bus_flags & DRM_BUS_FLAG_PIXDATA_POSEDGE) {
++					escr |= ESCR_DCLKOINV;
++				}
++			}
++		}
++	}
++
+ 	dev_dbg(rcrtc->group->dev->dev, "%s: ESCR 0x%08x\n", __func__, escr);
+ 
+ 	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? ESCR2 : ESCR,
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+index 6baa4c055265..747ba5e8b0d6 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+@@ -70,6 +70,7 @@ struct rcar_du_crtc {
+ };
+ 
+ #define to_rcar_crtc(c)	container_of(c, struct rcar_du_crtc, crtc)
++#define rcar_crtc_to_drm_crtc(e) (&(e)->crtc)
+ 
+ /**
+  * struct rcar_du_crtc_state - Driver-specific CRTC state
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+index e3037fddc75a..ee6ec149a60f 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+@@ -82,6 +82,7 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+ 		return -ENOMEM;
+ 
+ 	renc->output = output;
++	renc->panel = NULL;
+ 	encoder = rcar_encoder_to_drm_encoder(renc);
+ 
+ 	dev_dbg(rcdu->dev, "initializing encoder %pOF for output %u\n",
+@@ -95,14 +96,14 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+ 	if ((output == RCAR_DU_OUTPUT_DPAD0 ||
+ 	     output == RCAR_DU_OUTPUT_DPAD1) &&
+ 	    rcar_du_encoder_count_ports(enc_node) == 1) {
+-		struct drm_panel *panel = of_drm_find_panel(enc_node);
++		renc->panel = of_drm_find_panel(enc_node);
+ 
+-		if (IS_ERR(panel)) {
+-			ret = PTR_ERR(panel);
++		if (IS_ERR(renc->panel)) {
++			ret = PTR_ERR(renc->panel);
+ 			goto done;
+ 		}
+ 
+-		bridge = devm_drm_panel_bridge_add(rcdu->dev, panel,
++		bridge = devm_drm_panel_bridge_add(rcdu->dev, renc->panel,
+ 						   DRM_MODE_CONNECTOR_DPI);
+ 		if (IS_ERR(bridge)) {
+ 			ret = PTR_ERR(bridge);
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
+index 6a00da2775e3..1bbaf7f0eaf4 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
+@@ -23,6 +23,7 @@ struct rcar_du_device;
+ struct rcar_du_encoder {
+ 	struct drm_encoder base;
+ 	enum rcar_du_output output;
++	struct drm_panel *panel;
+ };
+ 
+ #define to_rcar_encoder(e) \
+-- 
+2.17.1
+

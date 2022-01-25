@@ -1,7 +1,7 @@
-From 297bfe157a8170836d08b396d3de63900671846c Mon Sep 17 00:00:00 2001
+From ff5a89903c338ec11f8369436bf34d09f5eb7836 Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@logicpd.com>
 Date: Sat, 25 Apr 2020 09:59:15 -0500
-Subject: [PATCH 04/44] Touch: Backport updated support for ili210x TS
+Subject: [PATCH 04/63] Touch: Backport updated support for ili210x TS
  controler
 
 ---

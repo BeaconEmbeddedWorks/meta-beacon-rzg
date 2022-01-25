@@ -1,0 +1,37 @@
+From 83fdd7ef1598853992bd787de723a7e183d1cd83 Mon Sep 17 00:00:00 2001
+From: Charles Stevens <charles.stevens@compasses.com>
+Date: Fri, 30 Oct 2020 16:54:07 -0500
+Subject: [PATCH 27/63] RSOM-229
+
+Change PWM frequency to 40kHz from 20kHz
+
+Signed-off-by: Charles Stevens <charles.stevens@compasses.com>
+---
+ arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+index 2e55a1228a0f..cdaa9172ca69 100755
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+@@ -14,7 +14,7 @@
+ 		compatible = "pwm-backlight";
+ 		power-supply = <&reg_lcd>;
+ 		enable-gpios = <&gpio_exp1 3 GPIO_ACTIVE_HIGH>;
+-		pwms = <&pwm2 0 50000>;
++		pwms = <&pwm2 0 25000>;
+ 		brightness-levels = <0 4 8 16 32 64 128 255>;
+ 		default-brightness-level = <6>;
+ 	};
+@@ -23,7 +23,7 @@
+ 		compatible = "pwm-backlight";
+ 		power-supply = <&reg_lcd>;
+ 		enable-gpios = <&gpio_exp1 7 GPIO_ACTIVE_LOW>;
+-		pwms = <&pwm0 0 50000>;
++		pwms = <&pwm0 0 25000>;
+ 		brightness-levels = <0 25 33 50 63 75 88 100>;
+ 		default-brightness-level = <6>;
+ 	};	
+-- 
+2.17.1
+

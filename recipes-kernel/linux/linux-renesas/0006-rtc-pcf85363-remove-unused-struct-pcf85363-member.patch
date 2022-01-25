@@ -1,7 +1,7 @@
-From 32e75f4524c02e6db202818f39c2045a5860677c Mon Sep 17 00:00:00 2001
+From 1af8f271cd6842f59e5544df1c41ce0e975cf483 Mon Sep 17 00:00:00 2001
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Date: Wed, 10 Apr 2019 22:56:00 +0200
-Subject: [PATCH 06/44] rtc: pcf85363: remove unused struct pcf85363 member
+Subject: [PATCH 06/63] rtc: pcf85363: remove unused struct pcf85363 member
 
 pcf85363->dev is unused, remove it.
 

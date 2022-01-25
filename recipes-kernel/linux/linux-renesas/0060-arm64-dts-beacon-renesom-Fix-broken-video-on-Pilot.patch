@@ -1,0 +1,39 @@
+From 9a6324310cce74c0ed64408c9d7a3a5fdf26b04c Mon Sep 17 00:00:00 2001
+From: Adam Ford <aford173@gmail.com>
+Date: Tue, 21 Dec 2021 10:41:20 -0600
+Subject: [PATCH 60/63] arm64: dts: beacon-renesom: Fix broken video on Pilot
+
+The Pilot boards changed a GPIO expander which controls the LVDS
+panel, touch controller and backlight for the LVDS panel. When
+the gpio-expander could not enumerate, the dependent functions
+failed.  Fix this by updating the device tree to the new gpio
+expander part and the new corresponding i2c address.  The original
+change was done to address LCD flicker and/or unwanted backlight.
+
+Fixes: RSOM-228
+Fixes: RSOM-357
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+ arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+index 796b812732fe..631fa32b2e6e 100755
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+@@ -511,9 +511,9 @@
+ 	/* 5 - LCD_H_pol */
+ 	/* 6 - lcd_V_pol */
+ 	/* 7 - BL_Disable */
+-	gpio_exp1: gpio@20 {
+-		compatible = "onnn,pca9654";
+-		reg = <0x20>;
++	gpio_exp1: gpio@70 {
++		compatible = "nxp,pca9538";
++		reg = <0x70>;
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 	};
+-- 
+2.17.1
+

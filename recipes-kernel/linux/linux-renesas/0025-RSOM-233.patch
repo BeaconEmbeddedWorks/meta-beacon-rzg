@@ -1,0 +1,38 @@
+From 91c412070df331685f0c1b017ad72fba1a95fd01 Mon Sep 17 00:00:00 2001
+From: Charles Stevens <charles.stevens@compasses.com>
+Date: Wed, 28 Oct 2020 15:30:15 -0500
+Subject: [PATCH 25/63] RSOM-233
+
+Change name of backlight for parallel display to backlight-dpi for
+consistancy with the display it is attached to.
+
+Signed-off-by: Charles Stevens <charles.stevens@compasses.com>
+---
+ arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+index f68c17385de3..051fc5345e4c 100755
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+@@ -19,7 +19,7 @@
+ 		default-brightness-level = <6>;
+ 	};
+ 
+-	backlight_rgb: backlight-rgb {
++	backlight_dpi: backlight-dpi {
+ 		compatible = "pwm-backlight";
+ 		power-supply = <&reg_lcd>;
+ 		enable-gpios = <&gpio_exp1 7 GPIO_ACTIVE_LOW>;
+@@ -138,7 +138,7 @@
+ 	rgb {
+ 		/* Some random LCD with similar timings */
+ 		compatible = "rocktech,rk070er9427";
+-		backlight = <&backlight_rgb>;
++		backlight = <&backlight_dpi>;
+ 		enable-gpios = <&gpio1 21 GPIO_ACTIVE_HIGH>;
+ 		port {
+ 			rgb_panel: endpoint {
+-- 
+2.17.1
+

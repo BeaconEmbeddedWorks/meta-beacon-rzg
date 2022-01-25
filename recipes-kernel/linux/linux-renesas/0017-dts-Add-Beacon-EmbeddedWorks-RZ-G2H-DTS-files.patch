@@ -1,7 +1,7 @@
-From ed9cef49b9868913dcd4839dab666e84fe4bf939 Mon Sep 17 00:00:00 2001
+From 55b6d49fdd7bc5b590857828b1104c4ded8a5933 Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@compasses.com>
 Date: Tue, 4 Aug 2020 13:33:24 -0500
-Subject: [PATCH 17/44] dts: Add Beacon EmbeddedWorks RZ/G2H DTS files
+Subject: [PATCH 17/63] dts: Add Beacon EmbeddedWorks RZ/G2H DTS files
 
 ---
  .../dts/renesas/r8a774e1-beacon-rzg2h-kit-rgb.dts | 15 +++++++++++++++

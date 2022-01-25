@@ -1,0 +1,33 @@
+From 1a3513eb84e7d31654843157a34730b6f0d0f140 Mon Sep 17 00:00:00 2001
+From: Adam Ford <aford173@gmail.com>
+Date: Mon, 4 Oct 2021 13:38:49 -0500
+Subject: [PATCH 59/63] arm64: dts: renesas: beacon: Reduce WiFi IRQ flood
+
+The WiFi chip has an IRQ set to keep the host awake, but the IRQ
+flood is causing nearly 30% CPU utilization.
+
+Since the host does not sleep, there is no need for this IRQ.
+
+Fixes: RSOM-348
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+ arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
+index f36d64ac921e..ed14d4b599af 100644
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
+@@ -268,9 +268,6 @@
+ 	brcmf: bcrmf@1 {
+ 		reg = <1>;
+ 		compatible = "brcm,bcm4329-fmac";
+-		interrupt-parent = <&gpio1>;
+-		interrupts = <27 IRQ_TYPE_LEVEL_LOW>;
+-		interrupt-names = "host-wake";
+ 	};
+ };
+ 
+-- 
+2.17.1
+

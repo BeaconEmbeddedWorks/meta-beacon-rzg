@@ -1,7 +1,7 @@
-From 47caa7407f9d8e165e3201f4875979940bce5532 Mon Sep 17 00:00:00 2001
+From 379f8de381e9d6086b4281f680d21e24ed05a841 Mon Sep 17 00:00:00 2001
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Date: Wed, 10 Apr 2019 22:56:03 +0200
-Subject: [PATCH 09/44] rtc: pcf85363: remove useless forward declaration
+Subject: [PATCH 09/63] rtc: pcf85363: remove useless forward declaration
 
 It is not necessary to forward declare pcf85363_driver as it is not used
 before being declared.

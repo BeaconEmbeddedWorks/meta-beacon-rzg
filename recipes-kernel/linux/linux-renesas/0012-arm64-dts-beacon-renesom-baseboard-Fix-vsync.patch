@@ -1,7 +1,7 @@
-From 5532d9ac8174be914e02e5bb6be45f6bc97bc31e Mon Sep 17 00:00:00 2001
+From 9f134315f0fb7c223e95779de2537611eb44e843 Mon Sep 17 00:00:00 2001
 From: Adam Ford <aford173@gmail.com>
 Date: Wed, 15 Jul 2020 09:18:56 -0500
-Subject: [PATCH 12/44] arm64: dts: beacon-renesom-baseboard: Fix vsync
+Subject: [PATCH 12/63] arm64: dts: beacon-renesom-baseboard: Fix vsync
 
 According to the upstream checks, the only valid entries are 0 or 1.
 This patch makes this value '1' instad of '3' and have been verified

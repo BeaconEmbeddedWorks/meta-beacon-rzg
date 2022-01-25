@@ -1,0 +1,37 @@
+From 9f5c17992c4b3bb48ba1d1e81cfd46ea25a004e6 Mon Sep 17 00:00:00 2001
+From: Adam Ford <aford173@gmail.com>
+Date: Mon, 5 Apr 2021 13:29:38 -0500
+Subject: [PATCH 41/63] arm64: dts: renesas: beacon baseboard: Enable
+ Microphone Bias
+
+In order to operate correcly, the microphone needs the bias voltage
+turned on.  This patch links the MICBIAS to the IN3R which is the
+input port of the microphone.
+
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+ arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+index a800b9fd7804..519b2e9b1d07 100755
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+@@ -198,6 +198,14 @@
+ 		compatible = "audio-graph-card";
+ 		label = "rcar-sound";
+ 		dais = <&rsnd_port0>, <&rsnd_port1>;
++		widgets = "Microphone", "Mic Jack",
++			  "Line", "Line In Jack",
++			  "Headphone", "Headphone Jack";
++		mic-det-gpio = <&gpio0 2 GPIO_ACTIVE_LOW>;
++		routing = "Headphone Jack", "HPOUTL",
++			  "Headphone Jack", "HPOUTR",
++			  "IN3R", "MICBIAS",
++			  "Mic Jack", "IN3R";
+ 	};
+ 
+ 	vccq_sdhi0: regulator-vccq-sdhi0 {
+-- 
+2.17.1
+

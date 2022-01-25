@@ -1,0 +1,28 @@
+From a609c0c02ce3e5b9818184e59a92016b7134ab72 Mon Sep 17 00:00:00 2001
+From: Charles Stevens <charles.stevens@compasses.com>
+Date: Wed, 2 Dec 2020 17:31:57 -0600
+Subject: [PATCH 32/63] RSOM-186 - Fix AVB TXC refclock reference
+
+arm64: dts: Add new clock reference and name for revised AVB driver
+
+Signed-off-by: Charles Stevens <charles.stevens@compasses.com>
+---
+ arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
+index 6016d2e13445..172327da3de0 100644
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
+@@ -88,6 +88,8 @@
+ 	pinctrl-names = "default";
+ 	phy-handle = <&phy0>;
+ 	phy-mode = "rgmii-txid";
++	clocks = <&cpg CPG_MOD 812>, <&versaclock5 4>;
++	clock-names = "etheravb", "txc_refclk";
+ 	status = "okay";
+ 
+ 	phy0: ethernet-phy@0 {
+-- 
+2.17.1
+

@@ -1,7 +1,7 @@
-From 507620b55ce04fc94b3d9897c380490bf4d52cb7 Mon Sep 17 00:00:00 2001
+From 24e5268b3da8bcce73950a49d1ecac18a38dc95e Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@compasses.com>
 Date: Tue, 4 Aug 2020 13:32:20 -0500
-Subject: [PATCH 15/44] dts: Leverage kit DTS file when building -rgb variant.
+Subject: [PATCH 15/63] dts: Leverage kit DTS file when building -rgb variant.
 
 ---
  .../boot/dts/renesas/r8a774a1-beacon-rzg2m-kit-rgb.dts      | 6 +-----

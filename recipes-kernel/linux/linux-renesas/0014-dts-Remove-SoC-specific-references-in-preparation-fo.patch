@@ -1,7 +1,7 @@
-From 376c745b81d664eeb8dff5d61f34b83c6ab07dcc Mon Sep 17 00:00:00 2001
+From fa28d96a0d3eb9809150ff63970dd09cbcd367f1 Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@compasses.com>
 Date: Tue, 4 Aug 2020 13:31:00 -0500
-Subject: [PATCH 14/44] dts: Remove SoC specific references in preparation for
+Subject: [PATCH 14/63] dts: Remove SoC specific references in preparation for
  introducing other SoC variants.
 
 ---

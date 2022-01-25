@@ -1,0 +1,51 @@
+From 0764861207a0f3ded95ffe3e4a01dd63079637ec Mon Sep 17 00:00:00 2001
+From: Adam Ford <aford173@gmail.com>
+Date: Wed, 18 Aug 2021 08:50:21 -0500
+Subject: [PATCH 55/63] arm64: dts: beacon-renesas-baseboard: Move RGB LCD to
+ panel-dpi
+
+Upstream, there is a panel-dpi driver.  now that it's been backported,
+move the RGB LCD to panel-dpi so the device tree can more closely
+align with the desired upstream tree.
+
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+ .../dts/renesas/beacon-renesom-baseboard.dtsi  | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+index a910442be185..e4c472a069f9 100755
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+@@ -137,11 +137,27 @@
+ 
+ 	rgb: display-rgb {
+ 		/* Some random LCD with similar timings */
+-		compatible = "rocktech,rk070er9427";
++		compatible = "panel-dpi";
+ 		backlight = <&backlight_dpi>;
+ 		enable-gpios = <&gpio1 21 GPIO_ACTIVE_HIGH>;
++		data-mapping = "rgb24";
+ 		status = "disabled";
+ 
++		panel-timing {
++			/* 800x480@60Hz */
++			clock-frequency = <26400000 33300000 46800000>;
++			hactive = <800>;
++			vactive = <480>;
++			hsync-len = <1>;
++			hfront-porch = <16 210 354>;
++			hback-porch = <46>;
++			vfront-porch = <7 22 147>;
++			vback-porch = <23>;
++			vsync-len = <1>;
++			de-active = <1>;
++			pixelclk-active = <1>;
++		};
++
+ 		port {
+ 			rgb_panel: endpoint {
+ 				remote-endpoint = <&du_out_rgb>;
+-- 
+2.17.1
+

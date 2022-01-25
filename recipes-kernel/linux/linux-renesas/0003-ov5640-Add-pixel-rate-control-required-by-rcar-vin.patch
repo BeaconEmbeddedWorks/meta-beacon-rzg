@@ -1,7 +1,7 @@
-From a5cdafa797b5d8e4a3ad16f992147857b97f34de Mon Sep 17 00:00:00 2001
+From b8ad44a7deb34e4b1936341ad7d81f5c5e480f38 Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@logicpd.com>
 Date: Wed, 1 Jul 2020 19:01:39 -0500
-Subject: [PATCH 03/44] ov5640: Add pixel rate control required by rcar-vin
+Subject: [PATCH 03/63] ov5640: Add pixel rate control required by rcar-vin
 
 ---
  drivers/media/i2c/ov5640.c | 23 +++++++++++++++++++++++

@@ -1,7 +1,7 @@
-From 212db063cbe6dd8b753ba2fa77c716876f5393cc Mon Sep 17 00:00:00 2001
+From 39272298a7868fb49c77ed8a058b66b7d03d0c46 Mon Sep 17 00:00:00 2001
 From: Charles Stevens <charles.stevens@compasses.com>
 Date: Mon, 10 Aug 2020 17:22:16 -0500
-Subject: [PATCH 19/44] dts: Don't assign clock rates in consumer nodes.
+Subject: [PATCH 19/63] dts: Don't assign clock rates in consumer nodes.
 
 Also continue to take needed clock references using EHCI as a work
 around to some consumers not taking a reference to a required clock

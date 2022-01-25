@@ -1,7 +1,7 @@
-From 9d170aaa5490320334f551d05e9107ff60f3dbb6 Mon Sep 17 00:00:00 2001
+From 08a14c77b964daa26322a65c99cacb42938d33b8 Mon Sep 17 00:00:00 2001
 From: Loc Lam <loc.lam.px@renesas.com>
 Date: Fri, 15 Nov 2019 17:38:35 +0700
-Subject: [PATCH 13/44] drm: rcar-du: Fix PHY configure registers
+Subject: [PATCH 13/63] drm: rcar-du: Fix PHY configure registers
 
 By H/W manual update, the setting to PHY configure (0x17, 0x16, 0x06)
 through I2C is to recomended value.
