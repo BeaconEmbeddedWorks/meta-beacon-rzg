@@ -22,4 +22,5 @@ BBLAYERS ?= " \
   ##OEROOT##/../meta-beacon-common \
   ##OEROOT##/../meta-beacon-rzg \
   ##OEROOT##/../meta-laird-cp \
+  ##OEROOT##/../meta-virtualization \
   "
