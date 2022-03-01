@@ -11,8 +11,9 @@ SRC_URI += " \
 	   file://Enable-GNSS.cfg \
 	   file://bluetooth.cfg \
 	   file://wifi.cfg \
-           file://mfg_eeprom.cfg \
+	   file://mfg_eeprom.cfg \
 	   file://Enable-fuse.cfg \
+	   file://Enable-GoodIx.cfg \
            "
 
 COMPATIBLE_MACHINE_append = "|beacon-rzg2m|beacon-rzg2n|beacon-rzg2h"
@@ -83,4 +84,5 @@ SRC_URI += " \
 	file://0061-Add-SPI-chipselect.patch \
 	file://0062-dts-beacon-add-missing-usb-phy-ref.patch \
 	file://0063-arm64-renesas-beacon-Fix-USB-C-device-mode.patch \
+	file://0064-Add-new-DTS-file-to-add-new-LVDS-panel.patch \
 	"

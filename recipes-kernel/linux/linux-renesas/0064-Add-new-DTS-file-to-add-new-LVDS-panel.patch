@@ -1,0 +1,105 @@
+From 5306c4687df5e39c025b8c4f2a40b83489951d1e Mon Sep 17 00:00:00 2001
+From: Charles Stevens <cstevens@beaconembedded.com>
+Date: Wed, 23 Feb 2022 15:19:53 -0600
+Subject: [PATCH 64/64] Add new DTS file to add new LVDS panel
+
+Signed-off-by: Charles Stevens <cstevens@beaconembedded.com>
+---
+ .../dts/renesas/beacon-renesom-baseboard.dtsi |  4 +-
+ .../renesas/r8a774a1-beacon-rzg2m-kit-new.dts | 59 +++++++++++++++++++
+ 2 files changed, 61 insertions(+), 2 deletions(-)
+ mode change 100755 => 100644 arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit-new.dts
+
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+old mode 100755
+new mode 100644
+index a1ef59ac8fd5..a855aa881b37
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+@@ -103,7 +103,7 @@
+ 		};
+ 	};
+ 
+-	lvds {
++	lvds_panel: lvds {
+ 		compatible = "panel-lvds";
+ 		power-supply = <&reg_lcd_reset>;
+ 		width-mm = <223>;
+@@ -518,7 +518,7 @@
+ 		#gpio-cells = <2>;
+ 	};
+ 
+-	touchscreen@26 {
++	ili_touch: touchscreen@26 {
+ 		compatible = "ilitek,ili2117";
+ 		reg = <0x26>;
+ 		interrupt-parent = <&gpio5>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit-new.dts b/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit-new.dts
+new file mode 100644
+index 000000000000..daf11a5a2582
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit-new.dts
+@@ -0,0 +1,59 @@
++#include "r8a774a1-beacon-rzg2m-kit.dts"
++
++/ {
++	model = "Beacon EmbeddedWorks RZ/G2M Development Kit (LVDS)";
++};
++
++&ili_touch {
++	status = "disabled";
++};
++
++&i2c5 {
++	touchscreen@14 {
++		compatible = "goodix,gt911";
++		reg = <0x14>;
++		interrupt-parent = <&gpio5>;
++		interrupts = <9 IRQ_TYPE_LEVEL_HIGH>;
++		reset-gpios = <&gpio_exp1 4 GPIO_ACTIVE_LOW>;
++		touchscreen-size-x = <1024>;
++		touchscreen-size-y = <600>;
++	};
++};
++
++&lvds_panel {
++	data-mapping = "jeida-18";
++	panel-timing {
++	       clock-frequency = <0x30d4000>;
++	       hactive = <0x400>;
++	       vactive = <0x258>;
++	       hsync-len = <0x108>;
++	       hfront-porch = <0x17>;
++	       hback-porch = <0x21>;
++	       vfront-porch = <0x10>;
++	       vback-porch = <0x17>;
++	       vsync-len = <0x10>;
++	};
++};
++
++&gpio_exp1 {
++	lcd-select {
++	       gpio-hog;
++	       gpios = <2 0>;
++	       output-high;
++	       line-name = "lcd-select";
++	};
++
++	lcd-hpol {
++	       gpio-hog;
++	       gpios = <5 0>;
++	       output-high;
++	       line-name = "lcd-hpol";
++	};
++
++	lcd-vpol {
++	       gpio-hog;
++	       gpios = <6 0>;
++	       output-low;
++	       line-name = "lcd-vpol";
++	};
++};
+-- 
+2.17.1
+
