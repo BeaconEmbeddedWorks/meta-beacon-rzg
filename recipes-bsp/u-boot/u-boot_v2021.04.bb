@@ -5,7 +5,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}/:"
 
 DEPENDS += "bc-native dtc-native"
 
-UBOOT_URL = "git://bitbucket.logicpd.com/scm/loix/renesas-u-boot-cip.git"
+UBOOT_URL = "git://github.com/BeaconEmbeddedWorks/renesas-u-boot-cip.git"
 BRANCH = "v2021.04-renesom"
 
 SRC_URI = "${UBOOT_URL};branch=${BRANCH};protocol=https \
