@@ -1,0 +1,242 @@
+From 479b5484f46bd6002b45b80ccc79ea9b8e6cf451 Mon Sep 17 00:00:00 2001
+From: Richard Feliciano <rfeliciano@BeaconEmbedded.com>
+Date: Wed, 4 Jan 2023 16:53:05 -0600
+Subject: [PATCH] Changed the logging level on various messages
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+There were message that needed to be squelched but there logging
+others that should not be squelched. So Logging levels were
+changed from NOTICE to INFO which requires a higher logging level
+
+[RSOM-405] ManualTest> 20.01.01 – LPDDR4-3200 (1.5 GHz) Support speed test failed.
+Signed-off-by: Richard Feliciano <rfeliciano@BeaconEmbedded.com>
+
+diff --git a/bl2/bl2_main.c b/bl2/bl2_main.c
+index 203e1d4b1..d2d8a3220 100644
+--- a/bl2/bl2_main.c
++++ b/bl2/bl2_main.c
+@@ -82,8 +82,8 @@ void bl2_main(void)
+ {
+ 	entry_point_info_t *next_bl_ep_info;
+ 
+-	NOTICE("BL2: %s\n", version_string);
+-	NOTICE("BL2: %s\n", build_message);
++	INFO("BL2: %s\n", version_string);
++	INFO("BL2: %s\n", build_message);
+ 
+ 	/* Perform remaining generic architectural setup in S-EL1 */
+ 	bl2_arch_setup();
+@@ -136,7 +136,7 @@ void bl2_main(void)
+ 	 */
+ 	smc(BL1_SMC_RUN_IMAGE, (unsigned long)next_bl_ep_info, 0, 0, 0, 0, 0, 0);
+ #else /* if BL2_AT_EL3 */
+-	NOTICE("BL2: Booting " NEXT_IMAGE "\n");
++	INFO("BL2: Booting " NEXT_IMAGE "\n");
+ 	print_entry_point_info(next_bl_ep_info);
+ 	console_flush();
+ 
+diff --git a/drivers/renesas/common/auth/auth_mod.c b/drivers/renesas/common/auth/auth_mod.c
+index 4aa86e2a4..8f9319d9e 100644
+--- a/drivers/renesas/common/auth/auth_mod.c
++++ b/drivers/renesas/common/auth/auth_mod.c
+@@ -163,10 +163,10 @@ void auth_mod_init(void)
+ 			secure_boot_api = &normal_boot_verify;
+ 	}
+ 
+-	NOTICE("BL2: %s boot\n",
++	INFO("BL2: %s boot\n",
+ 	       secure_boot_api == &normal_boot_verify ? "Normal" : "Secure");
+ #else
+-	NOTICE("BL2: Normal boot\n");
++	INFO("BL2: Normal boot\n");
+ 	secure_boot_api = &normal_boot_verify;
+ #endif
+ }
+diff --git a/drivers/renesas/common/ddr/ddr_b/boot_init_dram.c b/drivers/renesas/common/ddr/ddr_b/boot_init_dram.c
+index 17c35381d..586f4b83c 100644
+--- a/drivers/renesas/common/ddr/ddr_b/boot_init_dram.c
++++ b/drivers/renesas/common/ddr/ddr_b/boot_init_dram.c
+@@ -3026,13 +3026,13 @@ static uint32_t init_ddr(void)
+ 	/* ddr backupmode end */
+ #ifdef DDR_BACKUPMODE
+ 	if (ddr_backup) {
+-		NOTICE("BL2: [WARM_BOOT]\n");
++		INFO("BL2: [WARM_BOOT]\n");
+ 	} else {
+-		NOTICE("BL2: [COLD_BOOT]\n");
++		INFO("BL2: [COLD_BOOT]\n");
+ 	}
+ 	err = rcar_dram_update_boot_status(ddr_backup);
+ 	if (err) {
+-		NOTICE("BL2: [BOOT_STATUS_UPDATE_ERROR]\n");
++		INFO("BL2: [BOOT_STATUS_UPDATE_ERROR]\n");
+ 		return INITDRAM_ERR_I;
+ 	}
+ #endif
+diff --git a/drivers/renesas/common/io/io_emmcdrv.c b/drivers/renesas/common/io/io_emmcdrv.c
+index c2b5f7c08..a001750d6 100644
+--- a/drivers/renesas/common/io/io_emmcdrv.c
++++ b/drivers/renesas/common/io/io_emmcdrv.c
+@@ -60,7 +60,7 @@ static int32_t emmcdrv_block_read(io_entity_t *entity, uintptr_t buffer,
+ 	sector_add = current_file.file_pos >> EMMC_SECTOR_SIZE_SHIFT;
+ 	sector_num = (length + EMMC_SECTOR_SIZE - 1U) >> EMMC_SECTOR_SIZE_SHIFT;
+ 
+-	NOTICE("BL2: Load dst=0x%lx src=(p:%d)0x%llx(%d) len=0x%lx(%d)\n",
++	INFO("BL2: Load dst=0x%lx src=(p:%d)0x%llx(%d) len=0x%lx(%d)\n",
+ 	       buffer,
+ 	       current_file.partition, current_file.file_pos,
+ 	       sector_add, length, sector_num);
+@@ -99,7 +99,7 @@ static int32_t emmcdrv_block_open(io_dev_info_t *dev_info,
+ 		    (emmcdrv_bootpartition == PARTITION_ID_BOOT_2)) {
+ 			current_file.partition = emmcdrv_bootpartition;
+ 
+-			NOTICE("BL2: eMMC boot from partition %d\n",
++			INFO("BL2: eMMC boot from partition %d\n",
+ 			       emmcdrv_bootpartition);
+ 			goto done;
+ 		}
+diff --git a/drivers/renesas/common/io/io_rcar.c b/drivers/renesas/common/io/io_rcar.c
+index c3e8319de..489dfa49c 100644
+--- a/drivers/renesas/common/io/io_rcar.c
++++ b/drivers/renesas/common/io/io_rcar.c
+@@ -528,7 +528,7 @@ static int32_t rcar_file_len(io_entity_t *entity, size_t *length)
+ {
+ 	*length = ((file_state_t *) entity->info)->size;
+ 
+-	NOTICE("%s: len: 0x%08lx\n", __func__, *length);
++	INFO("%s: len: 0x%08lx\n", __func__, *length);
+ 
+ 	return IO_SUCCESS;
+ }
+diff --git a/drivers/renesas/rzg/qos/G2M/qos_init_g2m_v11.c b/drivers/renesas/rzg/qos/G2M/qos_init_g2m_v11.c
+index db61858ff..fd9489a95 100644
+--- a/drivers/renesas/rzg/qos/G2M/qos_init_g2m_v11.c
++++ b/drivers/renesas/rzg/qos/G2M/qos_init_g2m_v11.c
+@@ -115,7 +115,7 @@ void qos_init_g2m_v11(void)
+ #endif /* RCAR_LSI == RZ_G2M */
+ #elif (RCAR_DRAM_SPLIT == RCAR_DRAM_SPLIT_2CH) || \
+ 	(RCAR_DRAM_SPLIT == RCAR_DRAM_SPLIT_AUTO)
+-	NOTICE("BL2: DRAM Split is 2ch\n");
++	INFO("BL2: DRAM Split is 2ch\n");
+ 	mmio_write_32(AXI_ADSPLCR0, 0x00000000U);
+ 	mmio_write_32(AXI_ADSPLCR1, ADSPLCR0_ADRMODE_DEFAULT |
+ 		      ADSPLCR0_SPLITSEL(0xFFU) | ADSPLCR0_AREA(0x1CU) |
+@@ -128,17 +128,17 @@ void qos_init_g2m_v11(void)
+ 
+ #if !(RCAR_QOS_TYPE == RCAR_QOS_NONE)
+ #if RCAR_QOS_TYPE  == RCAR_QOS_TYPE_DEFAULT
+-	NOTICE("BL2: QoS is default setting(%s)\n", RCAR_QOS_VERSION);
++	INFO("BL2: QoS is default setting(%s)\n", RCAR_QOS_VERSION);
+ #endif /* RCAR_QOS_TYPE  == RCAR_QOS_TYPE_DEFAULT */
+ 
+ #if RCAR_REF_INT == RCAR_REF_DEFAULT
+-	NOTICE("BL2: DRAM refresh interval 1.95 usec\n");
++	INFO("BL2: DRAM refresh interval 1.95 usec\n");
+ #else /* RCAR_REF_INT == RCAR_REF_DEFAULT */
+-	NOTICE("BL2: DRAM refresh interval 3.9 usec\n");
++	INFO("BL2: DRAM refresh interval 3.9 usec\n");
+ #endif /* RCAR_REF_INT == RCAR_REF_DEFAULT */
+ 
+ #if RCAR_REWT_TRAINING != RCAR_REWT_TRAINING_DISABLE
+-	NOTICE("BL2: Periodic Write DQ Training\n");
++	INFO("BL2: Periodic Write DQ Training\n");
+ #endif /* RCAR_REWT_TRAINING != RCAR_REWT_TRAINING_DISABLE */
+ 
+ 	mmio_write_32(QOSCTRL_RAS, 0x00000044U);
+diff --git a/plat/renesas/rzg/bl2_fusa.c b/plat/renesas/rzg/bl2_fusa.c
+index dfe763afe..3ccd5eb60 100644
+--- a/plat/renesas/rzg/bl2_fusa.c
++++ b/plat/renesas/rzg/bl2_fusa.c
+@@ -378,6 +378,6 @@ void bl2_ecc_init(uint32_t major, uint32_t minor)
+ #error "Don't have ECC initialize routine(unknown)."
+ #endif
+ #else  /* RZG_DRAM_ECC == 1 */
+-	NOTICE("BL2: DRAM don't have ECC configuration\n");
++	INFO("BL2: DRAM don't have ECC configuration\n");
+ #endif /* RZG_DRAM_ECC == 1 */
+ }
+diff --git a/plat/renesas/rzg/bl2_plat_setup.c b/plat/renesas/rzg/bl2_plat_setup.c
+index 667cabc0b..e8b9f68bf 100644
+--- a/plat/renesas/rzg/bl2_plat_setup.c
++++ b/plat/renesas/rzg/bl2_plat_setup.c
+@@ -226,7 +226,7 @@ static void bl2_lossy_setting(uint32_t no, uint64_t start_addr,
+ 	mmio_write_32(LOSSY_PARAMS_BASE + sizeof(info) * no + 0x4U, info.a0);
+ 	mmio_write_32(LOSSY_PARAMS_BASE + sizeof(info) * no + 0x8U, info.b0);
+ 
+-	NOTICE("     Entry %d: DCMPAREACRAx:0x%x DCMPAREACRBx:0x%x\n", no,
++	INFO("     Entry %d: DCMPAREACRAx:0x%x DCMPAREACRBx:0x%x\n", no,
+ 	       mmio_read_32(AXI_DCMPAREACRA0 + 0x8U * no),
+ 	       mmio_read_32(AXI_DCMPAREACRB0 + 0x8U * no));
+ }
+@@ -544,7 +544,7 @@ static void bl2_advertise_dram_entries(uint64_t dram_config[8])
+ 			continue;
+ 		}
+ 
+-		NOTICE("BL2: CH%d: %llx - %llx, %lld %siB\n",
++		INFO("BL2: CH%d: %llx - %llx, %lld %siB\n",
+ 		       chan, start, start + size - 1U,
+ 		       (size >> 30) ? : size >> 20,
+ 		       (size >> 30) ? "G" : "M");
+@@ -732,7 +732,7 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
+ 		break;
+ 	}
+ 
+-	NOTICE("BL2: RZ/G2 Initial Program Loader(%s) Rev.%s\n", str,
++	INFO("BL2: RZ/G2 Initial Program Loader(%s) Rev.%s\n", str,
+ 	       version_of_renesas);
+ 
+ 	reg = mmio_read_32(RCAR_PRR);
+@@ -764,16 +764,16 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
+ 	    ((reg & RCAR_MAJOR_MASK) == PRR_PRODUCT_20)) {
+ 		if ((reg & PRR_CUT_MASK) == RCAR_M3_CUT_VER11) {
+ 			/* M3 Ver.1.1 or Ver.1.2 */
+-			NOTICE("BL2: PRR is RZ/%s Ver.1.1 / Ver.1.2\n", str);
++			INFO("BL2: PRR is RZ/%s Ver.1.1 / Ver.1.2\n", str);
+ 		} else {
+-			NOTICE("BL2: PRR is RZ/%s Ver.1.%d\n", str,
++			INFO("BL2: PRR is RZ/%s Ver.1.%d\n", str,
+ 				(reg & RCAR_MINOR_MASK) + RCAR_M3_MINOR_OFFSET);
+ 		}
+ 	} else {
+ 		major = (reg & RCAR_MAJOR_MASK) >> RCAR_MAJOR_SHIFT;
+ 		major = major + RCAR_MAJOR_OFFSET;
+ 		minor = reg & RCAR_MINOR_MASK;
+-		NOTICE("BL2: PRR is RZ/%s Ver.%d.%d\n", str, major, minor);
++		INFO("BL2: PRR is RZ/%s Ver.%d.%d\n", str, major, minor);
+ 	}
+ 
+ #if (RCAR_LSI == RZ_G2E)
+@@ -802,16 +802,16 @@ void bl2_el3_early_platform_setup(u_register_t arg1, u_register_t arg2,
+ 	}
+ 
+ 	if (type == BOARD_UNKNOWN || rev == BOARD_REV_UNKNOWN) {
+-		NOTICE("BL2: Board is %s Rev.---\n", GET_BOARD_NAME(type));
++		INFO("BL2: Board is %s Rev.---\n", GET_BOARD_NAME(type));
+ 	} else if (type == BOARD_EK874_RZ_G2E) {
+ 		char board_rev;
+ 
+ 		board_rev = (char) rev;
+-		NOTICE("BL2: Board is %s Rev.%s\n",
++		INFO("BL2: Board is %s Rev.%s\n",
+ 			GET_BOARD_NAME(type), &board_rev);
+ 
+ 	} else {
+-		NOTICE("BL2: Board is %s Rev.%d.%d\n",
++		INFO("BL2: Board is %s Rev.%d.%d\n",
+ 		       GET_BOARD_NAME(type),
+ 		       GET_BOARD_MAJOR(rev), GET_BOARD_MINOR(rev));
+ 	}
+@@ -965,7 +965,7 @@ lcm_state:
+ 		mmio_write_32(CPG_PLL0CR, reg);
+ 	}
+ #if (RCAR_LOSSY_ENABLE == 1)
+-	NOTICE("BL2: Lossy Decomp areas\n");
++	INFO("BL2: Lossy Decomp areas\n");
+ 
+ 	fcnlnode = fdt_add_subnode(fdt, 0, "reserved-memory");
+ 	if (fcnlnode < 0) {
+-- 
+2.34.1
+
