@@ -1,0 +1,39 @@
+From 8c60211a10d7716f4016857a2b16a1e20bb69274 Mon Sep 17 00:00:00 2001
+From: Richard Feliciano <rfeliciano@BeaconEmbedded.com>
+Date: Tue, 17 Jan 2023 08:39:16 -0600
+Subject: [PATCH 68/68] Change device tree from 4GB to 8GB DRAM config for H
+ platforms
+
+The latest rev of the Beacon RZG2 H Soms are built with
+8GB of RAM. Change the device tree memory node to utilize
+8GB of memory vs 4 GB
+[RSOM-433] RZG2H 8GB RAM
+
+Signed-off-by: Richard Feliciano <rfeliciano@BeaconEmbedded.com>
+---
+ arch/arm64/boot/dts/renesas/r8a774e1-beacon-rzg2h-kit.dts | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a774e1-beacon-rzg2h-kit.dts b/arch/arm64/boot/dts/renesas/r8a774e1-beacon-rzg2h-kit.dts
+index 9a8bd608cf0e..6b50063a5b10 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774e1-beacon-rzg2h-kit.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774e1-beacon-rzg2h-kit.dts
+@@ -26,9 +26,14 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	memory@480000000 {
++		device_type = "memory";
++		reg = <0x4 0x80000000 0x0 0x80000000>;
++	};
++
+ 	memory@500000000 {
+ 		device_type = "memory";
+-		reg = <0x5 0x00000000 0x0 0x80000000>;
++		reg = <0x5 0x00000000 0x1 0x00000000>;
+ 	};
+ };
+ 
+-- 
+2.34.1
+

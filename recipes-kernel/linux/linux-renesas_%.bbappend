@@ -88,4 +88,5 @@ SRC_URI += " \
 	file://0065-arm64-dts-beacon-renesom-baseboard-Add-Support-for-2.patch \
 	file://0066-media-i2c-imx219-Add-support-for-four-lane-mode.patch \
 	file://0067-arm64-dts-rzg2-beacon-Enable-4-Lane-CSI-camera.patch \
+	file://0068-Change-device-tree-from-4GB-to-8GB-DRAM-config-for-H.patch \
 	"

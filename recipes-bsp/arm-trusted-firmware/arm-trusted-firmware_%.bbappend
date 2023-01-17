@@ -10,6 +10,7 @@ SRC_URI += "file://0001-plat-rzg-Add-support-for-Beacon-RZ-G2M-SOM.patch \
 	    file://0002-rzg-drivers-pfc-Support-Beacon-Boards.patch \
             file://0001-Implement-GPIO-poweroff-for-Beacon-boards.patch \
             file://0003-Changed-the-logging-level-on-various-messages.patch \
+            file://0004-Change-dram-init-memory-code-to-handle-8GB-config-fo.patch \
             "
 
 do_deploy_append() {

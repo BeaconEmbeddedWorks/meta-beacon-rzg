@@ -12,7 +12,7 @@ SRC_URI = "${UBOOT_URL};branch=${BRANCH};protocol=https \
            file://fw_env.config \
 "
 
-SRCREV = "99ade3b2cf7e487cfb6663ccbb42454635ca0e4c"
+SRCREV = "5280ec75ece5324f37adef757655aa552c201ad9"
 PV = "v2021.04+git${SRCPV}"
 
 UBOOT_SREC_SUFFIX = "srec"
