@@ -1,0 +1,102 @@
+From c030a742068df203c4e8f0c36500a56ebee7bb00 Mon Sep 17 00:00:00 2001
+From: Adam Ford <aford173@gmail.com>
+Date: Fri, 1 Apr 2022 08:01:34 -0500
+Subject: [PATCH 65/67] arm64: dts: beacon-renesom-baseboard: Add Support for
+ 2-Lane IMX219
+
+There is a 2-Lane CSI Camera port designed to connect to an IMX219
+Camera board.
+
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+ .../dts/renesas/beacon-renesom-baseboard.dtsi | 36 ++++++++++++++++---
+ 1 file changed, 31 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+index a855aa881b37..bb96f97ac7cd 100644
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+@@ -28,6 +28,12 @@
+ 		default-brightness-level = <6>;
+ 	};	
+ 
++	clk_csi1: cs1-oscillator {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <24000000>;
++	};
++
+ 	hdmi0-out {
+ 		compatible = "hdmi-connector";
+ 		type = "a";
+@@ -198,8 +204,9 @@
+ 		regulator-name = "reg_cam0";
+ 		regulator-min-microvolt = <1800000>;
+ 		regulator-max-microvolt = <1800000>;
+-		gpio = <&gpio_exp2 2 GPIO_ACTIVE_HIGH>;
++		gpio = <&gpio_exp2 0 GPIO_ACTIVE_HIGH>;
+ 		enable-active-high;
++		startup-delay-us = <100000>;
+ 	};
+ 	
+ 	reg_cam1: regulator_camera {
+@@ -207,9 +214,10 @@
+ 		regulator-name = "reg_cam1";
+ 		regulator-min-microvolt = <1800000>;
+ 		regulator-max-microvolt = <1800000>;
+-		gpio = <&gpio_exp2 5 GPIO_ACTIVE_HIGH>;
++		gpio = <&gpio_exp2 3 GPIO_ACTIVE_HIGH>;
+ 		enable-active-high;
+ 		startup-delay-us = <100000>;
++		regulator-always-on;
+ 	};
+ 
+ 	sound_card {
+@@ -280,7 +288,7 @@
+ };
+ 
+ &csi20 {
+-	status = "disabled"; /* Enable when we have cameras */
++	status = "okay"; /* Enable when we have cameras */
+ 
+ 	ports {
+ 		port@0 {
+@@ -288,7 +296,7 @@
+ 			csi20_in: endpoint {
+ 				clock-lanes = <0>;
+ 				data-lanes = <1 2>;
+-				/* remote-endpoint = <&ov5640_to_mipi_csi2>; */
++				remote-endpoint = <&imx219_1_ep>;
+ 			};
+ 		};
+ 	};
+@@ -473,7 +481,25 @@
+ 	pinctrl-0 = <&i2c5_pins>;
+ 	pinctrl-names = "default";
+ 
+-	/* Eventual Home of CSI1 Camera */
++	/* Camera-1 is 2-lane Camera */
++	imx219_1@10 {
++		compatible = "sony,imx219";
++		reg = <0x10>;
++		clocks = <&clk_csi1>;
++		/* VANA-supply = <&imx219_vana_2v8>; */
++		VDIG-supply = <&reg_cam1>;
++		/* VDDL-supply = <&imx219_vddl_1v2>; */
++
++		port {
++			imx219_1_ep: endpoint {
++				remote-endpoint = <&csi20_in>;
++				data-lanes = <1 2>;
++				clock-lanes = <0>;
++				clock-noncontinuous;
++				link-frequencies = /bits/ 64 <456000000>;
++			};
++		};
++	};
+ 
+ 	codec: wm8962@1a {
+ 		compatible = "wlf,wm8962";
+-- 
+2.34.1
+

@@ -85,4 +85,7 @@ SRC_URI += " \
 	file://0062-dts-beacon-add-missing-usb-phy-ref.patch \
 	file://0063-arm64-renesas-beacon-Fix-USB-C-device-mode.patch \
 	file://0064-Add-new-DTS-file-to-add-new-LVDS-panel.patch \
+	file://0065-arm64-dts-beacon-renesom-baseboard-Add-Support-for-2.patch \
+	file://0066-media-i2c-imx219-Add-support-for-four-lane-mode.patch \
+	file://0067-arm64-dts-rzg2-beacon-Enable-4-Lane-CSI-camera.patch \
 	"

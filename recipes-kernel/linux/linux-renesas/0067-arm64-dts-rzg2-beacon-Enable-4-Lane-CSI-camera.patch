@@ -1,0 +1,131 @@
+From bc68abcb7129f9cc18b2ca9c93438bb17aae7e47 Mon Sep 17 00:00:00 2001
+From: Adam Ford <aford173@gmail.com>
+Date: Wed, 6 Apr 2022 16:21:30 -0500
+Subject: [PATCH 67/67] arm64: dts: rzg2-beacon: Enable 4-Lane CSI camera
+
+There is a 4-lane camera connected to the baseboard which is also
+an imx219 camera.
+
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+ .../dts/renesas/beacon-renesom-baseboard.dtsi | 46 +++++++++++++------
+ 1 file changed, 31 insertions(+), 15 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+index bb96f97ac7cd..89f770320761 100644
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+@@ -28,7 +28,7 @@
+ 		default-brightness-level = <6>;
+ 	};	
+ 
+-	clk_csi1: cs1-oscillator {
++	clk_imx219: cs1-oscillator {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <24000000>;
+@@ -199,7 +199,7 @@
+ 		vin-supply = <&reg_lcd>;
+ 	};
+ 
+-	reg_cam0: regulator_camera {
++	reg_cam0: regulator-camera0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "reg_cam0";
+ 		regulator-min-microvolt = <1800000>;
+@@ -207,9 +207,10 @@
+ 		gpio = <&gpio_exp2 0 GPIO_ACTIVE_HIGH>;
+ 		enable-active-high;
+ 		startup-delay-us = <100000>;
++		regulator-always-on;
+ 	};
+ 	
+-	reg_cam1: regulator_camera {
++	reg_cam1: regulator-camera1 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "reg_cam1";
+ 		regulator-min-microvolt = <1800000>;
+@@ -288,7 +289,7 @@
+ };
+ 
+ &csi20 {
+-	status = "okay"; /* Enable when we have cameras */
++	status = "okay";
+ 
+ 	ports {
+ 		port@0 {
+@@ -303,7 +304,7 @@
+ };
+ 
+ &csi40 {
+-	status = "disabled";  /* Enable when we have cameras */
++	status = "okay";
+ 
+ 	ports {
+ 		port@0 {
+@@ -311,7 +312,7 @@
+ 			csi40_in: endpoint {
+ 				clock-lanes = <0>;
+ 				data-lanes = <1 2 3 4>;
+-				/* remote-endpoint = <&ov5640_2_to_mipi_csi2>; */
++				remote-endpoint = <&imx219_0_ep>;
+ 			};
+ 		};
+ 	};
+@@ -377,18 +378,32 @@
+ 	status = "okay";
+ 	clock-frequency = <400000>;
+ 	i2c-scl-rising-time-ns = <50>;
+-
+ 	pinctrl-0 = <&i2c2_pins>;
+ 	pinctrl-names = "default";
+ 
+-	/* Eventual Home of CSI0 Camera */
++	/* Camera-0 is 4-lane Camera */
++	imx219_1@10 {
++		compatible = "sony,imx219";
++		reg = <0x10>;
++		clocks = <&clk_imx219>;
++		VANA-supply = <&reg_cam0>;
++		VDIG-supply = <&reg_cam0>;
++		VDDL-supply = <&reg_cam0>;
++
++		port {
++			imx219_0_ep: endpoint {
++				remote-endpoint = <&csi40_in>;
++				data-lanes = <1 2 3 4>;
++				clock-lanes = <0>;
++				clock-noncontinuous;
++				link-frequencies = /bits/ 64 <363000000>;
++			};
++		};
++	};
+ 
+ 	/* 0 - CSI0_RSTn */
+-	/* 1 - CAM0_PW_EN_0 */
+-	/* 2 - CAM0_PW_EN_1 */
+ 	/* 3 - CSI1_RSTn */
+-	/* 4 - CAM1_PW_EN_0 */
+-	/* 5 - CAM1_PW_EN_1 */
++
+ 	/* 6 - nc */
+ 	/* 7 - nc */
+ 	gpio_exp2: gpio@21 {
+@@ -485,10 +500,11 @@
+ 	imx219_1@10 {
+ 		compatible = "sony,imx219";
+ 		reg = <0x10>;
+-		clocks = <&clk_csi1>;
+-		/* VANA-supply = <&imx219_vana_2v8>; */
++		clocks = <&clk_imx219>;
++		VANA-supply = <&reg_cam1>;
+ 		VDIG-supply = <&reg_cam1>;
+-		/* VDDL-supply = <&imx219_vddl_1v2>; */
++		VDDL-supply = <&reg_cam1>;
++		status = "okay";
+ 
+ 		port {
+ 			imx219_1_ep: endpoint {
+-- 
+2.34.1
+
