@@ -1,0 +1,171 @@
+From 7394c84c83fb2b25e79fad8419584fe51feb8c8d Mon Sep 17 00:00:00 2001
+From: Richard Feliciano <rfeliciano@BeaconEmbedded.com>
+Date: Mon, 6 Mar 2023 09:00:22 -0600
+Subject: [PATCH] Squelching some ATF splat for cleaner boot log
+
+The ATF spits out a lot of information that is not likely to
+be relevant to most users.  Squelching those messages so that
+only messages of interest to user are displayed by defualt.
+
+[RSOM-343] make ATF less verbose
+
+Signed-off-by: Richard Feliciano <rfeliciano@BeaconEmbedded.com>
+
+diff --git a/drivers/renesas/common/io/io_memdrv.c b/drivers/renesas/common/io/io_memdrv.c
+index 1f31c0fb9..7953298d8 100644
+--- a/drivers/renesas/common/io/io_memdrv.c
++++ b/drivers/renesas/common/io/io_memdrv.c
+@@ -82,7 +82,7 @@ static int32_t memdrv_block_read(io_entity_t *entity, uintptr_t buffer,
+ 
+ 	fp = (file_state_t *) entity->info;
+ 
+-	NOTICE("BL2: dst=0x%lx src=0x%llx len=%ld(0x%lx)\n",
++	INFO("BL2: dst=0x%lx src=0x%llx len=%ld(0x%lx)\n",
+ 	       buffer, (unsigned long long)fp->base +
+ 	       (unsigned long long)fp->file_pos, length, length);
+ 
+diff --git a/drivers/renesas/rzg/qos/G2H/qos_init_g2h_v30.c b/drivers/renesas/rzg/qos/G2H/qos_init_g2h_v30.c
+index 7f466c89a..cc14b7a2a 100644
+--- a/drivers/renesas/rzg/qos/G2H/qos_init_g2h_v30.c
++++ b/drivers/renesas/rzg/qos/G2H/qos_init_g2h_v30.c
+@@ -114,7 +114,7 @@ void qos_init_g2h_v30(void)
+ #endif /* RCAR_LSI == RZ_G2H */
+ #elif (RCAR_DRAM_SPLIT == RCAR_DRAM_SPLIT_2CH) || \
+ 	(RCAR_DRAM_SPLIT == RCAR_DRAM_SPLIT_AUTO)
+-	NOTICE("BL2: DRAM Split is 2ch(DDR %x)\n", (int)qos_init_ddr_phyvalid);
++	INFO("BL2: DRAM Split is 2ch(DDR %x)\n", (int)qos_init_ddr_phyvalid);
+ 
+ 	mmio_write_32(AXI_ADSPLCR0, ADSPLCR0_AREA(split_area));
+ 	mmio_write_32(AXI_ADSPLCR1, ADSPLCR0_ADRMODE_DEFAULT |
+@@ -124,22 +124,22 @@ void qos_init_g2h_v30(void)
+ 	mmio_write_32(AXI_ADSPLCR3, 0x00000000U);
+ #else /* RCAR_DRAM_SPLIT == RCAR_DRAM_SPLIT_4CH */
+ 	mmio_write_32(AXI_ADSPLCR0, ADSPLCR0_AREA(split_area));
+-	NOTICE("BL2: DRAM Split is OFF(DDR %x)\n", (int)qos_init_ddr_phyvalid);
++	INFO("BL2: DRAM Split is OFF(DDR %x)\n", (int)qos_init_ddr_phyvalid);
+ #endif /* RCAR_DRAM_SPLIT == RCAR_DRAM_SPLIT_4CH */
+ 
+ #if !(RCAR_QOS_TYPE == RCAR_QOS_NONE)
+ #if RCAR_QOS_TYPE  == RCAR_QOS_TYPE_DEFAULT
+-	NOTICE("BL2: QoS is default setting(%s)\n", RCAR_QOS_VERSION);
++	INFO("BL2: QoS is default setting(%s)\n", RCAR_QOS_VERSION);
+ #endif
+ 
+ #if RCAR_REF_INT == RCAR_REF_DEFAULT
+-	NOTICE("BL2: DRAM refresh interval 1.95 usec\n");
++	INFO("BL2: DRAM refresh interval 1.95 usec\n");
+ #else
+-	NOTICE("BL2: DRAM refresh interval 3.9 usec\n");
++	INFO("BL2: DRAM refresh interval 3.9 usec\n");
+ #endif
+ 
+ #if RCAR_REWT_TRAINING != RCAR_REWT_TRAINING_DISABLE
+-	NOTICE("BL2: Periodic Write DQ Training\n");
++	INFO("BL2: Periodic Write DQ Training\n");
+ #endif /* RCAR_REWT_TRAINING != RCAR_REWT_TRAINING_DISABLE */
+ 
+ 	mmio_write_32(QOSCTRL_RAS, 0x00000044U);
+diff --git a/drivers/renesas/rzg/qos/G2M/qos_init_g2m_v10.c b/drivers/renesas/rzg/qos/G2M/qos_init_g2m_v10.c
+index ceaad25f5..584b6d6a5 100644
+--- a/drivers/renesas/rzg/qos/G2M/qos_init_g2m_v10.c
++++ b/drivers/renesas/rzg/qos/G2M/qos_init_g2m_v10.c
+@@ -71,7 +71,7 @@ void qos_init_g2m_v10(void)
+ #endif /* RCAR_LSI == RZ_G2M */
+ #elif (RCAR_DRAM_SPLIT == RCAR_DRAM_SPLIT_2CH) || \
+ 	(RCAR_DRAM_SPLIT == RCAR_DRAM_SPLIT_AUTO)
+-	NOTICE("BL2: DRAM Split is 2ch\n");
++	INFO("BL2: DRAM Split is 2ch\n");
+ 	mmio_write_32(AXI_ADSPLCR0, 0x00000000U);
+ 	mmio_write_32(AXI_ADSPLCR1, ADSPLCR0_ADRMODE_DEFAULT |
+ 		      ADSPLCR0_SPLITSEL(0xFFU) | ADSPLCR0_AREA(0x1CU) |
+@@ -79,12 +79,12 @@ void qos_init_g2m_v10(void)
+ 	mmio_write_32(AXI_ADSPLCR2, 0x089A0000U);
+ 	mmio_write_32(AXI_ADSPLCR3, 0x00000000U);
+ #else /* RCAR_DRAM_SPLIT == RCAR_DRAM_SPLIT_4CH */
+-	NOTICE("BL2: DRAM Split is OFF\n");
++	INFO("BL2: DRAM Split is OFF\n");
+ #endif /* RCAR_DRAM_SPLIT == RCAR_DRAM_SPLIT_4CH */
+ 
+ #if !(RCAR_QOS_TYPE == RCAR_QOS_NONE)
+ #if RCAR_QOS_TYPE  == RCAR_QOS_TYPE_DEFAULT
+-	NOTICE("BL2: QoS is default setting(%s)\n", RCAR_QOS_VERSION);
++	INFO("BL2: QoS is default setting(%s)\n", RCAR_QOS_VERSION);
+ #endif
+ 
+ 	/* Resource Alloc setting */
+diff --git a/drivers/renesas/rzg/qos/G2M/qos_init_g2m_v30.c b/drivers/renesas/rzg/qos/G2M/qos_init_g2m_v30.c
+index 321cd2bf8..ab361aac2 100644
+--- a/drivers/renesas/rzg/qos/G2M/qos_init_g2m_v30.c
++++ b/drivers/renesas/rzg/qos/G2M/qos_init_g2m_v30.c
+@@ -123,22 +123,22 @@ void qos_init_g2m_v30(void)
+ 	mmio_write_32(AXI_ADSPLCR2, 0x00001004U);
+ 	mmio_write_32(AXI_ADSPLCR3, 0x00000000U);
+ #else /* RCAR_DRAM_SPLIT == RCAR_DRAM_SPLIT_4CH */
+-	NOTICE("BL2: DRAM Split is OFF\n");
++	INFO("BL2: DRAM Split is OFF\n");
+ #endif /* RCAR_DRAM_SPLIT == RCAR_DRAM_SPLIT_4CH */
+ 
+ #if !(RCAR_QOS_TYPE == RCAR_QOS_NONE)
+ #if RCAR_QOS_TYPE  == RCAR_QOS_TYPE_DEFAULT
+-	NOTICE("BL2: QoS is default setting(%s)\n", RCAR_QOS_VERSION);
++	INFO("BL2: QoS is default setting(%s)\n", RCAR_QOS_VERSION);
+ #endif
+ 
+ #if RCAR_REF_INT == RCAR_REF_DEFAULT
+-	NOTICE("BL2: DRAM refresh interval 1.95 usec\n");
++	INFO("BL2: DRAM refresh interval 1.95 usec\n");
+ #else /*  RCAR_REF_INT == RCAR_REF_DEFAULT */
+-	NOTICE("BL2: DRAM refresh interval 3.9 usec\n");
++	INFO("BL2: DRAM refresh interval 3.9 usec\n");
+ #endif /*  RCAR_REF_INT == RCAR_REF_DEFAULT */
+ 
+ #if RCAR_REWT_TRAINING != RCAR_REWT_TRAINING_DISABLE
+-	NOTICE("BL2: Periodic Write DQ Training\n");
++	INFO("BL2: Periodic Write DQ Training\n");
+ #endif /* RCAR_REWT_TRAINING != RCAR_REWT_TRAINING_DISABLE */
+ 
+ 	mmio_write_32(QOSCTRL_RAS, 0x00000044U);
+diff --git a/drivers/renesas/rzg/qos/G2N/qos_init_g2n_v10.c b/drivers/renesas/rzg/qos/G2N/qos_init_g2n_v10.c
+index 00b0948d1..de3431d52 100644
+--- a/drivers/renesas/rzg/qos/G2N/qos_init_g2n_v10.c
++++ b/drivers/renesas/rzg/qos/G2N/qos_init_g2n_v10.c
+@@ -115,22 +115,22 @@ void qos_init_g2n_v10(void)
+ 	panic();
+ #endif
+ #else
+-	NOTICE("BL2: DRAM Split is OFF\n");
++	INFO("BL2: DRAM Split is OFF\n");
+ #endif
+ 
+ #if !(RCAR_QOS_TYPE == RCAR_QOS_NONE)
+ #if RCAR_QOS_TYPE  == RCAR_QOS_TYPE_DEFAULT
+-	NOTICE("BL2: QoS is default setting(%s)\n", RCAR_QOS_VERSION);
++	INFO("BL2: QoS is default setting(%s)\n", RCAR_QOS_VERSION);
+ #endif
+ 
+ #if RCAR_REF_INT == RCAR_REF_DEFAULT
+-	NOTICE("BL2: DRAM refresh interval 1.95 usec\n");
++	INFO("BL2: DRAM refresh interval 1.95 usec\n");
+ #else
+-	NOTICE("BL2: DRAM refresh interval 3.9 usec\n");
++	INFO("BL2: DRAM refresh interval 3.9 usec\n");
+ #endif
+ 
+ #if RCAR_REWT_TRAINING != RCAR_REWT_TRAINING_DISABLE
+-	NOTICE("BL2: Periodic Write DQ Training\n");
++	INFO("BL2: Periodic Write DQ Training\n");
+ #endif /* RCAR_REWT_TRAINING != RCAR_REWT_TRAINING_DISABLE */
+ 
+ 	mmio_write_32(QOSCTRL_RAS, 0x00000028U);
+@@ -189,7 +189,7 @@ void qos_init_g2n_v10(void)
+ 
+ 	mmio_write_32(QOSCTRL_STATQC, 0x00000001U);
+ #else
+-	NOTICE("BL2: QoS is None\n");
++	INFO("BL2: QoS is None\n");
+ 
+ 	mmio_write_32(QOSCTRL_RAEN, 0x00000001U);
+ #endif /* !(RCAR_QOS_TYPE == RCAR_QOS_NONE) */
+-- 
+2.34.1
+
