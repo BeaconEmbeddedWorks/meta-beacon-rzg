@@ -90,3 +90,6 @@ SRC_URI += " \
 	file://0067-arm64-dts-rzg2-beacon-Enable-4-Lane-CSI-camera.patch \
 	file://0068-Change-device-tree-from-4GB-to-8GB-DRAM-config-for-H.patch \
 	"
+	
+LINUX_VERSION_EXTENSION = "-1.0.4"
+LOCALVERSION = "+beacon-${LINUX_VERSION_EXTENSION}"
