@@ -1,0 +1,32 @@
+From 3f72f447b555a6531b61f8c053e191b8bc91eb95 Mon Sep 17 00:00:00 2001
+From: Adam Ford <aford@beaconembedded.com>
+Date: Wed, 25 Jan 2023 10:42:59 -0600
+Subject: [PATCH 70/72] arm64: dts: beacon-renesom-baseboard: Add MMC aliases
+
+With MMC aliasing available, configure them so the microSD is
+MMC0, the eMMC is MMC1, and optional WiFi is MMC2.
+---
+ arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+index 89f770320761..b328cf784968 100644
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+@@ -10,6 +10,13 @@
+ #include <dt-bindings/clk/versaclock.h>
+ 
+ / {
++
++	aliases {
++		mmc0 = &sdhi0;
++		mmc1 = &sdhi3;
++		mmc2 = &sdhi2;
++	};
++
+ 	backlight_lvds: backlight-lvds {
+ 		compatible = "pwm-backlight";
+ 		power-supply = <&reg_lcd>;
+-- 
+2.34.1
+

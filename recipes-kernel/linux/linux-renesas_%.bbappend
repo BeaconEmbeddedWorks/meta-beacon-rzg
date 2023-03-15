@@ -89,6 +89,10 @@ SRC_URI += " \
 	file://0066-media-i2c-imx219-Add-support-for-four-lane-mode.patch \
 	file://0067-arm64-dts-rzg2-beacon-Enable-4-Lane-CSI-camera.patch \
 	file://0068-Change-device-tree-from-4GB-to-8GB-DRAM-config-for-H.patch \
+	file://0069-mmc-core-Allow-setting-slot-index-via-device-tree-al.patch \
+	file://0070-arm64-dts-beacon-renesom-baseboard-Add-MMC-aliases.patch \
+	file://0071-arm64-dts-beacon-renesom-Disable-SDR104-by-default.patch \
+	file://0072-arm64-dts-beacon-renesom-Fix-WiFi-sdr104-typo.patch \
 	"
 	
 LINUX_VERSION_EXTENSION = "-1.0.4"

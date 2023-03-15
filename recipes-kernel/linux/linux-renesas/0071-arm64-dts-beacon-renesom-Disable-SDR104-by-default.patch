@@ -1,0 +1,27 @@
+From 37bba303aa4910614e044eed4bb2aa4b9dd53009 Mon Sep 17 00:00:00 2001
+From: Adam Ford <aford@beaconembedded.com>
+Date: Wed, 25 Jan 2023 10:16:22 -0600
+Subject: [PATCH 71/72] arm64: dts: beacon-renesom: Disable SDR104 by default
+
+There appears to be an issue with some micro SD cards running
+at SDR104 which cause them to hang.  If a someone finds a card
+that works reliably, this can be reverted.
+---
+ arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+index b328cf784968..f57b77ac2e71 100644
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+@@ -882,7 +882,6 @@
+ 	cd-gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
+ 	bus-width = <4>;
+ 	sd-uhs-sdr50;
+-	sd-uhs-sdr104;
+ 	status = "okay";
+ };
+ 
+-- 
+2.34.1
+

@@ -1,0 +1,28 @@
+From be310b0988feb466b2c35c416f8ca8f87717bfe2 Mon Sep 17 00:00:00 2001
+From: Adam Ford <aford@beaconembedded.com>
+Date: Tue, 31 Jan 2023 07:10:51 -0600
+Subject: [PATCH 72/72] arm64: dts: beacon-renesom: Fix WiFi sdr104 typo
+
+The flag to enable SDR104 on the Wifi interface is spelled incorrectly,
+and it's limiting the speed to 100MHz.  Fix the typo to increase
+the MMC clock to 200MHz.
+---
+ arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
+index ed14d4b599af..2ce13b5cf580 100644
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
+@@ -262,7 +262,7 @@
+ 	keep-power-in-suspend;
+ 	mmc-pwrseq = <&wlan_pwrseq>;
+ 	sd-uhs-sdr50;
+-	sd-ush-sdr104;
++	sd-uhs-sdr104;
+ 	status = "okay";
+ 
+ 	brcmf: bcrmf@1 {
+-- 
+2.34.1
+
