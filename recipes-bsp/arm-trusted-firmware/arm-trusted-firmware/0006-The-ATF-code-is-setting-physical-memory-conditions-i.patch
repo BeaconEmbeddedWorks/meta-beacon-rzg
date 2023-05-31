@@ -1,0 +1,63 @@
+From b445016bfa9f5e7c2adbaa64505921faf20393a7 Mon Sep 17 00:00:00 2001
+From: Richard Feliciano <rfeliciano@BeaconEmbedded.com>
+Date: Tue, 30 May 2023 20:21:54 -0500
+Subject: [PATCH 6/6] The ATF code is setting physical memory conditions
+ incorrectly
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+In the ATF code the physical memory is hardcoded based on the
+platform type.  The physical memory was increased from 4 GB
+to 8GB so those hard coded values are no longer valid for Beacon
+RZGH boards with the larger memory.  Code was added for correct
+memory mapping in the 8GB configuration.
+
+ [RSOM-487] 16.04.01 – TrustZone failed to execute application example for H board
+
+Signed-off-by: Richard Feliciano <rfeliciano@BeaconEmbedded.com>
+
+diff --git a/plat/renesas/rzg/bl2_plat_setup.c b/plat/renesas/rzg/bl2_plat_setup.c
+index e8b9f68bf..2abe899e0 100644
+--- a/plat/renesas/rzg/bl2_plat_setup.c
++++ b/plat/renesas/rzg/bl2_plat_setup.c
+@@ -612,6 +612,11 @@ static void bl2_advertise_dram_size(uint32_t product)
+ 		dram_config[5] = 0x80000000ULL;
+ 		break;
+ 	case PRR_PRODUCT_H3:
++#if (BEACON_RZG2H_DDR_SIZE == 8)
++		/* 8GB(4GBx2 2ch split) */
++		dram_config[1] = 0x100000000ULL;
++		dram_config[3] = 0x100000000ULL;
++#else
+ #if (RCAR_DRAM_LPDDR4_MEMCONF == 0)
+ 		/* 4GB(1GBx4) */
+ 		dram_config[1] = 0x40000000ULL;
+@@ -630,6 +635,7 @@ static void bl2_advertise_dram_size(uint32_t product)
+ 		dram_config[5] = 0x80000000ULL;
+ 		dram_config[7] = 0x80000000ULL;
+ #endif /* RCAR_DRAM_LPDDR4_MEMCONF == 0 */
++#endif /* BEACON_RZG2H_DDR_SIZE == 8 */
+ 		break;
+ 	case PRR_PRODUCT_M3N:
+ 		/* 4GB(4GBx1) */
+diff --git a/plat/renesas/rzg/platform.mk b/plat/renesas/rzg/platform.mk
+index 7168f7019..85c550141 100644
+--- a/plat/renesas/rzg/platform.mk
++++ b/plat/renesas/rzg/platform.mk
+@@ -194,6 +194,12 @@ RCAR_DRAM_DDR3L_MEMDUAL :=1
+ endif
+ $(eval $(call add_define,RCAR_DRAM_DDR3L_MEMDUAL))
+ 
++# Process BEACON_RZG2H_DDR_SIZE flag
++ifndef BEACON_RZG2H_DDR_SIZE
++BEACON_RZG2H_DDR_SIZE := 8
++endif
++$(eval $(call add_define,BEACON_RZG2H_DDR_SIZE))
++
+ # Process RCAR_BL33_ARG0 flag
+ ifdef RCAR_BL33_ARG0
+ $(eval $(call add_define,RCAR_BL33_ARG0))
+-- 
+2.34.1
+
